@@ -109,6 +109,290 @@
     q17_process_mismatch: 1
   };
 
+  /* BEGIN EXPR */
+  var MAX_DEPTH = 32;
+  var MAX_NODES = 10_000;
+  
+  var OPERATORS = new Set([
+    "answer", "derived", "result", "flag", "rank",
+    "all", "any", "not",
+    "eq", "ne", "gt", "gte", "lt", "lte",
+    "in", "hasAny", "hasAll", "hasNone", "isSet", "rankAtMost",
+    "add", "sub", "mul", "min", "max", "sumFields", "count",
+    "countSelected", "bucket", "coalesce",
+  ]);
+  
+  function isOperator(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+    var keys = Object.keys(value);
+    return keys.length === 1 && OPERATORS.has(keys[0]);
+  }
+  
+  function depthOf(value, seen = new WeakSet()) {
+    if (!value || typeof value !== "object") return 1;
+    if (seen.has(value)) return Infinity;
+    seen.add(value);
+    var children = Array.isArray(value)
+      ? value
+      : Object.keys(value).map((key) => value[key]);
+    var depth = 1;
+    for (var child of children) depth = Math.max(depth, 1 + depthOf(child, seen));
+    seen.delete(value);
+    return depth;
+  }
+  
+  function own(obj, key) {
+    return obj != null && Object.prototype.hasOwnProperty.call(obj, key);
+  }
+  
+  function isFiniteNumber(value) {
+    return typeof value === "number" && Number.isFinite(value);
+  }
+  
+  function recordValid(value, constraints = {}) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+    var required = Array.isArray(constraints.requiredKeys)
+      ? constraints.requiredKeys
+      : [];
+    for (var key of required) {
+      if (!own(value, key)) return false;
+      var item = value[key];
+      if (!(isFiniteNumber(item) || (typeof item === "string" && item.length > 0))) {
+        return false;
+      }
+      if (constraints.minimums && own(constraints.minimums, key) &&
+          (!isFiniteNumber(item) || item < constraints.minimums[key])) {
+        return false;
+      }
+      if (constraints.allowedValues && own(constraints.allowedValues, key) &&
+          (!Array.isArray(constraints.allowedValues[key]) ||
+           constraints.allowedValues[key].indexOf(item) === -1)) {
+        return false;
+      }
+    }
+    if (own(constraints, "sumTo")) {
+      if (!isFiniteNumber(constraints.sumTo) || required.length === 0) return false;
+      var sum = 0;
+      for (var key of required) {
+        var item = value[key];
+        if (!isFiniteNumber(item) || item < 0) return false;
+        sum += item;
+      }
+      if (sum !== constraints.sumTo) return false;
+    }
+    return true;
+  }
+  
+  function readAnswer(path, ctx) {
+    if (typeof path !== "string" || !path) return null;
+    var parts = path.split(".");
+    var root = parts[0];
+    var answers = ctx.answers || {};
+    if (!own(answers, root)) return null;
+    var meta = (ctx.fieldIndex || {})[root];
+    var value = answers[root];
+    if (meta && meta.kind === "record" && !recordValid(value, meta.constraints || {})) {
+      return null;
+    }
+    for (var i = 1; i < parts.length; i++) {
+      if (!value || typeof value !== "object" || !own(value, parts[i])) return null;
+      value = value[parts[i]];
+    }
+    return value === undefined ? null : value;
+  }
+  
+  function rankOf(field, value, ctx) {
+    var ranked = readAnswer(field, ctx);
+    if (!Array.isArray(ranked)) return null;
+    var index = ranked.indexOf(value);
+    return index === -1 ? null : index + 1;
+  }
+  
+  function isSet(value) {
+    if (value == null || value === "") return false;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "number") return Number.isFinite(value);
+    return true;
+  }
+  
+  function list(value) {
+    return Array.isArray(value) ? value : null;
+  }
+  
+  function numericArgs(raw, state, depth, minimum = 2) {
+    if (!Array.isArray(raw) || raw.length < minimum) return null;
+    var values = raw.map((item) => evalNode(item, state, depth + 1));
+    return values.every(isFiniteNumber) ? values : null;
+  }
+  
+  function ordered(raw, state, depth, compare) {
+    var values = numericArgs(raw, state, depth, 2);
+    return values && values.length === 2 ? compare(values[0], values[1]) : false;
+  }
+  
+  function membership(raw, state, depth, mode) {
+    if (!Array.isArray(raw) || raw.length !== 2) return false;
+    var left = evalNode(raw[0], state, depth + 1);
+    var right = evalNode(raw[1], state, depth + 1);
+    if (left == null || !Array.isArray(right)) return false;
+    if (mode === "in") return right.indexOf(left) !== -1;
+    if (!Array.isArray(left)) return false;
+    if (mode === "hasAny") return right.some((item) => left.indexOf(item) !== -1);
+    if (mode === "hasAll") return right.every((item) => left.indexOf(item) !== -1);
+    return !right.some((item) => left.indexOf(item) !== -1);
+  }
+  
+  function evalNode(expr, state, depth) {
+    state.nodes += 1;
+    if (state.nodes > MAX_NODES || depth > MAX_DEPTH) throw state.limit;
+    if (Array.isArray(expr)) return expr.map((item) => evalNode(item, state, depth + 1));
+    if (!expr || typeof expr !== "object") return expr;
+  
+    var keys = Object.keys(expr);
+    if (keys.length !== 1 || !OPERATORS.has(keys[0])) return false;
+    var op = keys[0];
+    var raw = expr[op];
+    var ctx = state.ctx;
+  
+    if (op === "answer") return readAnswer(raw, ctx);
+    if (op === "derived") return own(ctx.derived || {}, raw) ? ctx.derived[raw] : null;
+    if (op === "result") return own(ctx.result || {}, raw) ? ctx.result[raw] : null;
+    if (op === "flag") return !!(ctx.flags && ctx.flags[raw] === true);
+    if (op === "rank") {
+      return raw && typeof raw === "object" ? rankOf(raw.field, raw.of, ctx) : null;
+    }
+    if (op === "all" || op === "any") {
+      if (!Array.isArray(raw)) return false;
+      var values = raw.map((item) => evalNode(item, state, depth + 1));
+      return op === "all" ? values.every(Boolean) : values.some(Boolean);
+    }
+    if (op === "not") {
+      var value = evalNode(raw, state, depth + 1);
+      return value == null ? false : !value;
+    }
+    if (op === "eq" || op === "ne") {
+      if (!Array.isArray(raw) || raw.length !== 2) return false;
+      var left = evalNode(raw[0], state, depth + 1);
+      var right = evalNode(raw[1], state, depth + 1);
+      if (left == null || right == null) return false;
+      return op === "eq" ? left === right : left !== right;
+    }
+    if (op === "gt") return ordered(raw, state, depth, (a, b) => a > b);
+    if (op === "gte") return ordered(raw, state, depth, (a, b) => a >= b);
+    if (op === "lt") return ordered(raw, state, depth, (a, b) => a < b);
+    if (op === "lte") return ordered(raw, state, depth, (a, b) => a <= b);
+    if (op === "in" || op === "hasAny" || op === "hasAll" || op === "hasNone") {
+      return membership(raw, state, depth, op);
+    }
+    if (op === "isSet") return isSet(evalNode(raw, state, depth + 1));
+    if (op === "rankAtMost") {
+      if (!raw || typeof raw !== "object" || !isFiniteNumber(raw.n)) return false;
+      var rank = rankOf(raw.field, raw.of, ctx);
+      return rank != null && rank <= raw.n;
+    }
+    if (["add", "sub", "mul", "min", "max"].indexOf(op) !== -1) {
+      var values = numericArgs(raw, state, depth);
+      if (!values) return null;
+      if (op === "add") return values.reduce((a, b) => a + b, 0);
+      if (op === "sub") return values.slice(1).reduce((a, b) => a - b, values[0]);
+      if (op === "mul") return values.reduce((a, b) => a * b, 1);
+      return op === "min" ? Math.min(...values) : Math.max(...values);
+    }
+    if (op === "sumFields") {
+      if (!raw || typeof raw !== "object" || !Array.isArray(raw.keys)) return null;
+      var values = raw.keys.map((key) => readAnswer(`${raw.field}.${key}`, ctx));
+      return values.every(isFiniteNumber) ? values.reduce((a, b) => a + b, 0) : null;
+    }
+    if (op === "count") {
+      var value = evalNode(raw, state, depth + 1);
+      return Array.isArray(value) ? value.length : 0;
+    }
+    if (op === "countSelected") {
+      if (!raw || typeof raw !== "object") return 0;
+      var value = readAnswer(raw.field, ctx);
+      if (!Array.isArray(value) || value.length === 0) return 0;
+      var except = Array.isArray(raw.except) ? raw.except : [];
+      return value.filter((item) => except.indexOf(item) === -1).length;
+    }
+    if (op === "bucket") {
+      if (!raw || typeof raw !== "object") return null;
+      var value = evalNode(raw.value, state, depth + 1);
+      if (value == null) return null;
+      if (!isFiniteNumber(value) || !Array.isArray(raw.cuts)) return raw.else ?? null;
+      for (var cut of raw.cuts) {
+        if (!cut || typeof cut !== "object") continue;
+        if (own(cut, "lte") && value <= cut.lte) return cut.then;
+        if (own(cut, "lt") && value < cut.lt) return cut.then;
+        if (own(cut, "gte") && value >= cut.gte) return cut.then;
+        if (own(cut, "gt") && value > cut.gt) return cut.then;
+      }
+      return raw.else ?? null;
+    }
+    if (op === "coalesce") {
+      if (!Array.isArray(raw)) return null;
+      for (var item of raw) {
+        var value = evalNode(item, state, depth + 1);
+        if (value != null) return value;
+      }
+      return null;
+    }
+    return false;
+  }
+  
+  function evalExpr(expr, ctx = {}) {
+    var state = { ctx, nodes: 0, limit: {} };
+    try {
+      return evalNode(expr, state, 1);
+    } catch {
+      return false;
+    }
+  }
+  
+  function derivedRefs(expr, out = new Set(), seen = new WeakSet()) {
+    if (!expr || typeof expr !== "object" || seen.has(expr)) return out;
+    seen.add(expr);
+    if (!Array.isArray(expr) && Object.keys(expr).length === 1 && own(expr, "derived")) {
+      if (typeof expr.derived === "string") out.add(expr.derived);
+    } else {
+      for (var value of Array.isArray(expr) ? expr : Object.values(expr)) {
+        derivedRefs(value, out, seen);
+      }
+    }
+    return out;
+  }
+  
+  function evalDerived(defs, answers, fieldIndex) {
+    var source = Array.isArray(defs) ? defs : [];
+    var byKey = new Map(source.map((def) => [def.key, def]));
+    var remaining = new Set(byKey.keys());
+    var derived = {};
+    while (remaining.size) {
+      var progressed = false;
+      for (var key of Array.from(remaining)) {
+        var refs = derivedRefs(byKey.get(key).expr);
+        var blocked = Array.from(refs).some((ref) => remaining.has(ref));
+        if (blocked) continue;
+        derived[key] = evalExpr(byKey.get(key).expr, {
+          answers: answers || {},
+          derived,
+          result: null,
+          flags: {},
+          fieldIndex: fieldIndex || {},
+        });
+        remaining.delete(key);
+        progressed = true;
+      }
+      if (!progressed) {
+        for (var key of remaining) derived[key] = null;
+        break;
+      }
+    }
+    return derived;
+  }
+  
+  var SDDExpr = { OPERATORS, isOperator, depthOf, recordValid, evalExpr, evalDerived };
+  /* END EXPR */
+
   var ENFORCEMENT_LABEL = {
     hard_gate: "Hard gate",
     agent_gate: "Agent gate",
@@ -418,31 +702,51 @@
     return "high";
   }
 
+  var FIELD_INDEX = {
+    q2_team: { kind: "record", constraints: {
+      requiredKeys: ["total", "qa_sdet", "product_owner", "scrum_master"],
+      minimums: { total: 1, qa_sdet: 0 },
+      allowedValues: {
+        product_owner: ["dedicated", "shared", "none"],
+        scrum_master: ["dedicated", "shared", "none"]
+      }
+    }},
+    q5_work_breakdown: { kind: "record", constraints: {
+      sumTo: 100, requiredKeys: ["roadmap", "ops", "bugs", "regulatory", "tech_debt"]
+    }},
+    q12_quality_gates: { kind: "multi" },
+    q16_bottlenecks: { kind: "ranked" }
+  };
+
+  var DERIVED_DEFS = [
+    { key: "unplannedShare", expr: {
+      sumFields: { field: "q5_work_breakdown", keys: ["ops", "bugs"] }
+    }},
+    { key: "nonRoadmapShare", expr: {
+      sumFields: { field: "q5_work_breakdown", keys: ["ops", "bugs", "regulatory", "tech_debt"] }
+    }},
+    { key: "volatilityIsHigh", expr: {
+      in: [{ answer: "q6_volatility" }, ["high", "interrupt_driven"]]
+    }},
+    { key: "coverageLevel", expr: { bucket: {
+      value: { countSelected: { field: "q12_quality_gates", except: ["mostly_manual"] }},
+      cuts: [{ lte: 0, then: "low" }, { lte: 2, then: "partial" }],
+      else: "high"
+    }}},
+    { key: "teamSize", expr: { answer: "q2_team.total" } },
+    { key: "hasProductOwner", expr: {
+      in: [{ answer: "q2_team.product_owner" }, ["dedicated", "shared"]]
+    }},
+    { key: "hasScrumMaster", expr: {
+      in: [{ answer: "q2_team.scrum_master" }, ["dedicated", "shared"]]
+    }},
+    { key: "hasQaSdet", expr: {
+      gte: [{ answer: "q2_team.qa_sdet" }, 1]
+    }}
+  ];
+
   function derive(answers) {
-    var a = answers || {};
-    var d = {
-      unplannedShare: null,
-      nonRoadmapShare: null,
-      volatilityIsHigh: a.q6_volatility === "high" || a.q6_volatility === "interrupt_driven",
-      coverageLevel: coverageLevel(a.q12_quality_gates),
-      hasRoles: null,
-      teamSize: null
-    };
-    if (q5Complete(a.q5_work_breakdown)) {
-      var q5 = a.q5_work_breakdown;
-      d.unplannedShare = q5.ops + q5.bugs;
-      d.nonRoadmapShare = q5.ops + q5.bugs + q5.regulatory + q5.tech_debt;
-    }
-    if (q2RulesComplete(a.q2_team)) {
-      var t = a.q2_team;
-      d.teamSize = t.total;
-      d.hasRoles = {
-        product_owner: t.product_owner === "dedicated" || t.product_owner === "shared",
-        scrum_master: t.scrum_master === "dedicated" || t.scrum_master === "shared",
-        qa_sdet: t.qa_sdet >= 1
-      };
-    }
-    return d;
+    return SDDExpr.evalDerived(DERIVED_DEFS, answers || {}, FIELD_INDEX);
   }
 
   function explainRequires(rule, answers) {
@@ -460,7 +764,7 @@
       return FRAMEWORKS[id].status !== "watch";
     });
     var runtimes = answers.q20_runtimes;
-    if (!runtimes || !runtimes.length) return ids;
+    if (!Array.isArray(runtimes) || !runtimes.length) return ids;
     return ids.filter(function (id) {
       var rt = FRAMEWORKS[id].runtimes || [];
       return runtimes.some(function (r) { return rt.indexOf(r) !== -1; });
@@ -468,7 +772,7 @@
   }
 
   function closestFrameworks(answers) {
-    var runtimes = answers.q20_runtimes || [];
+    var runtimes = Array.isArray(answers.q20_runtimes) ? answers.q20_runtimes : [];
     return Object.keys(FRAMEWORKS).filter(function (id) {
       return FRAMEWORKS[id].status !== "watch";
     }).map(function (id) {
@@ -495,44 +799,45 @@
     {
       id: "base-1", label: "OpenSpec — brownfield / non-roadmap load",
       requires: ["q5_work_breakdown", "q10_architecture"],
-      when: function (a, d) {
-        var share = d.nonRoadmapShare != null && d.nonRoadmapShare >= 40;
-        var arch = a.q10_architecture === "monolith" || a.q10_architecture === "hybrid" || a.q10_architecture === "batch_data";
-        return !!(share || arch);
-      },
+      when: { any: [
+        { gte: [{ derived: "nonRoadmapShare" }, 40] },
+        { in: [{ answer: "q10_architecture" }, ["monolith", "hybrid", "batch_data"]] }
+      ]},
       adopt: { framework: "openspec", artifacts: FRAMEWORKS.openspec.artifacts, commands: FRAMEWORKS.openspec.commands,
         rationale: "Non-roadmap work or a monolith/hybrid/batch architecture favors specs written only for the change at hand." }
     },
     {
       id: "base-2", label: "GitHub Spec Kit — structured greenfield services",
       requires: ["q5_work_breakdown", "q10_architecture", "q7_requirements", "q6_volatility"],
-      when: function (a, d) {
-        if (!q5Complete(a.q5_work_breakdown)) return false;
-        return a.q5_work_breakdown.roadmap >= 60 && a.q10_architecture === "microservices" &&
-          a.q7_requirements === "structured" && !d.volatilityIsHigh;
-      },
+      when: { all: [
+        { gte: [{ answer: "q5_work_breakdown.roadmap" }, 60] },
+        { eq: [{ answer: "q10_architecture" }, "microservices"] },
+        { eq: [{ answer: "q7_requirements" }, "structured"] },
+        { not: { derived: "volatilityIsHigh" } }
+      ]},
       adopt: { framework: "speckit", artifacts: FRAMEWORKS.speckit.artifacts, commands: FRAMEWORKS.speckit.commands,
         rationale: "Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline." }
     },
     {
       id: "base-3", label: "BMAD Method — role separation and vague inbound requirements",
       requires: ["q2_team", "q7_requirements"],
-      when: function (a, d) {
-        if (!d.hasRoles) return false;
-        return d.hasRoles.product_owner && d.hasRoles.scrum_master && d.hasRoles.qa_sdet &&
-          (a.q7_requirements === "high_level" || a.q7_requirements === "vague");
-      },
+      when: { all: [
+        { derived: "hasProductOwner" },
+        { derived: "hasScrumMaster" },
+        { derived: "hasQaSdet" },
+        { in: [{ answer: "q7_requirements" }, ["high_level", "vague"]] }
+      ]},
       adopt: { framework: "bmad", artifacts: FRAMEWORKS.bmad.artifacts, commands: FRAMEWORKS.bmad.commands,
         rationale: "PO, Scrum Master, and QA exist, and requirements are not yet stories — BMAD's personas pay off." }
     },
     {
       id: "base-4", label: "Compact autonomous team, frequent deploys",
       requires: ["q2_team", "q11_deploy_cadence", "q14_release_autonomy", "q12_quality_gates", "q18_token_budget"],
-      when: function (a, d) {
-        return d.teamSize != null && d.teamSize < 5 &&
-          (a.q11_deploy_cadence === "continuous" || a.q11_deploy_cadence === "sprint") &&
-          a.q14_release_autonomy === "autonomous";
-      },
+      when: { all: [
+        { lt: [{ derived: "teamSize" }, 5] },
+        { in: [{ answer: "q11_deploy_cadence" }, ["continuous", "sprint"]] },
+        { eq: [{ answer: "q14_release_autonomy" }, "autonomous"] }
+      ]},
       adopt: { framework: "gsd", artifacts: FRAMEWORKS.gsd.artifacts, commands: FRAMEWORKS.gsd.commands,
         rationale: "A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core." }
     }
@@ -543,7 +848,10 @@
       id: "overlay-a", label: "Regulatory constitution",
       requires: ["q8_compliance", "q15_governance"],
       providedByBase: ["speckit"],
-      when: function (a) { return a.q8_compliance === "sox_tier1" || a.q15_governance === "cab"; },
+      when: { any: [
+        { eq: [{ answer: "q8_compliance" }, "sox_tier1"] },
+        { eq: [{ answer: "q15_governance" }, "cab"] }
+      ]},
       adopt: { framework: "speckit", practice: "constitution.md as documented intent",
         artifacts: ["constitution.md"], commands: ["/speckit.constitution"],
         rationale: "SOX Tier 1 or CAB-on-every-release needs written invariants in the agent session. Advisory only — pair with CI." }
@@ -553,11 +861,11 @@
       requires: ["q9_precision", "q16_bottlenecks"],
       providedByBase: ["superpowers"],
       resolves: ["test_fear"],
-      when: function (a, d, r) {
-        var top2 = (a.q16_bottlenecks || []).slice(0, 2);
-        if (a.q9_precision === "zero_tolerance" || top2.indexOf("test_fear") !== -1) return true;
-        return !!(r && r.forceOverlayB);
-      },
+      when: { any: [
+        { eq: [{ answer: "q9_precision" }, "zero_tolerance"] },
+        { rankAtMost: { field: "q16_bottlenecks", of: "test_fear", n: 2 } },
+        { flag: "force_tdd_overlay" }
+      ]},
       adopt: { framework: "superpowers", practice: "TDD iron law",
         artifacts: ["tests/"], commands: ["test-driven-development"],
         rationale: "Zero-tolerance precision or test-fear in the top 2 needs failing tests before production code. Not Tessl [@test] links." }
@@ -567,10 +875,10 @@
       requires: ["q14_release_autonomy", "q3_distribution"],
       providedByBase: [],
       resolves: ["cross_team_approvals"],
-      when: function (a) {
-        return a.q14_release_autonomy === "coupled" || a.q14_release_autonomy === "heavy" ||
-          a.q3_distribution === "global_timezones";
-      },
+      when: { any: [
+        { in: [{ answer: "q14_release_autonomy" }, ["coupled", "heavy"]] },
+        { eq: [{ answer: "q3_distribution" }, "global_timezones"] }
+      ]},
       adopt: { framework: "speckitty", practice: "Lane state machine and worktrees",
         artifacts: ["kitty-specs/", ".worktrees/", "append-only status log"],
         commands: ["spec-kitty agent tasks move-task", "spec-kitty sync workspace"],
@@ -581,10 +889,11 @@
       requires: ["q4_domain_familiarity", "q7_requirements", "q16_bottlenecks"],
       providedByBase: ["bmad", "superpowers"],
       resolves: ["ambiguous_or_shifting"],
-      when: function (a) {
-        var rank1 = (a.q16_bottlenecks || [])[0];
-        return a.q4_domain_familiarity === "low" || a.q7_requirements === "vague" || rank1 === "ambiguous_or_shifting";
-      },
+      when: { any: [
+        { eq: [{ answer: "q4_domain_familiarity" }, "low"] },
+        { eq: [{ answer: "q7_requirements" }, "vague"] },
+        { rankAtMost: { field: "q16_bottlenecks", of: "ambiguous_or_shifting", n: 1 } }
+      ]},
       adopt: { framework: "bmad", practice: "Deep recon / brainstorming before spec",
         artifacts: ["research notes", "PRD.md"], commands: ["bmad-deep-recon", "brainstorming"],
         rationale: "Low domain familiarity, vague goals, or ambiguous-or-shifting as the #1 bottleneck need discovery before implementation." }
@@ -593,7 +902,7 @@
       id: "overlay-e", label: "Ephemeral subagent waves",
       requires: ["q10_architecture"],
       providedByBase: ["gsd"],
-      when: function (a) { return a.q10_architecture === "monolith"; },
+      when: { eq: [{ answer: "q10_architecture" }, "monolith"] },
       adopt: { framework: "gsd", practice: "Fresh-context executor waves",
         artifacts: [".planning/phases/"], commands: ["/gsd:execute-phase"],
         rationale: "A monolith with broad file spans benefits from GSD Core's clean-context parallel executors." }
@@ -602,10 +911,13 @@
       id: "overlay-f", label: "Deterministic CI enforcement",
       requires: ["q8_compliance", "q9_precision", "q21_ci_maturity"],
       providedByBase: [],
-      when: function (a) {
-        var need = a.q8_compliance === "sox_tier1" || a.q9_precision === "zero_tolerance";
-        return need && (a.q21_ci_maturity === "none" || a.q21_ci_maturity === "tests_only");
-      },
+      when: { all: [
+        { any: [
+          { eq: [{ answer: "q8_compliance" }, "sox_tier1"] },
+          { eq: [{ answer: "q9_precision" }, "zero_tolerance"] }
+        ]},
+        { in: [{ answer: "q21_ci_maturity" }, ["none", "tests_only"]] }
+      ]},
       adopt: { framework: null, practice: "Required status checks and spec-to-test traceability in CI",
         artifacts: [".github/workflows/spec-gates.yml"], commands: [],
         rationale: "SOX or zero-tolerance with tests-or-nothing in CI has no fail-closed gate among these frameworks. CI is the gate." }
@@ -614,9 +926,10 @@
       id: "overlay-g", label: "Low-ceremony fast path",
       requires: ["q19_change_volume", "q6_volatility"],
       providedByBase: ["openspec"],
-      when: function (a, d) {
-        return a.q19_change_volume === "many_small" || d.volatilityIsHigh;
-      },
+      when: { any: [
+        { eq: [{ answer: "q19_change_volume" }, "many_small"] },
+        { derived: "volatilityIsHigh" }
+      ]},
       adopt: { framework: "bmad", practice: "Two-track: full pipeline vs Quick Flow / propose",
         artifacts: ["written scope rule for when not to run the full pipeline"],
         commands: ["bmad-quick-spec", "/opsx:propose"],
@@ -627,113 +940,141 @@
   var CAUTIONS = [
     { id: "C1", label: "C1 Spec Kit on non-roadmap load", severity: "high",
       requires: ["q5_work_breakdown"],
-      when: function (a, d, r) {
-        return r && r.baseId === "speckit" && d.nonRoadmapShare != null && d.nonRoadmapShare >= 25;
-      },
+      when: { all: [
+        { eq: [{ result: "baseFramework" }, "speckit"] },
+        { gte: [{ derived: "nonRoadmapShare" }, 25] }
+      ]},
       caution: { severity: "high", kind: "warning",
         finding: "On legacy modules with no reachable owner, Spec Kit has been observed fabricating constitution mandates, inventing performance budgets, and tightening schemas in ways that break against existing data.",
         mitigation: "Bound Spec Kit to architecturally novel work. Require a measured baseline before any performance claim. Review every schema change against production data shape.",
         source: "ERP modernization field report; §8.3" } },
     { id: "C2", label: "C2 constitution.md is not a control", severity: "high",
       requires: ["q8_compliance"],
-      when: function (a, d, r) {
-        return r && r.overlayIds.indexOf("overlay-a") !== -1 && a.q8_compliance === "sox_tier1";
-      },
+      when: { all: [
+        { hasAny: [{ result: "overlays" }, ["overlay-a"]] },
+        { eq: [{ answer: "q8_compliance" }, "sox_tier1"] }
+      ]},
       caution: { severity: "high", kind: "warning",
         finding: "constitution.md is prompt context, not a control. Nothing outside the agent re-reads it or blocks a violating change. It will not satisfy an auditor asking what prevents a violation.",
         mitigation: "Pair with overlay F. Treat the constitution as documentation of intent and CI as the enforcement. If segregation of duties must be provable, prefer Spec Kitty's lane state machine.",
         source: "Spec Kit README; §8.3; V1" } },
     { id: "C3", label: "C3 Superpowers under a metered budget", severity: "high",
       requires: ["q18_token_budget"],
-      when: function (a, d, r) {
-        var sp = r && (r.baseId === "superpowers" || r.overlayIds.indexOf("overlay-b") !== -1);
-        return sp && (a.q18_token_budget === "individual_pro" || a.q18_token_budget === "strict");
-      },
+      when: { all: [
+        { any: [
+          { eq: [{ result: "baseFramework" }, "superpowers"] },
+          { hasAny: [{ result: "overlays" }, ["overlay-b"]] }
+        ]},
+        { in: [{ answer: "q18_token_budget" }, ["individual_pro", "strict"]] }
+      ]},
       caution: { severity: "high", kind: "warning",
         finding: "Superpowers' full loop is token-intensive by design; users under metered plans report slowdowns and reversion. Setup runs 10–20 minutes per feature.",
         mitigation: "Adopt TDD and code-review skills selectively rather than the full mandatory progression. Reserve brainstorming for genuinely ambiguous work.",
         source: "Superpowers release notes and field reports; §8.6" } },
     { id: "C4", label: "C4 Tessl [@test] is not fail-closed", severity: "medium",
       requires: [],
-      when: function (a, d, r) { return r && r.overlayIds.indexOf("overlay-b") !== -1; },
+      when: { hasAny: [{ result: "overlays" }, ["overlay-b"]] },
       caution: { severity: "medium", kind: "warning",
         finding: "The source material recommends Tessl [@test] anchors as fail-closed verification. They are not: check-spec-links.sh verifies that links point to existing files. The tile is watch-status and stale.",
         mitigation: "Use Superpowers' TDD iron law. Borrow Tessl's one-question-at-a-time interview discipline without adopting the tile.",
         source: "Tessl tile; Fowler; V4" } },
     { id: "C5", label: "C5 OpenSpec verify does not block archive", severity: "high",
       requires: ["q9_precision"],
-      when: function (a, d, r) { return r && r.baseId === "openspec" && a.q9_precision === "zero_tolerance"; },
+      when: { all: [
+        { eq: [{ result: "baseFramework" }, "openspec"] },
+        { eq: [{ answer: "q9_precision" }, "zero_tolerance"] }
+      ]},
       caution: { severity: "high", kind: "warning",
         finding: "/opsx:verify exists only in the expanded profile and must be configured explicitly. Even then it flags issues without blocking archiving.",
         mitigation: "Run openspec config profile to enable expanded. Add overlay F so the actual gate is CI.",
         source: "OpenSpec docs; V7" } },
     { id: "C6", label: "C6 Spec Kitty audit trail", severity: "medium",
       requires: ["q8_compliance"],
-      when: function (a, d, r) {
-        return r && r.overlayIds.indexOf("overlay-c") !== -1 && a.q8_compliance === "sox_tier1";
-      },
+      when: { all: [
+        { hasAny: [{ result: "overlays" }, ["overlay-c"]] },
+        { eq: [{ answer: "q8_compliance" }, "sox_tier1"] }
+      ]},
       caution: { severity: "medium", kind: "positive",
         finding: "Spec Kitty's lane machine permits exactly 27 transitions and requires implementation evidence to reach for_review; overrides demand actor and reason. This is a stronger audit artifact than Markdown-based governance.",
         mitigation: "Treat Spec Kitty's status log as an audit record. Protect append-only log merges in review — conflict resolution can lose events.",
         source: "Spec Kitty architecture; V8" } },
     { id: "C7", label: "C7 Ceremony vs change volume", severity: "high",
       requires: ["q19_change_volume"],
-      when: function (a, d, r) {
-        var heavy = r && (r.baseId === "speckit" || r.baseId === "bmad" || r.baseId === "superpowers");
-        return heavy && a.q19_change_volume === "many_small";
-      },
+      when: { all: [
+        { in: [{ result: "baseFramework" }, ["speckit", "bmad", "superpowers"]] },
+        { eq: [{ answer: "q19_change_volume" }, "many_small"] }
+      ]},
       caution: { severity: "high", kind: "warning",
         finding: "Per-change ceremony dominates at high change volume. Field measurement puts Spec Kit at roughly one full session per ~2,000 LOC unit.",
         mitigation: "Adopt overlay G's two-track policy and hold the heavyweight pipeline for architecturally novel work only.",
         source: "ERP field report; §8.3" } },
     { id: "C8", label: "C8 Spec Kitty below three workers", severity: "medium",
       requires: ["q2_team"],
-      when: function (a, d, r) {
-        return r && r.overlayIds.indexOf("overlay-c") !== -1 && d.teamSize != null && d.teamSize < 3;
-      },
+      when: { all: [
+        { hasAny: [{ result: "overlays" }, ["overlay-c"]] },
+        { lt: [{ derived: "teamSize" }, 3] }
+      ]},
       caution: { severity: "medium", kind: "warning",
         finding: "Spec Kitty's worktree model pays off through concurrency. Below three concurrent workers it adds sync and rebase friction without the benefit. Isolation is partial: full checkouts with ownership metadata.",
         mitigation: "Use plain git worktrees or Superpowers' using-git-worktrees skill instead of Spec Kitty's full mission model.",
         source: "Spec Kitty architecture; C8" } },
     { id: "C9", label: "C9 GSD Core immaturity", severity: "medium",
       requires: [],
-      when: function (a, d, r) { return r && r.baseId === "gsd"; },
+      when: { eq: [{ result: "baseFramework" }, "gsd"] },
       caution: { severity: "medium", kind: "warning",
         finding: "Created 2026-05-22 — roughly four months old at the evidence date. Release cadence is high but there is little track record, and .planning/ is still evolving.",
         mitigation: "Pin a version. Budget for migration between minor releases. Re-verify activity before committing a team to it.",
         source: "Appendix A; V3" } },
     { id: "C10", label: "C10 Superpowers maintenance pause", severity: "medium",
       requires: [],
-      when: function (a, d, r) { return r && r.baseId === "superpowers"; },
+      when: { eq: [{ result: "baseFramework" }, "superpowers"] },
       caution: { severity: "medium", kind: "warning",
         finding: "No commits on main in the 30 days before the evidence date (v6.3.0, 2026-08-12), while comparable projects posted 100+. Star count reflects historical popularity.",
         mitigation: "Check current repository activity before adopting. The methodology is portable, so a pause is survivable — do not assume active upstream support.",
         source: "Appendix A; V12" } },
     { id: "C11", label: "C11 BMAD license", severity: "medium",
       requires: [],
-      when: function (a, d, r) { return r && r.baseId === "bmad"; },
+      when: { eq: [{ result: "baseFramework" }, "bmad"] },
       caution: { severity: "medium", kind: "warning",
         finding: "The GitHub API reports a non-standard license (NOASSERTION) where comparable projects are MIT.",
         mitigation: "Have legal review the license terms before enterprise adoption.",
         source: "GitHub API; §8.4" } },
     { id: "C12", label: "C12 Interrupt-driven vs ceremony", severity: "high",
       requires: ["q6_volatility"],
-      when: function (a, d, r) {
-        var heavy = r && (r.baseId === "speckit" || r.baseId === "superpowers" || r.baseId === "bmad");
-        return heavy && a.q6_volatility === "interrupt_driven";
-      },
+      when: { all: [
+        { in: [{ result: "baseFramework" }, ["speckit", "superpowers", "bmad"]] },
+        { eq: [{ answer: "q6_volatility" }, "interrupt_driven"] }
+      ]},
       caution: { severity: "high", kind: "warning",
         finding: "Interrupt-driven work arrives in real time. Spec Kit, Superpowers' mandatory progression, and BMAD's full method price a session per change that the queue will not wait for.",
         mitigation: "Prefer OpenSpec (or BMAD Quick Flow if BMAD is already the base) as the daily path. Do not run the full Spec Kit or Superpowers pipeline on interrupt tickets.",
         source: "D15; V5" } },
     { id: "C13", label: "C13 Vendor release train", severity: "medium",
       requires: ["q14_release_autonomy"],
-      when: function (a) { return a.q14_release_autonomy === "vendor"; },
+      when: { eq: [{ answer: "q14_release_autonomy" }, "vendor"] },
       caution: { severity: "medium", kind: "warning",
         finding: "Core delivery waits on an external vendor release train. No SDD framework removes that blocker.",
         mitigation: "Keep the selected stack for work this team owns. Treat vendor-gated work as out of scope for the SDD recommendation rather than overlaying Spec Kitty.",
         source: "D18" } }
   ];
+
+  function makeCtx(answers, derived, partial) {
+    return {
+      answers: answers || {},
+      derived: derived || {},
+      result: partial ? {
+        baseFramework: partial.baseId || null,
+        baseRule: partial.baseRule || null,
+        overlays: partial.overlayIds || []
+      } : null,
+      flags: partial && partial.forceOverlayB ? { force_tdd_overlay: true } : {},
+      fieldIndex: FIELD_INDEX
+    };
+  }
+
+  function ruleMatches(rule, answers, derived, partial) {
+    return SDDExpr.evalExpr(rule.when, makeCtx(answers, derived, partial)) === true;
+  }
 
   function selectBase(answers, derived, baseRules, candidates) {
     var winner = null;
@@ -741,7 +1082,7 @@
     var forceOverlayB = false;
     for (var i = 0; i < baseRules.length; i++) {
       var rule = baseRules[i];
-      if (!rule.when(answers, derived)) continue;
+      if (!ruleMatches(rule, answers, derived, null)) continue;
       var fw = rule.adopt.framework;
       if (rule.id === "base-4") {
         fw = pickRule4Framework(answers, derived);
@@ -767,11 +1108,12 @@
 
   function applyOverlays(answers, derived, overlays, partial) {
     return overlays.filter(function (rule) {
-      return rule.when(answers, derived, partial);
+      return ruleMatches(rule, answers, derived, partial);
     }).map(function (rule) {
       var included = (rule.providedByBase || []).indexOf(partial.baseId) !== -1;
       var recNote = false;
-      if (rule.id === "overlay-b" && (answers.q12_quality_gates || []).indexOf("financial_reconciliation") !== -1) {
+      var gates = answers.q12_quality_gates;
+      if (rule.id === "overlay-b" && Array.isArray(gates) && gates.indexOf("financial_reconciliation") !== -1) {
         recNote = true;
       }
       return {
@@ -785,7 +1127,7 @@
 
   function applyCautions(answers, derived, cautions, partial) {
     var fired = cautions.filter(function (rule) {
-      return rule.when(answers, derived, partial);
+      return ruleMatches(rule, answers, derived, partial);
     });
     var rank = { high: 0, medium: 1 };
     fired.sort(function (a, b) {
@@ -797,7 +1139,7 @@
   }
 
   function buildBottleneckMatrix(answers, overlayResult) {
-    var ranked = answers.q16_bottlenecks || [];
+    var ranked = Array.isArray(answers.q16_bottlenecks) ? answers.q16_bottlenecks : [];
     return ranked.map(function (id, i) {
       var resolvedBy = [];
       overlayResult.forEach(function (o) {
@@ -947,7 +1289,12 @@
       throw new Error("watch framework selected as base");
     }
 
-    var partial = { baseId: baseId, overlayIds: [], forceOverlayB: forceB };
+    var partial = {
+      baseId: baseId,
+      baseRule: baseRule.id,
+      overlayIds: [],
+      forceOverlayB: forceB
+    };
     var overlays = applyOverlays(answers, derived, rules.OVERLAYS, partial);
     partial.overlayIds = overlays.map(function (o) { return o.rule.id; });
     var cautions = applyCautions(answers, derived, rules.CAUTIONS, partial);
@@ -1221,9 +1568,9 @@
     var dHi = derive({ q6_volatility: "interrupt_driven" });
     ok("derive interrupt", dHi.volatilityIsHigh);
     var dRoles = derive({ q2_team: { total: 5, swe: 5, data_engineers: 0, qa_sdet: 0, product_owner: "none", scrum_master: "none" } });
-    ok("hasRoles all false", dRoles.hasRoles && !dRoles.hasRoles.product_owner && !dRoles.hasRoles.scrum_master && !dRoles.hasRoles.qa_sdet);
+    ok("role flags all false", !dRoles.hasProductOwner && !dRoles.hasScrumMaster && !dRoles.hasQaSdet);
     var dPo = derive({ q2_team: { total: 5, swe: 4, data_engineers: 0, qa_sdet: 0, product_owner: "shared", scrum_master: "none" } });
-    ok("shared PO", dPo.hasRoles.product_owner);
+    ok("shared PO", dPo.hasProductOwner);
 
     eq("cov low manual", coverageLevel(["mostly_manual"]), "low");
     eq("cov low empty", coverageLevel([]), "low");
@@ -1391,7 +1738,8 @@
     evaluate: evaluate, derive: derive, selectBase: selectBase, applyOverlays: applyOverlays,
     applyCautions: applyCautions, toMarkdown: toMarkdown, encodeHash: encodeHash, decodeHash: decodeHash,
     completeness: completeness, coverageLevel: coverageLevel, runSelftest: runSelftest,
-    FRAMEWORKS: FRAMEWORKS, QUESTIONS: QUESTIONS, BASE_RULES: BASE_RULES, OVERLAYS: OVERLAYS, CAUTIONS: CAUTIONS
+    FRAMEWORKS: FRAMEWORKS, QUESTIONS: QUESTIONS, FIELD_INDEX: FIELD_INDEX, DERIVED_DEFS: DERIVED_DEFS,
+    BASE_RULES: BASE_RULES, OVERLAYS: OVERLAYS, CAUTIONS: CAUTIONS, SDDExpr: SDDExpr
   };
 
   function fwName(id) {

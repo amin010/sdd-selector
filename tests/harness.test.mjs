@@ -18,15 +18,13 @@ import { projectRec, runParity } from "../tools/parity.mjs";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MD_DIR = path.join(__dirname, "markdown");
 
-test("golden freeze file exists and matches baseline snapshot contract", () => {
+test("golden freeze file exists and stays frozen", () => {
   assert.ok(fs.existsSync(GOLDEN_V030));
   const golden = fs.readFileSync(GOLDEN_V030, "utf8");
-  const current = fs.readFileSync(CURRENT_PAGE, "utf8");
-  // At P0 they are identical; later phases diverge and this assertion is removed
-  // from the "must match current" sense — golden must remain frozen.
   assert.ok(golden.includes("SDDSelector"));
   assert.ok(golden.includes("module.exports"));
-  assert.equal(golden, current, "P0: golden freeze must equal index.html");
+  // After P0, index.html may diverge; the golden file must not be edited.
+  assert.ok(!golden.includes("/* BEGIN EXPR */"), "v0.3.0 golden must not contain P1 interpreter");
 });
 
 test("load-page exports evaluate/toMarkdown without document", () => {
@@ -87,7 +85,7 @@ test("G-PARITY self (golden vs golden) on documented+boundary+malformed", () => 
 test("G-MARKDOWN fixtures match golden files", () => {
   assert.ok(fs.existsSync(path.join(MD_DIR, "INDEX.json")), "run npm run fixtures:markdown first");
   const index = JSON.parse(fs.readFileSync(path.join(MD_DIR, "INDEX.json"), "utf8"));
-  const api = loadGolden({ now: PINNED_NOW });
+  const api = loadCurrent({ now: PINNED_NOW });
   const byName = Object.fromEntries(documentedFixtures().map((f) => [f.name, f.answers]));
   for (const file of index) {
     const name = file.replace(/\.md$/, "");
@@ -101,7 +99,7 @@ test("G-MARKDOWN fixtures match golden files", () => {
 });
 
 test("in-page selftest still passes under vm", () => {
-  const api = loadGolden({ now: PINNED_NOW });
+  const api = loadCurrent({ now: PINNED_NOW });
   const out = api.runSelftest();
   assert.equal(out.ok, true, out.fails && out.fails.join("\n"));
 });

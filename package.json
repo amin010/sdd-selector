@@ -8,6 +8,8 @@
     "test": "node --test tests/*.test.mjs && node tools/parity.mjs --self --quick && node tools/parity.mjs && node tools/parity.mjs --break-demo && node tools/lint-structure.mjs",
     "parity": "node tools/parity.mjs",
     "lint:structure": "node tools/lint-structure.mjs",
+    "inline": "node tools/inline.mjs",
+    "validate": "node tools/validate.mjs",
     "fixtures:markdown": "node tools/generate-markdown-goldens.mjs"
   },
   "engines": {

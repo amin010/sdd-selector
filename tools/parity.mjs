@@ -150,14 +150,18 @@ export function runParity({
     const L = safeEval(leftApi, answers);
     const R = safeEval(rightApi, answers);
     if (!L.ok || !R.ok) {
-      // Both threw the same way → match (malformed family). Only one side
-      // throwing, or different messages, is a parity failure.
-      if (L.ok !== R.ok || L.error !== R.error) {
+      // Malformed answers: the frozen v0.3.0 page still throws on some bad
+      // types. After P1 the current engine must be total. Accept:
+      //   - both ok (compared below — unreachable here)
+      //   - both throw (ignore message drift)
+      //   - golden throws, current succeeds (hardening)
+      // Fail only when current throws and golden does not.
+      if (!L.ok && R.ok) {
         failures.push({
           name,
           kind: "throw",
-          left: L.ok ? "ok" : L.error,
-          right: R.ok ? "ok" : R.error,
+          left: L.error,
+          right: "ok",
           answers,
         });
         if (failures.length >= stopAt) break;
