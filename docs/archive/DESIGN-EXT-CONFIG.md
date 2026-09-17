@@ -7,9 +7,9 @@
 | Version | 0.2.0 |
 | Owner | Amin Rashidi |
 | Last updated | 2026-09-16 |
-| Extends | `docs/DESIGN.md` v0.3.0 |
-| Related | `docs/DESIGN-EXT-UI.md` (EXT-UI) |
-| Implementation plan | `docs/IMPLEMENTATION-PLAN.md` — supersedes §17 with a phasing shared with EXT-UI |
+| Extends | `../DESIGN.md` v0.3.0 |
+| Related | `DESIGN-EXT-UI.md` (EXT-UI) |
+| Implementation plan | `IMPLEMENTATION-PLAN.md` — supersedes §17 with a phasing shared with EXT-UI |
 | Target release | SDD Selector v0.4.0 |
 | Supersedes | DESIGN.md §15 future-work item 1 |
 
@@ -849,7 +849,7 @@ Re-run DESIGN.md §12.4 and §14.2 checks against the generic renderers, since e
 
 ## 17. Implementation plan
 
-*Superseded by `docs/IMPLEMENTATION-PLAN.md`, which sequences this extension together with EXT-UI across seven phases. The summary below is retained as the config-side view; where the two differ, the plan document is authoritative — notably, it adds a test-harness phase before any refactor and splits the UI work into input-path and output-path phases.*
+*Superseded by `IMPLEMENTATION-PLAN.md`, which sequences this extension together with EXT-UI across seven phases. The summary below is retained as the config-side view; where the two differ, the plan document is authoritative — notably, it adds a test-harness phase before any refactor and splits the UI work into input-path and output-path phases.*
 
 Five phases. Each is independently reviewable and leaves the page working; the parity harness arrives in Phase 1 and gates every phase after it.
 

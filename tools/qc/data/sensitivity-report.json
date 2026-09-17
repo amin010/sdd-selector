@@ -1,0 +1,583 @@
+{
+  "meta": {
+    "generatedAt": "2026-09-17T22:58:31.805Z",
+    "pinnedNow": 1789560000000,
+    "corpusSizes": {
+      "documented": 52,
+      "boundary": 171,
+      "random": 50000,
+      "malformed": 108,
+      "total": 50331
+    },
+    "oatSampleSize": 2000,
+    "elapsedMs": 14759
+  },
+  "a1": {
+    "distribution": {
+      "total": 50331,
+      "errors": 0,
+      "counts": {
+        "openspec": 14219,
+        "speckit": 248,
+        "bmad": 2936,
+        "superpowers": 42,
+        "gsd": 215,
+        "fallback_openspec": 29457,
+        "no_runtime_match": 3214
+      },
+      "percentages": {
+        "openspec": 28.25,
+        "speckit": 0.49,
+        "bmad": 5.83,
+        "superpowers": 0.08,
+        "gsd": 0.43,
+        "fallback_openspec": 58.53,
+        "no_runtime_match": 6.39
+      }
+    },
+    "bmadHole": {
+      "corpusSize": 50331,
+      "q20AnsweredCount": 27969,
+      "base3WhenMatchedCount": 3197,
+      "holeCount": 1066,
+      "holeShareOfCorpusPct": 2.118,
+      "holeShareOfQ20AnsweredPct": 3.811,
+      "holeShareOfBase3MatchedPct": 33.344
+    }
+  },
+  "a2": {
+    "sampleSize": 2000,
+    "fields": [
+      {
+        "fieldId": "q1_domain",
+        "questionId": "q1_domain",
+        "questionReportOnly": true,
+        "kind": "single",
+        "totalPairs": 10796,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 0,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q2_team",
+        "questionId": "q2_team",
+        "questionReportOnly": false,
+        "kind": "record",
+        "totalPairs": 12781,
+        "baseInfluenceScore": 4.5536,
+        "overlayInfluenceScore": 0.7433,
+        "cautionInfluenceScore": 5.516,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q3_distribution",
+        "questionId": "q3_distribution",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 4821,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 31.9436,
+        "cautionInfluenceScore": 6.3887,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q4_tenure",
+        "questionId": "q4",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 4795,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 0,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q4_domain_familiarity",
+        "questionId": "q4",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 4855,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 31.8023,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q5_work_breakdown",
+        "questionId": "q5_work_breakdown",
+        "questionReportOnly": false,
+        "kind": "record",
+        "totalPairs": 5556,
+        "baseInfluenceScore": 14.3988,
+        "overlayInfluenceScore": 0,
+        "cautionInfluenceScore": 1.6919,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q6_volatility",
+        "questionId": "q6_volatility",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 6804,
+        "baseInfluenceScore": 0.2058,
+        "overlayInfluenceScore": 43.5332,
+        "cautionInfluenceScore": 2.3516,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q7_requirements",
+        "questionId": "q7_requirements",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 4793,
+        "baseInfluenceScore": 8.9297,
+        "overlayInfluenceScore": 33.1942,
+        "cautionInfluenceScore": 8.7628,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q8_compliance",
+        "questionId": "q8_compliance",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 6787,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 31.3246,
+        "cautionInfluenceScore": 36.5257,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q9_precision",
+        "questionId": "q9_precision",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 4788,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 41.2907,
+        "cautionInfluenceScore": 45.614,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q10_architecture",
+        "questionId": "q10_architecture",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 8838,
+        "baseInfluenceScore": 0.7128,
+        "overlayInfluenceScore": 28.0267,
+        "cautionInfluenceScore": 0.5205,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q11_deploy_cadence",
+        "questionId": "q11",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 6801,
+        "baseInfluenceScore": 0.4117,
+        "overlayInfluenceScore": 0.147,
+        "cautionInfluenceScore": 0.4117,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q11_cycle_time",
+        "questionId": "q11",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 6783,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 0,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q12_quality_gates",
+        "questionId": "q12_quality_gates",
+        "questionReportOnly": false,
+        "kind": "multi",
+        "totalPairs": 12000,
+        "baseInfluenceScore": 0.0083,
+        "overlayInfluenceScore": 0.0583,
+        "cautionInfluenceScore": 0.0583,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q13_branching",
+        "questionId": "q13_branching",
+        "questionReportOnly": true,
+        "kind": "single",
+        "totalPairs": 4847,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 0,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q14_release_autonomy",
+        "questionId": "q14_release_autonomy",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 6814,
+        "baseInfluenceScore": 0.7191,
+        "overlayInfluenceScore": 44.0857,
+        "cautionInfluenceScore": 41.6495,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q15_governance",
+        "questionId": "q15_governance",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 4806,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 38.6808,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q16_bottlenecks",
+        "questionId": "q16_bottlenecks",
+        "questionReportOnly": false,
+        "kind": "ranked",
+        "totalPairs": 5518,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 42.4792,
+        "cautionInfluenceScore": 13.6644,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q17_process_mismatch",
+        "questionId": "q17_process_mismatch",
+        "questionReportOnly": true,
+        "kind": "text",
+        "totalPairs": 0,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 0,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q18_token_budget",
+        "questionId": "q18_token_budget",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 6773,
+        "baseInfluenceScore": 0.0886,
+        "overlayInfluenceScore": 0.0591,
+        "cautionInfluenceScore": 16.3295,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q19_change_volume",
+        "questionId": "q19_change_volume",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 4821,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 32.8148,
+        "cautionInfluenceScore": 2.8625,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q20_runtimes",
+        "questionId": "q20_runtimes",
+        "questionReportOnly": false,
+        "kind": "multi",
+        "totalPairs": 16000,
+        "baseInfluenceScore": 22.85,
+        "overlayInfluenceScore": 13.8563,
+        "cautionInfluenceScore": 9.5563,
+        "evalErrors": 0
+      },
+      {
+        "fieldId": "q21_ci_maturity",
+        "questionId": "q21_ci_maturity",
+        "questionReportOnly": false,
+        "kind": "single",
+        "totalPairs": 6814,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 16.5542,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0
+      }
+    ],
+    "zeroBaseInfluenceFields": [
+      "q11_cycle_time",
+      "q13_branching",
+      "q15_governance",
+      "q16_bottlenecks",
+      "q17_process_mismatch",
+      "q19_change_volume",
+      "q1_domain",
+      "q21_ci_maturity",
+      "q3_distribution",
+      "q4_domain_familiarity",
+      "q4_tenure",
+      "q8_compliance",
+      "q9_precision"
+    ],
+    "sanityCheck": {
+      "expectedZero": [
+        "q1_domain",
+        "q13_branching",
+        "q17_process_mismatch",
+        "q4_tenure",
+        "q11_cycle_time"
+      ],
+      "unexpectedNonZero": [],
+      "ok": true
+    }
+  },
+  "a3": {
+    "sampleSize": 2000,
+    "topMi": [
+      {
+        "fieldId": "q5_work_breakdown",
+        "questionId": "q5_work_breakdown",
+        "miBits": 1.2478
+      },
+      {
+        "fieldId": "q2_team",
+        "questionId": "q2_team",
+        "miBits": 1.0993
+      },
+      {
+        "fieldId": "q20_runtimes",
+        "questionId": "q20_runtimes",
+        "miBits": 0.536
+      },
+      {
+        "fieldId": "q16_bottlenecks",
+        "questionId": "q16_bottlenecks",
+        "miBits": 0.236
+      },
+      {
+        "fieldId": "q12_quality_gates",
+        "questionId": "q12_quality_gates",
+        "miBits": 0.1531
+      },
+      {
+        "fieldId": "q7_requirements",
+        "questionId": "q7_requirements",
+        "miBits": 0.1368
+      },
+      {
+        "fieldId": "q17_process_mismatch",
+        "questionId": "q17_process_mismatch",
+        "miBits": 0.1097
+      },
+      {
+        "fieldId": "q8_compliance",
+        "questionId": "q8_compliance",
+        "miBits": 0.066
+      },
+      {
+        "fieldId": "q4_tenure",
+        "questionId": "q4",
+        "miBits": 0.0639
+      },
+      {
+        "fieldId": "q14_release_autonomy",
+        "questionId": "q14_release_autonomy",
+        "miBits": 0.0638
+      },
+      {
+        "fieldId": "q15_governance",
+        "questionId": "q15_governance",
+        "miBits": 0.059
+      },
+      {
+        "fieldId": "q4_domain_familiarity",
+        "questionId": "q4",
+        "miBits": 0.0589
+      },
+      {
+        "fieldId": "q18_token_budget",
+        "questionId": "q18_token_budget",
+        "miBits": 0.0587
+      },
+      {
+        "fieldId": "q6_volatility",
+        "questionId": "q6_volatility",
+        "miBits": 0.058
+      },
+      {
+        "fieldId": "q10_architecture",
+        "questionId": "q10_architecture",
+        "miBits": 0.058
+      },
+      {
+        "fieldId": "q11_deploy_cadence",
+        "questionId": "q11",
+        "miBits": 0.0567
+      },
+      {
+        "fieldId": "q1_domain",
+        "questionId": "q1_domain",
+        "miBits": 0.0542
+      },
+      {
+        "fieldId": "q3_distribution",
+        "questionId": "q3_distribution",
+        "miBits": 0.0536
+      },
+      {
+        "fieldId": "q21_ci_maturity",
+        "questionId": "q21_ci_maturity",
+        "miBits": 0.0534
+      },
+      {
+        "fieldId": "q11_cycle_time",
+        "questionId": "q11",
+        "miBits": 0.0532
+      },
+      {
+        "fieldId": "q19_change_volume",
+        "questionId": "q19_change_volume",
+        "miBits": 0.0529
+      },
+      {
+        "fieldId": "q13_branching",
+        "questionId": "q13_branching",
+        "miBits": 0.0509
+      },
+      {
+        "fieldId": "q9_precision",
+        "questionId": "q9_precision",
+        "miBits": 0.0485
+      }
+    ],
+    "pairwiseRedundancy": [
+      {
+        "ruleId": "base-4",
+        "fieldA": "q2_team",
+        "fieldB": "q12_quality_gates",
+        "miBits": 3.1096
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q5_work_breakdown",
+        "fieldB": "q10_architecture",
+        "miBits": 1.5587
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q2_team",
+        "fieldB": "q18_token_budget",
+        "miBits": 1.4946
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q2_team",
+        "fieldB": "q14_release_autonomy",
+        "miBits": 1.4804
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q2_team",
+        "fieldB": "q11_deploy_cadence",
+        "miBits": 1.4608
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q5_work_breakdown",
+        "fieldB": "q6_volatility",
+        "miBits": 1.4472
+      },
+      {
+        "ruleId": "base-3",
+        "fieldA": "q2_team",
+        "fieldB": "q7_requirements",
+        "miBits": 1.2839
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q5_work_breakdown",
+        "fieldB": "q7_requirements",
+        "miBits": 1.2579
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q12_quality_gates",
+        "fieldB": "q18_token_budget",
+        "miBits": 0.2659
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q14_release_autonomy",
+        "fieldB": "q12_quality_gates",
+        "miBits": 0.2519
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q11_deploy_cadence",
+        "fieldB": "q12_quality_gates",
+        "miBits": 0.2483
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q14_release_autonomy",
+        "fieldB": "q18_token_budget",
+        "miBits": 0.1267
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q10_architecture",
+        "fieldB": "q6_volatility",
+        "miBits": 0.1242
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q11_deploy_cadence",
+        "fieldB": "q18_token_budget",
+        "miBits": 0.1121
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q11_deploy_cadence",
+        "fieldB": "q14_release_autonomy",
+        "miBits": 0.1079
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q7_requirements",
+        "fieldB": "q6_volatility",
+        "miBits": 0.104
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q10_architecture",
+        "fieldB": "q7_requirements",
+        "miBits": 0.0976
+      }
+    ]
+  },
+  "a4": {
+    "corpusSize": 50000,
+    "nonRoadmapShareGte40": {
+      "cliff": 40,
+      "band": "±5 points",
+      "definedCount": 25628,
+      "nearCliffCount": 2788,
+      "nearCliffPctOfDefined": 10.879,
+      "nearCliffPctOfCorpus": 5.576
+    },
+    "roadmapShareGte60": {
+      "cliff": 60,
+      "band": "±5 points",
+      "definedCount": 30094,
+      "nearCliffCount": 3284,
+      "nearCliffPctOfDefined": 10.912,
+      "nearCliffPctOfCorpus": 6.568
+    },
+    "teamSizeLt5": {
+      "cliff": 5,
+      "band": "±1 person",
+      "definedCount": 27083,
+      "nearCliffCount": 4131,
+      "nearCliffPctOfDefined": 15.253,
+      "nearCliffPctOfCorpus": 8.262
+    }
+  }
+}

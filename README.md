@@ -70,7 +70,8 @@ node tools/validate.mjs --report packs/finance-tech.json
 | `index.html` | The product: UI + engine in one file (built from pack + `src/`) |
 | `packs/finance-tech.json` | Shipped rule pack (questions, rules, fixtures) |
 | `packs/general-engineering.json` | Second pack — format proof; CI artifact only |
-| `docs/` | Design, extensions, implementation plan, authoring guide |
+| `docs/` | Living design and authoring guide |
+| `docs/archive/` | Completed v0.4.0 design extensions, implementation plan, source research |
 | `docs/AUTHORING.md` | How to edit packs |
 | `tests/` | Automated tests and golden Markdown snapshots |
 | `tests/golden/index-v040.html` | Frozen v0.4.0 finance-tech baseline for parity |
@@ -95,9 +96,7 @@ See [docs/AUTHORING.md](docs/AUTHORING.md) for the full loop, cookbook pointers,
 
 - [DESIGN.md](docs/DESIGN.md) — product design and rules
 - [AUTHORING.md](docs/AUTHORING.md) — pack authoring guide
-- [DESIGN-EXT-CONFIG.md](docs/DESIGN-EXT-CONFIG.md) — pack / config extension
-- [DESIGN-EXT-UI.md](docs/DESIGN-EXT-UI.md) — UI extension
-- [IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md) — phased migration to v0.4.0
+- [archive/](docs/archive/) — completed v0.4.0 design extensions, implementation plan, and source research
 
 ## License / status
 

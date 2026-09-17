@@ -2,10 +2,10 @@
   "schema": 1,
   "meta": {
     "id": "finance-tech",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "title": "Finance Tech SDD Selector",
     "description": "Spec-driven development framework selector for finance-tech teams.",
-    "updated": "2026-09-16"
+    "updated": "2026-09-17"
   },
   "settings": {
     "fallbackBase": "openspec",
@@ -1420,32 +1420,15 @@
       "id": "base-1",
       "label": "OpenSpec — brownfield / non-roadmap load",
       "when": {
-        "any": [
+        "gte": [
           {
-            "gte": [
-              {
-                "derived": "nonRoadmapShare"
-              },
-              40
-            ]
+            "derived": "nonRoadmapShare"
           },
-          {
-            "in": [
-              {
-                "answer": "q10_architecture"
-              },
-              [
-                "monolith",
-                "hybrid",
-                "batch_data"
-              ]
-            ]
-          }
+          40
         ]
       },
       "requires": [
-        "q5_work_breakdown",
-        "q10_architecture"
+        "q5_work_breakdown"
       ],
       "adopt": {
         "framework": "openspec",
@@ -1461,7 +1444,7 @@
           "/opsx:sync",
           "/opsx:archive"
         ],
-        "rationale": "Non-roadmap work or a monolith/hybrid/batch architecture favors specs written only for the change at hand."
+        "rationale": "Non-roadmap work favors specs written only for the change at hand."
       }
     },
     {
@@ -2586,6 +2569,43 @@
       }
     },
     {
+      "name": "base-3 bmad with q20 answered",
+      "answers": {
+        "q7_requirements": "vague",
+        "q10_architecture": "monolith",
+        "q11_deploy_cadence": "monthly",
+        "q14_release_autonomy": "autonomous",
+        "q6_volatility": "moderate",
+        "q5_work_breakdown": {
+          "roadmap": 80,
+          "ops": 5,
+          "bugs": 5,
+          "regulatory": 5,
+          "tech_debt": 5
+        },
+        "q2_team": {
+          "total": 8,
+          "swe": 4,
+          "data_engineers": 1,
+          "qa_sdet": 1,
+          "product_owner": "dedicated",
+          "scrum_master": "shared"
+        },
+        "q12_quality_gates": [
+          "unit_coverage",
+          "integration_contract",
+          "e2e"
+        ],
+        "q20_runtimes": [
+          "claude_code"
+        ]
+      },
+      "expect": {
+        "base": "bmad",
+        "fallback": false
+      }
+    },
+    {
       "name": "base-4 superpowers",
       "answers": {
         "q7_requirements": "structured",
@@ -2627,11 +2647,11 @@
         "q14_release_autonomy": "autonomous",
         "q6_volatility": "moderate",
         "q5_work_breakdown": {
-          "roadmap": 80,
-          "ops": 5,
-          "bugs": 5,
-          "regulatory": 5,
-          "tech_debt": 5
+          "roadmap": 20,
+          "ops": 20,
+          "bugs": 20,
+          "regulatory": 20,
+          "tech_debt": 20
         },
         "q2_team": {
           "total": 3,
@@ -3336,11 +3356,11 @@
         "q14_release_autonomy": "autonomous",
         "q6_volatility": "moderate",
         "q5_work_breakdown": {
-          "roadmap": 80,
-          "ops": 5,
-          "bugs": 5,
-          "regulatory": 5,
-          "tech_debt": 5
+          "roadmap": 20,
+          "ops": 20,
+          "bugs": 20,
+          "regulatory": 20,
+          "tech_debt": 20
         },
         "q2_team": {
           "total": 8,

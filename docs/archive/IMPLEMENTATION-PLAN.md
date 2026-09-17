@@ -7,6 +7,7 @@
 | Owner | Amin Rashidi |
 | Last updated | 2026-09-16 |
 | Implements | `DESIGN-EXT-CONFIG.md` v0.2.0 (EXT-CONFIG) and `DESIGN-EXT-UI.md` v0.1.0 (EXT-UI) |
+| Archived | Moved to `docs/archive/` after v0.4.0 shipped. Living docs: `docs/DESIGN.md`, `docs/AUTHORING.md`. |
 | Baseline | `index.html` at v0.3.0 — 1,975 lines, working, no tests outside `?selftest` |
 
 **Changelog**

@@ -10,7 +10,7 @@ A pack is a single JSON file under `packs/` with `schema: 1`. Top-level keys:
 |---|---|
 | `meta` | `id` (slug), `version` (semver), title, description, `updated` |
 | `settings` | Fallback base, stale days, Tier 0 runtime filter, rating/status vocabularies |
-| `frameworks` | Candidate bases and overlay sources (evidence, runtimes, enforcement) |
+| `frameworks` | Candidate bases and overlay sources (evidence, runtimes, enforcement). An empty `runtimes` array means no runtime restriction at Tier 0, not “supports nothing.” |
 | `sections` / `questions` | Questionnaire: questions group **fields** of six kinds |
 | `derived` | Named scalar views (`key` + expression) |
 | `baseRules` / `overlays` / `cautions` | Ordered rules with expression `when` predicates |
@@ -25,7 +25,7 @@ Shipped product: one pack is inlined into `index.html` at build time. A second p
 
 ## Cookbook
 
-Worked examples live in `docs/DESIGN-EXT-CONFIG.md` Appendix B:
+Worked examples live in `docs/archive/DESIGN-EXT-CONFIG.md` Appendix B:
 
 - **B.1** Change a threshold (one number in an expression)
 - **B.2** Add a framework + a base rule that can select it
@@ -117,6 +117,7 @@ Base rules are **first-match wins** in array order. Where you insert the rule is
 
 ## See also
 
-- `docs/DESIGN-EXT-CONFIG.md` — pack schema, operators, null semantics, security
-- `docs/DESIGN-EXT-UI.md` — generic form and report (no pack editor in the page)
-- `docs/IMPLEMENTATION-PLAN.md` — how the migration reached pack-based v0.4.0
+- `docs/DESIGN.md` — product design and rules
+- `docs/archive/DESIGN-EXT-CONFIG.md` — pack schema, operators, null semantics, security
+- `docs/archive/DESIGN-EXT-UI.md` — generic form and report (no pack editor in the page)
+- `docs/archive/IMPLEMENTATION-PLAN.md` — how the migration reached pack-based v0.4.0

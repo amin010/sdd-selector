@@ -1,0 +1,1302 @@
+[
+  {
+    "id": "v001",
+    "targetOutcome": "openspec",
+    "prose": "The six-person ledger integrations team supports a payments platform acquired through a merger. Its core is a decade-old Java monolith with nightly settlement jobs and a shared Oracle schema; newer reconciliation and exception-handling services run in containers, but still depend on flat files emitted by the monolith. Most incoming work is production triage, partner-format changes, failed batch reruns, and untangling accounting rules embedded in stored procedures rather than planned product features.\n\nThe service handles merchant operational records rather than consumer balances, so controls focus on audit trails, access reviews, and retention obligations instead of a formal financial-regulatory program. Requirements usually arrive as ticket fragments from support or finance operations, with examples taken from a broken settlement file. Engineers deploy small cloud-service fixes on demand, while monolith changes are grouped around the overnight processing window and require careful rollback scripts. The team relies on SQL consoles, log search, job dashboards, and a growing suite of characterization tests around fragile legacy behavior.",
+    "tags": {
+      "domain": "settlement ledger",
+      "size": "6 FTE",
+      "architecture": "legacy monolith plus cloud services",
+      "compliance": "operational audit controls",
+      "cadence": "on-demand with nightly batch windows"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v002",
+    "targetOutcome": "openspec",
+    "prose": "A 14-person engineering team maintains the finance reporting and compliance platform used to produce monthly close packages, audit extracts, and regulator-facing reconciliations. Its core is a decade-old monolith backed by overnight batch jobs, shared Oracle tables, and a growing set of Python services that patch gaps around ingestion and report generation. Much of the backlog comes from production failures, data corrections, auditor findings, vendor file-format changes, and long-deferred upgrades rather than planned product work.\n\nThe platform is SOX Tier 1: every calculation change needs traceable evidence, peer review, controlled access, and retained test outputs. Requirements often arrive as spreadsheet deltas or policy language that must be translated against existing job behavior and historical exceptions. The team deploys on a one- to two-week release train, with emergency fixes handled through a separate approval path. They use CI, ticketing, database migration scripts, batch monitoring, and manual reconciliation checklists, but end-to-end test coverage is uneven across the legacy jobs.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "14 FTE",
+      "architecture": "legacy batch hybrid",
+      "compliance": "SOX Tier 1",
+      "cadence": "1-2 week releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v003",
+    "targetOutcome": "openspec",
+    "prose": "The 27-person treasury engineering group maintains the firm’s intraday liquidity and cash-positioning platform. A Java monolith still owns ledger posting, limit checks, and end-of-day reconciliation, while newer Kafka consumers ingest bank statements, payment acknowledgements, and market-rate feeds. Much of the backlog comes from failed-file recovery, month-end incidents, audit findings, brittle vendor integrations, and replacing spreadsheet-driven controls around funding forecasts.\n\nRequests arrive through finance operations, risk control, and regional treasury desks, often as policy interpretations rather than settled requirements. Changes require evidence of test coverage, segregation-of-duties review, and traceable approvals because an incorrect balance can affect funding decisions and regulatory reporting. The team uses Jira, GitHub Actions, Kubernetes, and Splunk, but releases to production are normally bundled into a monthly change window; urgent fixes follow a separate, closely reviewed path.",
+    "tags": {
+      "domain": "treasury",
+      "size": "27 FTE",
+      "architecture": "monolith plus streaming",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v004",
+    "targetOutcome": "openspec",
+    "prose": "Three engineers maintain the data pipeline that assembles daily position, pricing, and client-activity files for a wealth-platform’s reporting operations. New product work is rare: most requests are corrections to historical mappings, late vendor feeds, audit findings, and one-off regulatory extracts. Requirements usually arrive as spreadsheet deltas from operations or compliance after an exception has already surfaced.\n\nThe team supports several small ingestion services, but they ultimately feed a long-lived Oracle-backed reporting application and overnight batch scheduler. Schema changes require coordination with the database group and downstream report owners; replaying a failed run can affect month-end reconciliations. Production releases are bundled into quarterly change windows, with emergency fixes handled through tightly controlled tickets, peer review, and rollback scripts. Monitoring covers job completion and file counts, while data-quality investigation still relies heavily on SQL queries, log searches, and manual reconciliation workbooks.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "3 FTE",
+      "architecture": "microservices plus batch monolith",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v005",
+    "targetOutcome": "openspec",
+    "prose": "A six-person internal platform team maintains the employee access, device inventory, and service-request portal used across the company. Most of their week is consumed by repairing brittle integrations, responding to provisioning incidents, updating audit exports, and untangling a decade of departmental customizations rather than delivering planned features. Requests often arrive as urgent tickets with incomplete ownership or rules that live in old runbooks.\n\nThe portal is a large Rails monolith backed by a shared PostgreSQL database, with scheduled jobs that synchronize data from HR, identity, and facilities systems overnight. Small fixes can be deployed on demand through the existing pipeline, but changes near the batch jobs or shared schema require cautious manual checks. The team uses issue tracking, logs, dashboards, and a modest automated test suite; there is no regulated financial data, though internal access controls and retention practices still matter.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "6 FTE",
+      "architecture": "legacy monolith with batch integrations",
+      "compliance": "low internal-controls",
+      "cadence": "on-demand continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v006",
+    "targetOutcome": "openspec",
+    "prose": "A 14-person ledger engineering team maintains the posting and reconciliation path for a public fintech’s treasury accounts. The core remains a decades-old Java monolith backed by an on-premises Oracle cluster and nightly batch jobs; newer exception-handling and reporting services run in a managed cloud environment. Most incoming work is production investigation, partner-file breakage, audit evidence, close-cycle defects, and incremental retirement of brittle stored procedures rather than net-new product delivery.\n\nBecause balances feed financial statements, the service is treated as SOX Tier 1. Changes require traceable approvals, segregation of duties, replayable test data, and reconciliations against prior-period outputs. Requirements often begin as an auditor finding or an operations spreadsheet and are clarified while engineers map undocumented batch dependencies. The team releases on a two-week train, with emergency patches reserved for posting failures, using source control, CI checks, ticketed change records, centralized logs, and scheduled database migration windows.",
+    "tags": {
+      "domain": "treasury ledger",
+      "size": "14 FTE",
+      "architecture": "legacy monolith plus cloud services",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v007",
+    "targetOutcome": "openspec",
+    "prose": "A 27-person engineering group maintains the regulatory reporting estate for a regional bank: capital adequacy, liquidity, sanctions attestations, and audit extracts assembled from core banking, treasury, and acquired lending platforms. Most requests arrive as regulator interpretation changes, reconciliation breaks, late source-file corrections, or audit findings rather than planned product work. Business analysts can describe required report fields, but lineage rules and historical exceptions are often encoded only in COBOL jobs, SQL scripts, and operator runbooks.\n\nThe platform is a hybrid of mainframe feeds, nightly ETL batches, an on-premise warehouse, and a small web portal for report review. A missed batch can block month-end close, so engineers spend substantial time replaying loads, investigating data drift, and reducing fragile dependencies. Changes require evidence of testing, peer review, segregation of duties, and retained approval records; production releases are bundled monthly outside reporting windows. The team uses ticket queues, scheduled-job monitoring, database migration scripts, and a mix of legacy source control repositories, with several long-running remediation and modernization efforts competing against daily support work.",
+    "tags": {
+      "domain": "regulatory reporting",
+      "size": "27 engineers",
+      "architecture": "hybrid batch pipeline",
+      "compliance": "high-risk governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v008",
+    "targetOutcome": "openspec",
+    "prose": "Three engineers maintain the treasury cash-positioning service for a regional bank. The core is a decade-old monolith that calculates intraday liquidity from end-of-day ledger extracts, while newer consumers publish payment and balance events into a small streaming layer. Reconciliation still depends on batch files from correspondent banks, and exceptions are often investigated through stored procedures and manually rerun jobs.\n\nMost planned capacity is displaced by failed feeds, data-quality fixes, audit findings, production defects, and upgrades to aging middleware. Requirements arrive as terse requests from treasury operations, risk, or internal audit, usually after a control gap has been identified; acceptance criteria are clarified during investigation. Changes require segregation-of-duties evidence, traceable approvals, and regression results for finance controls. Releases are bundled into a quarterly change window, with emergency patches reserved for settlement-impacting incidents.",
+    "tags": {
+      "domain": "treasury",
+      "size": "3 engineers",
+      "architecture": "legacy monolith with streaming",
+      "compliance": "standard enterprise controls",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v009",
+    "targetOutcome": "openspec",
+    "prose": "A six-person data engineering team maintains the overnight reconciliation and reporting pipeline for a payments platform. Most of the work comes from brittle partner file formats, failed batch reruns, production data corrections, and requests from finance operations rather than planned product work. A decade-old scheduler coordinates a large warehouse-loading application, while newer services handle intake, validation, and exception routing; ownership boundaries are blurred when a late file affects every downstream job.\n\nThe team deploys small fixes on demand, but releases are shaped by batch windows and the need to preserve historical outputs. Requirements often arrive as spreadsheets or examples of a broken settlement report, with edge cases discovered during investigation. They use ticket queues, dashboards, log search, and manual runbooks heavily, and maintain regression fixtures for partner feeds. The system is not directly customer-facing and has a light internal-control posture, though auditability of corrections and reruns matters.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "6 FTE",
+      "architecture": "hybrid batch",
+      "compliance": "low internal controls",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v010",
+    "targetOutcome": "openspec",
+    "prose": "The 14-person Internal Ledger Platform team maintains the aging finance backbone used by treasury, accounting, and month-end close. Its Java monolith still owns journal posting, chart-of-accounts validation, entitlement checks, and several overnight reconciliation jobs; newer reporting services read from replicated tables but cannot yet replace the core workflows. Much of the team’s time goes to production incidents, close-period defects, database upgrades, audit evidence requests, and retiring brittle file-transfer integrations.\n\nThe platform is SOX Tier 1, so changes affecting posting logic, access controls, or retained financial records require traceable approvals, segregation-of-duties review, and tested rollback steps. Requests often arrive as narrowly framed control findings or urgent accounting exceptions, with business rules discovered in stored procedures and long-lived operational runbooks. The team releases on a two-week train, except for tightly controlled fixes during close, using CI pipelines, ticketing, code review, database migration tooling, and dashboards around batch completion and reconciliation breaks.",
+    "tags": {
+      "domain": "internal_platform",
+      "size": "14 FTE",
+      "architecture": "monolith_hybrid_batch",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v011",
+    "targetOutcome": "openspec",
+    "prose": "The 28-person ledger engineering group maintains the posting and reconciliation estate for a regional bank’s commercial clients. Its core remains a decade-old Java monolith backed by an Oracle cluster and overnight batch jobs; newer cloud services ingest payment events and expose balance data, but still depend on files and stored procedures produced by the legacy platform.\n\nMost capacity goes to failed settlement investigations, production fixes, audit findings, vendor file-format changes, and untangling duplicate account logic. Product requests arrive with uneven detail and are frequently revised after finance operations identifies an edge case. Changes must preserve immutable journal history, segregation of duties, and evidence for internal model-risk and financial-control reviews. Releases are grouped into a monthly window after reconciliation dry runs, although urgent correction scripts occasionally require a tightly approved out-of-band deployment.\n\nThe team uses CI for service code, but database migrations, batch schedules, and mainframe-adjacent interfaces require manual coordination across operations, finance control, and release management. Monitoring is strongest around end-of-day completion and ledger imbalance alerts rather than individual application components.",
+    "tags": {
+      "domain": "commercial ledger",
+      "size": "28 engineers",
+      "architecture": "legacy monolith with cloud services",
+      "compliance": "high-risk financial controls",
+      "cadence": "monthly releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v012",
+    "targetOutcome": "openspec",
+    "prose": "A three-person engineering team maintains the bank’s regulatory reporting estate for liquidity, capital, and large-exposure filings. Most requests arrive as defect investigations, audit findings, source-data exceptions, or late changes to reporting instructions rather than planned feature work. Analysts often provide spreadsheet examples and prior-quarter outputs; acceptance criteria are refined only after finance controls and compliance reviewers reconcile totals.\n\nThe core process is a nightly batch chain: SQL Server extracts feed a mixture of stored procedures, SSIS packages, and an older .NET application that produces regulator-specific files. A small web portal sits alongside it for manual overrides and sign-off, making production behavior dependent on both scheduled jobs and operator actions. The team uses ticketing, source control, deployment runbooks, database comparison scripts, and a non-production reconciliation environment, but realistic test data is tightly controlled. Releases are usually bundled around quarter-end cycles, with emergency database fixes occasionally approved through change management. Evidence of approvals, rerun logs, and reconciliation results is retained for internal audit under standard enterprise controls.",
+    "tags": {
+      "domain": "regulatory reporting",
+      "size": "3 FTE",
+      "architecture": "batch hybrid",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v013",
+    "targetOutcome": "openspec",
+    "prose": "A six-person treasury engineering team maintains internal cash-positioning and bank-file reconciliation tools for a multinational retailer. Most of its week is spent untangling exceptions from acquired subsidiaries, repairing failed statement imports, answering finance operations escalations, and replacing brittle spreadsheet-fed workflows rather than delivering new planning features.\n\nThe core application is an aging Java monolith backed by nightly batch jobs, with newer services consuming bank and ledger events from a stream. Data must remain explainable to auditors, but the system is an internal corporate tool rather than a regulated customer financial product. Requirements often arrive as urgent examples from accountants or as changes to bank formats, and the team deploys small fixes on demand after reconciliation checks and production-data safeguards.",
+    "tags": {
+      "domain": "corporate treasury",
+      "size": "6 FTE",
+      "architecture": "monolith with batch and events",
+      "compliance": "internal audit controls",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v014",
+    "targetOutcome": "openspec",
+    "prose": "A 14-person engineering team runs the overnight data pipeline that feeds treasury liquidity, capital, and management reporting for a regional bank. Most of their work is corrective rather than roadmap-driven: repairing late vendor files, reconciling ledger breaks, updating regulatory mappings, and retiring brittle jobs inherited from several acquisitions. Business rules live partly in a decade-old Java monolith, partly in SQL Server stored procedures, and partly in newer containerized services that publish curated datasets.\n\nThe platform is SOX Tier 1, with documented approvals, segregated production access, traceable change tickets, and retained evidence for report-affecting releases. Requirements are often clarified from incident notes, audit findings, or finance analyst spreadsheets rather than stable product briefs. The team deploys on a two-week release train, except for tightly controlled production fixes; batch schedules, downstream report deadlines, and end-of-quarter freezes frequently determine what can safely change. They use CI pipelines, job orchestration dashboards, database migration scripts, log search, and data-quality checks, but cross-system failures still require manual investigation.",
+    "tags": {
+      "domain": "treasury data pipeline",
+      "size": "14 FTE",
+      "architecture": "hybrid monolith and services",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v015",
+    "targetOutcome": "openspec",
+    "prose": "The 28-person Internal Controls Platform group maintains the employee-facing systems used to provision trading, payments, and data-warehouse access across the firm. Its core application is a decade-old Java monolith backed by Oracle, with nightly entitlement reconciliation jobs and a growing set of REST adapters to newer identity and HR services. Much of the team’s time goes to failed batch runs, audit findings, production permissions defects, database upgrades, and retiring brittle spreadsheet-driven approval paths.\n\nRequirements arrive through risk committees, audit remediation tickets, and urgent requests from operations rather than a stable product roadmap. Changes must preserve detailed approval history, segregation-of-duties rules, and evidence exports for internal control testing. Releases are bundled into a monthly window after regression testing in a shared environment; emergency fixes require security and governance sign-off. Engineers use CI pipelines, centralized logs, database migration scripts, and a heavily customized ticketing workflow, but test coverage around legacy approval rules remains uneven.",
+    "tags": {
+      "domain": "internal_platform",
+      "size": "28 FTE",
+      "architecture": "legacy monolith with batch",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v016",
+    "targetOutcome": "openspec",
+    "prose": "A two-person team maintains the insurer’s general-ledger posting service, where policy, claims, and commission events are consolidated into journal entries. The core is a decade-old Java monolith backed by Oracle and fed by overnight batch files from several acquired systems; a small cloud worker fleet handles reconciliation reports and exception queues. Most work arrives as production fixes, month-end balancing defects, auditor findings, or schema changes required by finance rather than planned product features.\n\nControls are standard enterprise finance controls: segregated production access, retained audit trails, peer review, and evidence for quarterly SOX testing. Requirements often begin as spreadsheet extracts or terse accounting tickets and need reconstruction from existing batch behavior. Releases are bundled around quarter-end blackout windows, with manual regression runs against representative ledger snapshots; urgent corrections are usually data repairs or tightly scoped patches.",
+    "tags": {
+      "domain": "insurance ledger",
+      "size": "2 FTE",
+      "architecture": "legacy monolith plus cloud batch",
+      "compliance": "enterprise financial controls",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v017",
+    "targetOutcome": "openspec",
+    "prose": "A six-person engineering team maintains the internal reporting platform for a payments operations business. Most requests arrive as urgent corrections to reconciliation extracts, renamed fields for audit partners, or one-off historical backfills rather than planned product work. The reports inform support and finance operations, but are not themselves a regulated filing system; access controls, retention, and change records are required under company policy, with no formal external certification process.\n\nThe platform grew around a decade-old application database. Nightly jobs pull from the monolith, enrich CSV and ledger snapshots in a warehouse, and publish scheduled dashboards and exports. Several transformations are shell scripts and stored procedures with sparse ownership, so schema changes regularly create downstream defects. Engineers deploy fixes on demand through automated pipelines, often after validating a single customer or date range; larger cleanup work competes with incident response and recurring data-quality tickets.",
+    "tags": {
+      "domain": "operations reporting",
+      "size": "6 FTE",
+      "architecture": "legacy batch hybrid",
+      "compliance": "internal controls",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v018",
+    "targetOutcome": "openspec",
+    "prose": "The 14-person Treasury Platforms team maintains cash-positioning, bank connectivity, and intraday liquidity controls for a multinational manufacturer. Most of its capacity goes to failed payment investigations, bank-format changes, audit findings, month-end performance incidents, and retiring brittle batch jobs rather than new treasury features. Requests arrive from controllers, operations, and internal audit with uneven detail; engineers often reconstruct intended behavior from settlement reports and production logs.\n\nThe estate is a Java monolith backed by Oracle, with overnight file exchanges and a newer event stream carrying balance and payment-status updates. The stream has reduced some manual reconciliation but still feeds monolith-owned ledgers, so schema changes require careful coordination and replay testing. It is SOX Tier 1, with segregated approvals, retained evidence, and tightly controlled production access. Releases are normally bundled into one- or two-week sprints, with emergency fixes following a separate change path.",
+    "tags": {
+      "domain": "treasury platforms",
+      "size": "14 FTE",
+      "architecture": "monolith with streaming and batch",
+      "compliance": "SOX Tier 1",
+      "cadence": "1-2 week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v019",
+    "targetOutcome": "openspec",
+    "prose": "A 27-person engineering group maintains the data pipeline that feeds a lender’s risk, collections, and finance reporting systems. Most new product logic still originates in a long-lived loan-servicing monolith, then moves through nightly batch exports, a managed message bus, and newer reconciliation services. The team spends much of each quarter repairing failed feeds, tracing duplicate events, updating brittle vendor-file parsers, and responding to audit findings rather than building planned analytics features.\n\nCustomer balances, credit decisions, and regulator-facing reports must reconcile to the general ledger, with lineage retained for years and production changes reviewed by risk, security, and data governance. Requirements often arrive as policy interpretations or spreadsheet-based exception lists, and edge cases are discovered during month-end close. CI runs contract and data-quality checks, but full validation depends on masked production extracts and scheduled downstream jobs. Releases are bundled monthly, with emergency patches for reporting defects and a tightly controlled rollback process.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "27 engineers",
+      "architecture": "monolith-to-services batch hybrid",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v020",
+    "targetOutcome": "openspec",
+    "prose": "Three engineers maintain the internal entitlement and reference-data platform used by operations, risk, and finance teams to provision staff access and reconcile overnight account feeds. Most requests arrive as production fixes, audit evidence pulls, permission exceptions, or small regulatory field changes; planned modernization regularly yields to month-end incidents and aging database jobs.\n\nThe core is a decade-old Java monolith with tightly coupled screens, stored procedures, and nightly batch imports from HR and vendor files. A few newer APIs sit beside it, but they still write through the same schema. Changes require enterprise change tickets, regression runs against masked production extracts, and security review for access-control behavior. Releases are bundled around quarterly windows, with emergency patches handled manually through a restricted deployment pipeline and runbooks maintained in a shared wiki.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "3 FTE",
+      "architecture": "legacy monolith with batch",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v021",
+    "targetOutcome": "openspec",
+    "prose": "A six-person team maintains the internal ledger used to allocate cloud spend, vendor charges, and shared-service costs across a payments company’s product lines. The original system is a decade-old Java monolith with nightly reconciliation jobs and a brittle Oracle schema; newer ingestion and reporting services run in the cloud but still depend on batch exports from the core application.\n\nMost weeks are consumed by correcting historical postings, investigating failed imports, responding to finance close requests, and untangling old account-mapping rules rather than building planned features. The ledger is not customer-facing or used for regulated settlement, though audit trails and month-end accuracy matter to internal finance. Requirements often arrive as spreadsheet examples from accountants after an exception has already surfaced. Small fixes can ship on demand through automated pipelines, while database changes and reconciliation logic require careful backfills and manual verification against prior periods.",
+    "tags": {
+      "domain": "internal cost ledger",
+      "size": "6 FTE",
+      "architecture": "legacy monolith with cloud services",
+      "compliance": "internal audit-sensitive",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v022",
+    "targetOutcome": "openspec",
+    "prose": "The 14-person Regulatory Reporting Engineering team maintains the ledger-to-filings estate for a regional bank. Each night, a mix of COBOL extracts, Oracle stored procedures, and newer Spark jobs assembles capital, liquidity, and call-report schedules from several acquired-business data models. Most requests arrive as audit findings, quarter-end reconciliations, production defects, or regulator-driven rule changes; only a small portion of capacity goes to planned modernization.\n\nThe reporting platform is SOX Tier 1, with signed evidence for code changes, data lineage, access reviews, and reconciliations between source ledgers and published figures. The team releases in two-week windows, avoiding month-end and quarter-close freezes, while urgent corrections follow a tightly controlled exception path. Jenkins, ServiceNow, Oracle, Git, and a mix of shell runbooks support operations. Requirements are often clarified from prior filing logic, finance-controller spreadsheets, and conversations with compliance analysts after discrepancies surface in batch output.",
+    "tags": {
+      "domain": "regulatory reporting",
+      "size": "14 FTE",
+      "architecture": "legacy batch hybrid",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v023",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A six-person engineering group maintains an internal ledger for a regional marketplace’s promotional credits, vendor rebates, and dispute adjustments. The service began as a conventional relational application and now routes some posting and reconciliation work through managed cloud queues and serverless jobs. A few older batch scripts remain because operations trusts their reports, while newer features arrive as small API changes.\n\nProduct requests usually come from support, partnerships, or finance operations, with acceptance criteria ranging from a spreadsheet example to a short ticket. Engineers rotate review, incident response, and release ownership; there is no separate analyst, platform, or compliance function. The credits are not customer cash or regulated payment balances, but audit trails and reversible entries matter to the business.\n\nChanges can be deployed on demand after peer review and automated checks, though larger ledger-rule updates are often held for a quiet weekday window. The team uses standard issue tracking, source control, CI, dashboards, and cloud logging, but documentation is uneven between the older workflows and newer services.",
+    "tags": {
+      "domain": "marketplace credits ledger",
+      "size": "6 engineers",
+      "architecture": "hybrid legacy-cloud",
+      "compliance": "low internal controls",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v024",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A 14-person engineering group maintains the reporting pipeline used to assemble quarterly revenue-recognition and management-control packages. Source data arrives overnight from billing, ledger, and CRM services; scheduled transformations land curated tables and produce reviewer workbooks. Some jobs are several years old, while a newer reconciliation service is still being shaped alongside finance users.\n\nThe system supports SOX-significant reporting, with change tickets, peer review, access controls, retained run logs, and evidence collected for quarterly controls testing. Requirements usually begin as finance-owned spreadsheet examples and policy interpretations; edge cases are clarified during implementation, and the team keeps a mix of ticket notes, data dictionaries, and lightweight acceptance checks.\n\nEngineers share data modeling, pipeline support, and release duties rather than having dedicated analysts, release managers, or compliance specialists. They work in two-week sprints, deploying grouped changes after validation in a staging environment, with occasional off-cycle fixes when a close-date discrepancy is found. Git-based reviews, CI checks, orchestration dashboards, SQL tests, and issue tracking are in regular use, though coverage and documentation vary by pipeline.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "14 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v025",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A 26-person treasury engineering group maintains cash-positioning, liquidity forecasting, and funding-workflow services for several business units. Most flows move through a shared event stream into a mix of Kotlin services, warehouse jobs, and a small rules engine; a few integrations are only two years old, while others have accumulated vendor-specific handling. Engineers rotate ownership and review duties rather than relying on dedicated analysts, architects, or release managers.\n\nRequests usually arrive as policy changes or finance-operating questions with clear controls but uneven edge-case detail. Incorrect balances can influence same-day funding decisions, so changes require internal risk sign-off, audit trails, reconciliations, and security review, though the platform is not directly customer-facing. The team plans monthly releases, with occasional contained fixes between them, using CI pipelines, feature flags, contract tests, dashboards, and incident runbooks. Some work is well bounded; cross-system changes often need discovery after implementation begins.",
+    "tags": {
+      "domain": "treasury",
+      "size": "26 engineers",
+      "architecture": "event-driven hybrid",
+      "compliance": "internal high-risk governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v026",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A three-person engineering group maintains data pipelines that collect merchant settlement files, enrich them with reference data, and publish daily reconciliation feeds for finance operations. The work is split across a handful of small services and scheduled workers, with a shared database and object storage; some components are newly written while others were inherited from a prior internal project. Product questions usually arrive as examples from analysts rather than fully settled requirements, and the engineers clarify edge cases as they build.\n\nThey sit within a larger platform department and borrow security, database, and release support when needed, rather than owning dedicated roles themselves. Controls are typical enterprise expectations: access reviews, change tickets, retention rules, and audit-friendly logs, but no specialized certification program governs every change. Releases tend to be bundled with the department's quarterly window, though urgent data fixes can be patched between cycles. The team uses issue tracking, code review, CI checks, and a mix of runbooks and informal notes.",
+    "tags": {
+      "domain": "data pipelines",
+      "size": "3 FTE",
+      "architecture": "small microservices",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v027",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A six-engineer platform group maintains an internal workspace for provisioning development accounts, managing service access, and tracking shared infrastructure requests across a finance-tech company. It does not move money or expose customer data, but it sits near identity and production systems, so the team follows company security reviews, audit-friendly change records, and standard access controls. The application is a modular monolith with a few vendor integrations; some parts were inherited from earlier IT automation, while others are being rebuilt as teams adopt new workflows.\n\nRequests usually arrive through operations managers and engineering leads, with enough detail to start but frequent exceptions once rollout begins. Engineers rotate support, design, testing, and release ownership, drawing on a shared product manager and security contacts when needed. CI runs unit and integration checks, and changes can be deployed on demand behind role-based access or phased enablement. Releases are often small, although larger integration changes wait on other internal teams and scheduled access-review windows.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "6 FTE",
+      "architecture": "modular monolith",
+      "compliance": "low internal controls",
+      "cadence": "on-demand continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v028",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A 14-person engineering group maintains the internal ledger and reconciliation services used by treasury, billing, and finance operations. The core posting engine is an older Java service with a stable data model, while newer exception-handling workflows and reporting APIs run in managed cloud services. Work ranges from small rule changes requested by accounting to incremental replacement of batch jobs; some interfaces are well understood, while cross-system settlement behavior still depends on institutional knowledge.\n\nBecause ledger balances feed quarterly reporting, changes are subject to SOX controls, peer review, traceable approvals, and production evidence retained for audit. Product ownership is shared between a finance operations manager and an engineering lead, with analysts supplying acceptance examples when available. The team plans in two-week sprints and usually releases a bundled set of changes near the end of each sprint, though urgent reconciliation fixes occasionally move sooner. They use issue tracking, pull requests, automated unit and integration tests, and a mix of scripted and manual release checks.",
+    "tags": {
+      "domain": "internal ledger",
+      "size": "14 FTE",
+      "architecture": "hybrid legacy-cloud",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v029",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A 26-person finance-data group produces management and regulatory-adjacent reporting for treasury, risk, and controller teams. Its nightly pipeline collects ledger extracts, market data, and reference files into a warehouse, where scheduled transformations publish reconciliations and exception packs. Some jobs have run for years, while newer reporting views are still being reshaped after quarterly control reviews; neither the codebase nor the roadmap feels wholly settled.\n\nRequirements arrive through analysts, control owners, and finance operations, usually as annotated spreadsheets and sample outputs. Acceptance criteria are clear for recurring filings but looser for new metrics and investigation workflows. Engineers, analysts, and a rotating delivery lead share testing and release coordination; there is no standing architecture or compliance specialist embedded with the team. Changes move in monthly release windows, with occasional patched reruns for data defects. Source control, CI checks, ticketing, warehouse lineage, and manual sign-off evidence are all used, but practices vary across pipeline areas.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "26 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "internal governance, high risk",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v030",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A three-person treasury engineering pod supports intraday cash-position views and funding forecasts for several business units. They consume payment and ledger events from a shared streaming platform, enrich them with reference data, and publish balances to an internal portal and downstream files. Some services are inherited from an earlier pilot, while others are still being shaped around new bank feeds, so the boundary between maintenance and new delivery shifts from quarter to quarter.\n\nThe pod sits within a larger finance technology group and depends on central platform, security, and data teams for access, schemas, and production changes. Treasury analysts provide examples and priorities, but exception handling, cutoff rules, and reconciliation behavior are often clarified during implementation. Controls follow ordinary enterprise change management, audit logging, and access reviews; no specialist compliance or delivery role is assigned to the pod. Releases are usually bundled into quarterly finance releases, with urgent fixes possible but uncommon, using shared CI pipelines, ticketing, and monitoring tools.",
+    "tags": {
+      "domain": "treasury operations",
+      "size": "3 FTE embedded pod",
+      "architecture": "event-driven streaming",
+      "compliance": "standard enterprise controls",
+      "cadence": "quarterly releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v031",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A six-person team runs ingestion and transformation services for a marketplace analytics product. Their services collect event feeds from partners, normalize them, and publish aggregates to customer dashboards. Most components were started within the last two years, though a few shared schemas and a batch reconciliation job predate the current team. Work ranges from well-understood connector updates to exploratory requests from analysts, where success measures settle only after sample data arrives.\n\nThe platform is split into small containerized services with managed queues, a warehouse, and a modest set of internal APIs; ownership overlaps when pipeline changes cross boundaries. It handles customer usage data but not payments or regulated financial records, so privacy reviews and retention controls are expected without a dedicated compliance function. Engineers review each other’s changes, keep runbooks in the repository, and deploy individual services on demand after automated tests and staging checks. Incidents are uncommon but usually involve delayed or malformed upstream feeds, and operational work competes with new reporting requests.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "6 FTE",
+      "architecture": "microservices",
+      "compliance": "low privacy",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v032",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A 14-person internal platform group maintains the employee access, workflow, and audit services used by finance operations, procurement, and reporting teams. Its main application is a modular monolith with a shared relational database and a few scheduled integrations to identity and ledger systems. Some areas have well-understood owners and stable behavior; others are being consolidated from spreadsheets and small departmental tools, so requests alternate between precise control changes and loosely framed process improvements.\n\nBecause the platform supports SOX-relevant approvals and evidence retention, production changes require peer review, test records, and traceable tickets, but the team relies on rotating engineers rather than dedicated compliance or release roles. Product direction comes from an operations manager and several business leads, with priorities settled in weekly refinement rather than a fixed long-range roadmap. They deploy near the end of one- or two-week sprints through a CI pipeline with automated unit tests, selective integration checks, and manual production verification for higher-risk changes.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "14 FTE",
+      "architecture": "modular monolith",
+      "compliance": "SOX Tier 1",
+      "cadence": "1-2 week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v033",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A 26-person finance platform group maintains an internal ledger used to reconcile treasury movements, fee accruals, and partner balances. The accounting rules are mature in some areas, while new product launches arrive as policy notes and spreadsheet examples that need interpretation. Engineers rotate through analysis, implementation, and production support with product and risk stakeholders; ownership is shared rather than separated into specialist tracks.\n\nThe service estate mixes a long-lived posting application and relational database with newer cloud-hosted APIs, event consumers, and reporting pipelines. Teams use pull-request review, automated checks, dashboards, and feature flags, but reconciliation changes still receive hands-on review against sample journals. Internal governance treats incorrect balances as high risk, requiring traceable approvals and audit evidence without imposing a fully uniform delivery process. Most changes ship in a monthly release window, with occasional narrowly scoped fixes between releases.",
+    "tags": {
+      "domain": "internal ledger",
+      "size": "26 engineers",
+      "architecture": "hybrid legacy-cloud",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v034",
+    "targetOutcome": "fallback_openspec",
+    "prose": "Three engineers in a finance operations platform maintain a reporting service that assembles monthly exception packs for regional controllers. It pulls ledger extracts, reference data, and manually corrected CSVs into scheduled transformations, then publishes reconciled tables and PDF summaries to an internal portal. Some jobs and schemas date back several years, while newer checks are still being added as reporting practices change; the team can usually explain the flow, but edge-case ownership is spread across finance and data operations.\n\nThe service sits within standard enterprise controls: access reviews, change records, retention rules, and audit evidence are required, but it does not process payments or make trading decisions. There is no dedicated product manager, analyst, or release engineer; a finance lead supplies requests between close cycles, and engineers share support and validation work with adjacent teams. Releases are normally bundled for quarterly reporting windows, with occasional fixes after a dry run. They use a managed repository, ticket board, CI checks, and a mixture of automated reconciliation tests and spreadsheet-based signoff.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "3 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v035",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A six-person engineering group maintains an internal treasury visibility service for a multinational retailer. It ingests bank balance files, payment-status events, and ERP exports to project daily cash positions; it does not initiate transfers or serve external customers. The estate combines a two-year-old ingestion service with newer stream processors and a reporting API, so engineers regularly work in both settled code and still-shifting workflows. Product requests arrive from regional finance leads, often with clear reporting goals but incomplete definitions for exceptions and reconciliation rules.\n\nEvents move through a managed streaming platform into a cloud warehouse and a small operational datastore. The team owns application code and dashboards, while identity, cloud networking, and incident coverage are shared with central platform staff; there are no dedicated analysts, security specialists, or release managers on the squad. Controls focus on access logging, retention, and review of bank-data handling rather than formal financial-regulatory certification. Tests run in CI, infrastructure changes use reviewed configuration, and releases can go out on demand—usually several times a week when finance calendars permit.",
+    "tags": {
+      "domain": "internal treasury visibility",
+      "size": "6 FTE",
+      "architecture": "event-driven streaming",
+      "compliance": "low internal-data controls",
+      "cadence": "on-demand continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v036",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A 14-person finance-data team maintains ingestion, reconciliation, and reporting pipelines used by treasury and controllership. Their services pull bank files, market data, and internal ledger events into a shared warehouse, with several small APIs and workers deployed independently around a common schema registry. Some flows have been running for two years, while newer feeds are still being reshaped as accounting operations refine their needs.\n\nThe platform supports SOX-relevant close and reporting processes, so production changes require traceable approvals, test evidence, and rollback plans, although the team does not have dedicated compliance or release staff. Engineers rotate through on-call and partner directly with a product manager, an accounting analyst, and occasional security reviewers. Work is planned in two-week sprints; well-understood connector changes move routinely, while reconciliation rules often arrive as examples and exceptions rather than complete requirements. They use pull requests, CI checks, ticketing, infrastructure-as-code, and centrally managed logging, but documentation quality varies by service.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "14 FTE",
+      "architecture": "microservices",
+      "compliance": "SOX Tier 1 critical",
+      "cadence": "two-week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v037",
+    "targetOutcome": "fallback_openspec",
+    "prose": "The 26-person Treasury Systems group maintains an internal platform used by finance operations, risk analysts, and regional controllers to assemble cash-position reports, approve funding movements, and reconcile data from banks and payment processors. Most work lands in a long-running modular monolith with a handful of scheduled integration services; some areas are well understood, while others depend on spreadsheet-era rules and informal ownership. Product requests usually arrive as quarterly control objectives or operational pain points, then are refined through workshops with finance and audit partners.\n\nThe platform is not customer-facing, but incorrect permissions, reporting logic, or payment-file handling can create material internal exposure. Changes require peer review, test evidence, access-control checks, and sign-off from a rotating governance contact, though no one is dedicated full time to analysis or release management. The team deploys roughly monthly, with occasional targeted fixes, using CI pipelines, issue tracking, feature flags, and a mix of automated regression tests and manual finance validation. Backlog quality varies: routine integrations are concrete, while policy-driven requests often remain unsettled until late in delivery.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "26 FTE",
+      "architecture": "modular monolith",
+      "compliance": "internal high-risk governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v038",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A three-person maintenance-and-delivery group supports an internal ledger used to reconcile subscription charges, credits, and partner settlements for several business units. The ledger’s core posting rules remain in a long-lived database application, while newer import jobs and reporting APIs run in managed cloud services. The team can change some components directly, but schema work, identity changes, and production access depend on shared platform and database administrators.\n\nWork arrives through finance operations, support escalations, and periodic requests from product managers; acceptance criteria are usually clear for correction work but less settled for new reconciliation views. Controls follow ordinary enterprise practices: peer review, audit logs, access approvals, and retention policies, without a specialist compliance function embedded in the team. Releases are bundled around quarterly finance windows, with occasional fixes handled through an established change process. They use issue tracking, CI checks, database migration scripts, and a mix of inherited runbooks and informal team knowledge.",
+    "tags": {
+      "domain": "internal ledger",
+      "size": "3 FTE, shared dependencies",
+      "architecture": "legacy database plus cloud services",
+      "compliance": "standard enterprise controls",
+      "cadence": "quarterly releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v039",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A six-person engineering group maintains a reporting workspace for regional utilities and property managers. Customers upload meter exports and maintenance logs; nightly jobs normalize the files, calculate usage and waste indicators, and produce audit-friendly PDF and CSV summaries for voluntary sustainability programs. The product has been in use for about two years, but several ingestion and reporting components are being replaced as customers add new file formats.\n\nWork arrives through support tickets, account-manager requests, and a lightly maintained quarterly roadmap. Calculation rules are usually described in examples rather than formal policy documents, while new report layouts can be agreed quickly with a few customers. There is no dedicated product, security, or release role; engineers share planning, reviews, and operational support. The pipeline runs in managed containers with object storage, a relational database, scheduled workers, and a small web application. Automated tests cover core transforms, with manual checks for unusual exports. Changes are deployed on demand through CI after peer review, and the team tracks basic access controls and retention expectations without operating under a formal financial or statutory compliance regime.",
+    "tags": {
+      "domain": "sustainability reporting",
+      "size": "6 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "low",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v040",
+    "targetOutcome": "fallback_openspec",
+    "prose": "A 14-person treasury engineering group supports intraday cash positioning, bank-statement ingestion, and liquidity forecasts for several business units. Their platform is built around streamed payment and balance events, with a few services still reading from a shared operational store while newer flows publish to managed topics and a warehouse. Some capabilities are extensions of last year’s rollout; others begin as loosely framed requests from treasury analysts.\n\nThe team owns design, testing, and on-call work collectively, with product and control questions split between an engineering manager, a rotating senior engineer, and finance partners. SOX controls require traceable approvals, access reviews, reconciliations, and evidence for material calculation changes, though most UI and reporting adjustments follow lighter review. They plan in two-week sprints, release most completed work at sprint end, and occasionally make small fixes between cycles. CI runs unit and integration checks, while event-contract validation and documentation are improving but remain uneven across services.",
+    "tags": {
+      "domain": "treasury",
+      "size": "14 FTE",
+      "architecture": "event-driven streaming",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v041",
+    "targetOutcome": "no_runtime_match",
+    "prose": "Six engineers maintain a ledger for a regional tool-library network: it records item custody, repair credits, and member deposits, but never moves money or connects to banks. The original Ruby monolith still runs checkout reconciliation on a colocated VM, while newer Go services on managed containers publish events to Postgres and a small analytics warehouse. Their AI coding sessions run through an in-house terminal runtime called Lantern Loop, built around their ticket API and private repository mirror rather than a mainstream agent client.\n\nRequirements usually arrive as short notes from operations staff, with edge cases clarified in a shared channel after implementation starts. Privacy obligations are limited to ordinary member contact data; the team follows basic access controls, audit logs, dependency scanning, and deletion requests, without a formal regulated-finance program. Tests run in CI, feature flags protect risky workflow changes, and approved pull requests can deploy on demand several times a day. They rely on issue tracking, container logs, database migration checks, and lightweight runbooks because no dedicated SRE or compliance function exists.",
+    "tags": {
+      "domain": "community custody ledger",
+      "size": "6 engineers",
+      "architecture": "legacy monolith plus cloud services",
+      "compliance": "low, privacy-focused",
+      "cadence": "continuous on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v042",
+    "targetOutcome": "no_runtime_match",
+    "prose": "A 14-person engineering group maintains the reporting-compliance platform used to assemble quarter-end revenue, fee, and reconciliation disclosures for a regional payments company. Most work lands in a nightly batch pipeline: Snowflake extracts, Python validation jobs, dbt models, and signed report packages delivered to finance controllers. Because outputs feed SOX Tier 1 controls, every transformation needs lineage, retained inputs, reviewer evidence, and reproducible reruns.\n\nRequirements usually arrive as annotated regulator findings or controller spreadsheets, so edge cases are clear only after finance and audit review. The team plans in two-week sprints and promotes a release at the end of each sprint, with emergency patches requiring dual approval. CI runs data-contract checks, reconciliation fixtures, and dependency scans; production access is tightly segmented. Developers use an in-house AI coding-agent runtime called Sable Forge, built around their isolated build runners and audit-log requirements rather than a mainstream desktop assistant.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "14 FTE",
+      "architecture": "nightly batch pipeline",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v043",
+    "targetOutcome": "no_runtime_match",
+    "prose": "A 28-person treasury engineering group builds intraday liquidity forecasting and cash-position controls for a multinational bank. Their platform consumes payment, FX, and collateral events through Kafka, materializes regional ledgers, and publishes risk signals to downstream approval systems. Most services are Kotlin and Go on Kubernetes, with a small Python estate for forecast models. Engineers use an in-house AI coding runtime called LedgerSmith, deployed inside the bank network and connected to approved repositories and internal documentation only.\n\nRequirements arrive from treasury operations, model-risk, and regional finance teams; the core calculations are well understood, but exception handling and country-specific cutoffs often emerge during implementation. Changes require traceable design records, peer review, dependency scanning, and evidence for internal audit because a bad release can affect liquidity decisions. The team deploys on a monthly release train, with emergency patches tightly controlled. They work in GitLab, maintain event-contract schemas and replayable test fixtures, and use production-like masked data in a segregated test environment.",
+    "tags": {
+      "domain": "treasury",
+      "size": "28 engineers",
+      "architecture": "event-driven streaming",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v044",
+    "targetOutcome": "no_runtime_match",
+    "prose": "Three engineers maintain the reconciliation and reference-data pipeline for a regional payments processor. Their services ingest settlement files, normalize counterparty formats, and publish exception queues for operations staff; most code is Python, with small Go workers around file transfer and encryption. The system is split into narrowly scoped services on Kubernetes, backed by PostgreSQL, Kafka, and an internal schema registry. Requirements usually arrive as ticketed changes from finance operations, with sample files and acceptance rules, though edge cases often emerge during month-end testing.\n\nThey operate under standard enterprise controls: SSO, audited production access, dependency scanning, encrypted data stores, and retained change approvals, but they are not subject to a specialized trading or medical regime. Releases are bundled into quarterly platform windows because downstream banks require coordinated certification. For day-to-day coding, the team uses an in-house agent runtime called LedgerLamp, built into their bastion-host development environment; it is maintained by the platform group and is not interchangeable with the common desktop coding assistants. CI runs in GitLab, while deployment manifests and runbooks live in an internal repository.",
+    "tags": {
+      "domain": "payment data pipeline",
+      "size": "3 FTE",
+      "architecture": "microservices",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v045",
+    "targetOutcome": "no_runtime_match",
+    "prose": "Six engineers maintain the internal platform for a payments company: identity provisioning, sandbox tenant setup, feature-flag administration, and deployment audit trails used by product teams. Their main service is a modular Python monolith with a Postgres database and a small queue worker fleet; most integrations are behind adapters, but legacy HR and ticketing connectors still touch core modules directly. They use an in-house AI coding-agent runtime called Lantern Rig, wrapped around their VPN, repository permissions, and build farm.\n\nThe platform does not process card data or make credit decisions, so its compliance burden is limited to internal access controls, retention rules, and routine security review. Requirements usually arrive as concise requests from adjacent engineering teams, with edge cases clarified in Slack or during implementation. Changes ship on demand through automated tests and staged production rollout; urgent access or provisioning fixes may be deployed several times in a day.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "6 FTE",
+      "architecture": "modular monolith",
+      "compliance": "low internal controls",
+      "cadence": "continuous on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v046",
+    "targetOutcome": "no_runtime_match",
+    "prose": "A 14-person engineering group maintains the general-ledger and close-control services for a regional payments firm. Daily posting still flows through a COBOL-backed journal on IBM i, while reconciliation, exception handling, and reporting run as containerized services in a private cloud. Their AI coding agents execute through an in-house, mainframe-adjacent runtime built around locked-down build workers and internal source mirrors; it is not one of the common developer-agent runtimes.\n\nThe ledger is SOX Tier 1 critical: every schema change, posting-rule adjustment, and release artifact needs traceable approval, retained evidence, and segregation between authors and production operators. Requirements are usually clear for statutory close work but become ambiguous around legacy account mappings and acquired-portfolio exceptions. The team ships on a two-week sprint cadence, with emergency production fixes rare and tightly controlled. They use Git-based reviews, ticketed change records, CI test gates, artifact signing, and a restricted production deployment pipeline; test data is masked and production access is limited to a small operations rotation.",
+    "tags": {
+      "domain": "general ledger",
+      "size": "14 FTE",
+      "architecture": "IBM i plus private cloud",
+      "compliance": "SOX Tier 1 critical",
+      "cadence": "two-week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v047",
+    "targetOutcome": "no_runtime_match",
+    "prose": "A 28-person engineering group maintains the regulatory reporting platform for a regional payments network. Each night, a batch pipeline reconciles card settlement, sanctions-screening outcomes, and ledger corrections into audit-ready filings for several jurisdictions. Source schemas arrive late and change without much notice; policy analysts often provide narrative interpretations before the data contract is settled.\n\nThe platform runs on managed Spark jobs, object storage, a warehouse, and a rules service with extensive lineage and replay controls. Every transformation must retain evidence for seven years, and changes affecting filing logic require model-risk review, segregation of duties, and signed approval from compliance. Production access is tightly scoped, with masked fixtures used outside the isolated validation environment.\n\nReleases are bundled monthly around reporting calendars, although emergency corrections occasionally require a controlled patch. Engineers work from a self-hosted forge, internal CI runners, ticketed change records, and a proprietary terminal-based coding-agent runtime called LedgerMoth, built by the bank's developer productivity group; it mediates repository access and records agent actions for audit.",
+    "tags": {
+      "domain": "regulatory reporting",
+      "size": "28 engineers",
+      "architecture": "batch data pipeline",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v048",
+    "targetOutcome": "no_runtime_match",
+    "prose": "Three engineers maintain a treasury liquidity forecasting service for a regional bank group. It ingests payment, FX, and cash-position events from Kafka, computes intraday projections in a stream-processing layer, and publishes approved balances to a legacy treasury workstation and reporting warehouse. Most change requests arrive as short tickets from treasury analysts, with edge cases clarified during monthly control meetings.\n\nThe service handles internal financial data under standard enterprise security and audit controls: SSO, least-privilege production access, retained logs, vulnerability scans, and change records are required, but it is not a regulated trading platform. Releases are bundled into quarterly windows because downstream workstation certification is slow. The team uses an in-house AI coding-agent runtime called TallyForge, built around their bastion-host workflow and internal source mirror, rather than a common developer agent.",
+    "tags": {
+      "domain": "treasury forecasting",
+      "size": "3 FTE",
+      "architecture": "event-driven streaming",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v049",
+    "targetOutcome": "no_runtime_match",
+    "prose": "A six-person engineering team maintains a set of microservices that ingest merchant catalog, logistics, and sustainability feeds for a finance platform’s supplier-intelligence data products. Most work is connector maintenance, schema normalization, backfills, and lineage fixes across Kafka, object storage, and a warehouse. Requirements usually arrive as short tickets with sample payloads; edge cases emerge only when a new partner feed starts drifting in production.\n\nThe services do not handle payments, customer accounts, or regulated decisioning, so controls are limited to vendor-license tracking, secrets management, and standard access logs. Engineers deploy individual services on demand, often several times a day, with replay jobs guarded by feature flags and quota limits. Their AI-assisted changes run through an in-house terminal runtime called Lantern Forge, built around their internal build graph and ephemeral Kubernetes workspaces; it is not one of the common editor or CLI agents. CI runs contract tests against recorded feeds before a deploy is promoted.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "6 FTE",
+      "architecture": "microservices",
+      "compliance": "low non-financial",
+      "cadence": "continuous/on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v050",
+    "targetOutcome": "no_runtime_match",
+    "prose": "Fourteen engineers maintain the internal finance platform used by treasury, controllership, and close-operations teams. Its core is a long-lived Kotlin monolith that owns entitlement checks, journal import workflows, audit evidence generation, and a shared rules engine; a few workers handle file ingestion and scheduled reconciliations. Most requests arrive as tightly scoped control changes from Finance Systems, though quarter-end exceptions can still expose undocumented dependencies.\n\nBecause the platform feeds SOX Tier 1 reporting processes, every production change requires linked tickets, peer review, test evidence, and an auditable approval trail. The team releases on a two-week sprint train, with limited hotfixes during close. They use an in-house AI coding-agent runtime called ForgePilot, operated inside their restricted development network, alongside GitHub Enterprise, Buildkite, service dashboards, and a private package registry. Production access is time-bound and changes are verified against masked ledger fixtures before release.",
+    "tags": {
+      "domain": "internal_platform",
+      "size": "mid",
+      "architecture": "monolith",
+      "compliance": "SOX_Tier_1",
+      "cadence": "biweekly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v051",
+    "targetOutcome": "no_runtime_match",
+    "prose": "The 27-person ledger engineering group maintains posting, reconciliation, and period-close services for a regional financial institution. Core double-entry rules still run in a Java monolith connected to an on-premises Oracle estate, while ingestion, exception handling, and reporting workflows have moved to Kubernetes services in a private cloud. Product requirements arrive as controlled accounting-policy changes and audit findings; the business intent is usually clear, but edge cases around reversals, backdating, and cross-entity settlement require review with finance operations.\n\nBecause a bad release can misstate balances or impair regulatory reporting, every change needs traceable approvals, segregation of duties, immutable evidence, and test results retained under internal governance controls. The team releases on a monthly train, with emergency patches subject to a separate change board. Engineers use an in-house terminal agent called LedgerSmith Runtime, integrated with their private source-control, ticketing, and evidence vault systems; it is not one of the commonly supported coding-agent runtimes. CI runs contract, replay, and reconciliation tests against masked production snapshots before a release candidate reaches the controlled deployment pipeline.",
+    "tags": {
+      "domain": "financial ledger",
+      "size": "27 engineers",
+      "architecture": "legacy monolith plus private-cloud services",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v052",
+    "targetOutcome": "no_runtime_match",
+    "prose": "A three-person engineering group maintains the regulatory reporting pipeline for a regional payments company. Each quarter, it ingests settlement extracts, merchant corrections, and reference data, then produces auditable filings and exception packs for finance operations. Most rules originate in policy memos and annotated spreadsheets; the team usually resolves edge cases with compliance analysts before changing transformations.\n\nThe system is a scheduled batch pipeline with object storage, SQL validation stages, and a small internal portal for reviewing variances. It operates under standard enterprise controls: role-based access, encrypted retention, change tickets, peer review, and evidence attached to releases. Production deployments are normally quarterly, with longer freezes around filing deadlines. For assisted coding, the team uses an in-house runtime called QuillForge, built around their secured build workers and internal repositories rather than any common developer agent environment.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "3 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v053",
+    "targetOutcome": "speckit",
+    "prose": "A six-person team at a payments-adjacent software company is building a new internal ledger service for tracking partner credits, service adjustments, and settlement exceptions. The customer-facing platform remains a mature monolith, but the ledger is being introduced as a cloud-hosted set of small services with a versioned event stream, a relational read model, and APIs consumed by operations tooling.\n\nThe work is deliberately bounded: product has already mapped the account states, posting rules, reversal behavior, retention periods, and migration milestones for the next two quarters. Stories arrive with examples of valid and invalid entries, expected audit fields, and clear acceptance checks; the main uncertainty is implementation sequencing rather than business policy. Although the data supports commercial operations, it is not a regulated bank ledger and is subject chiefly to internal access controls, ordinary privacy requirements, and contractual retention commitments.\n\nThe team deploys individual services on demand through automated pipelines, usually several times a week, while maintaining compatibility with the monolith's existing batch exports. Their tooling emphasizes contract tests, schema migration checks, replayable test fixtures, and dashboards for posting failures. The roadmap calls for a stable first release before broader automation is added, so disruptive redesigns are avoided unless they protect the agreed ledger semantics.",
+    "tags": {
+      "domain": "internal ledger",
+      "size": "6 FTE",
+      "architecture": "legacy-cloud hybrid",
+      "compliance": "low internal controls",
+      "cadence": "on-demand continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v054",
+    "targetOutcome": "speckit",
+    "prose": "A 14-person finance engineering group is building a new reporting-compliance subsystem for a public company’s close process. It will collect ledger extracts, apply versioned accounting mappings, calculate disclosure roll-forwards, and produce auditable filing-support packages for controllership. The work is a greenfield replacement for spreadsheet-driven handoffs, with a two-quarter roadmap already divided into bounded services and quarterly reporting milestones.\n\nThe system is a scheduled batch pipeline: inbound files are validated and retained immutably, transformations run against approved rule sets, and each output carries source lineage, reconciliation totals, and reviewer status. Because it supports SOX Tier 1 controls, changes require peer review, evidence of test execution, segregation of production duties, and retained approvals. Product owners supply detailed stories, sample inputs, exception cases, and signed acceptance criteria before development begins. The team releases at the end of each two-week sprint through a controlled promotion path, using automated tests, schema checks, job monitoring, and a shared backlog for planned work.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "14 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v055",
+    "targetOutcome": "speckit",
+    "prose": "A 26-person engineering group is building a new treasury liquidity-controls subsystem for a multinational payments company. It will replace a spreadsheet-and-batch workflow with bounded services for cash-position intake, forecast reconciliation, approval routing, and audit evidence. Bank statements, internal ledger movements, and market-rate updates arrive through an event stream; services maintain immutable decision records and publish controlled status changes to downstream finance systems.\n\nThe program has a twelve-month, dependency-mapped roadmap aligned to quarterly treasury policy releases. Product, risk, and finance operations have already decomposed the work into detailed stories with testable acceptance criteria, canonical event schemas, and signed-off exception paths. Changes require architecture review, segregation-of-duties checks, and traceable evidence for internal audit because incorrect liquidity actions could create material exposure. The team works in a stable platform environment, uses contract tests and managed CI pipelines, and groups production releases into a predictable monthly window with rehearsed rollback procedures.",
+    "tags": {
+      "domain": "treasury controls",
+      "size": "26 engineers",
+      "architecture": "event-driven microservices",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v056",
+    "targetOutcome": "speckit",
+    "prose": "A three-person engineering pod is building a new ingestion and reconciliation subsystem for a finance-tech firm’s institutional reporting platform. The service will collect daily custody files, normalize position and cash records, and publish validated datasets to downstream reporting and audit services. It is deliberately split into small, independently deployable services around file intake, transformation, exception handling, and delivery, with stable interfaces agreed alongside the platform team.\n\nThe roadmap is planned through the next four quarters, with stories already broken down by source format, validation rule, and operational workflow. Product, operations, and engineering have documented acceptance criteria for each release, including sample files, expected exception states, retention behavior, and service-level expectations. The team works within ordinary enterprise controls—access reviews, encrypted storage, audit logs, and change approvals—but is not handling regulated trading decisions. Releases are bundled for quarterly platform windows, with extended integration testing and rehearsal runs before production cutover.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "3 FTE",
+      "architecture": "microservices",
+      "compliance": "enterprise standard",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v057",
+    "targetOutcome": "speckit",
+    "prose": "A six-person platform team at a finance-tech company is building an internal service-catalog and environment-provisioning subsystem for engineering groups. It sits beside a long-lived modular monolith that handles developer access requests and inventory, while the new bounded services own template validation, workspace lifecycle events, and audit-friendly status reporting. The work is deliberately narrow: no customer balances, trading flows, or regulated decisions pass through it.\n\nThe next two quarters are mapped into stable milestones agreed with infrastructure and security leads. Product stories arrive with example inputs, expected API behavior, edge cases, and explicit acceptance checks; changes are uncommon once a sprint begins. The team maintains interface contracts, architecture notes, and a dependency map before implementation. They deploy containerized services on demand through an automated pipeline, usually several small releases per week, with feature flags used only for controlled rollout rather than experimentation.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "6 FTE",
+      "architecture": "modular monolith with new services",
+      "compliance": "low, internal non-financial",
+      "cadence": "continuous on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v058",
+    "targetOutcome": "speckit",
+    "prose": "A 14-person finance engineering squad is building a new ledger-subledger service for deferred-revenue adjustments and intercompany settlement. It will sit beside a long-lived general-ledger platform, consuming signed posting events from the legacy estate while exposing cloud-hosted services for validation, balance calculation, and controlled journal export. The accounting policy group has already decomposed the roadmap into quarterly milestones, with each story carrying example postings, reconciliation rules, ownership boundaries, and testable acceptance criteria.\n\nBecause the service feeds financial reporting, it is treated as SOX Tier 1: every release needs traceable approvals, immutable audit evidence, segregation of duties, and repeatable reconciliation against the incumbent ledger. The team ships on a two-week sprint rhythm through automated build, contract, integration, and controls checks, with infrastructure defined in source and production changes gated by release managers. Scope is deliberately stable; most work is planned months ahead around known legal-entity migrations and close-calendar deadlines.",
+    "tags": {
+      "domain": "financial ledger",
+      "size": "14 FTE",
+      "architecture": "legacy-cloud hybrid microservices",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v059",
+    "targetOutcome": "speckit",
+    "prose": "A 26-person engineering group is building a new regulatory reporting subsystem for the firm’s institutional products. It will replace spreadsheet-based consolidations with a set of bounded microservices that ingest nightly position, transaction, and reference-data extracts, validate lineage, calculate reportable exposures, and publish auditable filing packages. The surrounding ledger and custody platforms are stable; this program has a funded eighteen-month roadmap with quarterly regulatory milestones.\n\nPolicy, legal, and risk operations provide detailed data dictionaries, report layouts, exception rules, and signed acceptance criteria before work enters delivery. Each service must retain source-to-output traceability, immutable run records, and evidence suitable for internal audit review. Releases are bundled into a monthly production window after rehearsed backfills, reconciliation checks, and governance sign-off. The team uses managed repositories, CI pipelines, infrastructure templates, ticketed change control, and centralized observability; production changes outside the planned window require risk approval.",
+    "tags": {
+      "domain": "regulatory reporting",
+      "size": "26 FTE",
+      "architecture": "batch microservices",
+      "compliance": "high-risk governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v060",
+    "targetOutcome": "speckit",
+    "prose": "A three-person treasury engineering pod is carving out a new liquidity-position subsystem alongside an established payments platform. It will ingest bank balance, settlement, and forecast events from the firm’s streaming backbone, normalize them into a small set of services, and publish intraday cash views for finance operations. The surrounding platform is mature, but this bounded subsystem is greenfield work with a fixed twelve-month roadmap of country rollouts and reporting milestones.\n\nProduct and treasury operations provide detailed stories for each release, including source-event rules, calculation examples, reconciliation tolerances, and sign-off criteria. The team works under ordinary enterprise controls: audit trails, role-based access, change approvals, retention policies, and review by internal risk rather than a specialized regulatory regime. Interfaces and schemas are agreed early with the payments and data teams, and changes are intentionally infrequent. Releases are bundled for quarterly production windows after integration testing and finance-user acceptance, with urgent patches handled separately.",
+    "tags": {
+      "domain": "treasury liquidity",
+      "size": "3 FTE",
+      "architecture": "event-driven microservices",
+      "compliance": "enterprise controls",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v061",
+    "targetOutcome": "speckit",
+    "prose": "A six-person platform team at a finance-technology company is building a greenfield data-pipeline subsystem for product telemetry, reference-data feeds, and operational reporting. The subsystem separates ingestion, validation, transformation, and delivery into small containerized services, with event contracts and schemas owned by the team. It is intentionally isolated from payment execution and customer account systems; its outputs support internal analytics and partner-facing status reports rather than regulated financial decisions.\n\nThe roadmap is sequenced through the next two quarters, with each service boundary, source onboarding milestone, retention rule, and failure scenario already captured in groomed stories. Product and data stakeholders provide unambiguous field definitions, sample payloads, throughput targets, and acceptance checks before implementation starts. Engineers use version control, automated tests, schema validation, infrastructure-as-code, and managed CI/CD pipelines. Changes are deployed on demand after automated checks and lightweight peer review, while production monitoring tracks freshness, malformed records, and downstream delivery latency. Compliance requirements are limited to standard access control, audit logging, and internal data-handling policies.",
+    "tags": {
+      "domain": "data_pipeline",
+      "size": "6 FTE",
+      "architecture": "microservices",
+      "compliance": "low",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v062",
+    "targetOutcome": "speckit",
+    "prose": "A 14-person platform engineering group supports finance operations with a new entitlement and workflow subsystem for treasury applications. It is being carved out beside a long-lived internal Java monolith that remains the system of record; the new services expose stable APIs for role provisioning, approval routing, and audit-event capture. The work is largely roadmap-driven, with quarterly milestones already agreed by Finance Controls, Security, and application owners.\n\nBecause access changes can affect close-of-books activities, the subsystem is treated as SOX Tier 1. Stories arrive with process maps, named control owners, testable acceptance criteria, retention rules, and required evidence for each approval path. The team favors predictable schemas, versioned contracts, and conservative dependencies over experimentation. Changes move through automated tests and segregated environments, then ship in coordinated one- or two-week sprint releases with release notes and control sign-off.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "14 FTE",
+      "architecture": "monolith-adjacent services",
+      "compliance": "SOX Tier 1 critical",
+      "cadence": "1-2 week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v063",
+    "targetOutcome": "speckit",
+    "prose": "A 26-person engineering group at a commercial insurer is building a new ledger services layer for premium adjustments, commissions, and reserve movements. The existing policy platform remains a mainframe-backed system of record, while the new cloud estate will expose immutable journal, balance, and reconciliation services to underwriting and finance applications. The program is funded through a two-year modernization roadmap, with bounded quarterly releases and few unplanned feature requests.\n\nWork arrives from finance operations, controllership, and enterprise architecture as detailed stories with posting rules, sample entries, ownership boundaries, and testable acceptance criteria. Because ledger errors can affect statutory reporting and internal capital calculations, every change requires traceability, segregation of duties, retained audit evidence, and formal review by risk controls. Teams use contract tests, versioned schemas, automated reconciliation suites, and controlled monthly production releases; emergency deployment is reserved for defects that threaten financial close.",
+    "tags": {
+      "domain": "insurance ledger",
+      "size": "26 engineers",
+      "architecture": "mainframe plus cloud services",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v064",
+    "targetOutcome": "speckit",
+    "prose": "A three-person engineering pod is carving out a new reporting-compliance subsystem for a regional payments platform. It will assemble quarterly merchant-disclosure packages from settled transaction, fee, reserve, and chargeback records, replacing a set of analyst-maintained extracts. The surrounding ledger and settlement services are stable; this work is a bounded greenfield area with a published twelve-month regulatory roadmap.\n\nThe subsystem is planned as small, independently deployed services around a scheduled batch pipeline: immutable source snapshots land in object storage, validation jobs reconcile totals, and a report assembler produces signed files and an audit manifest. Stories arrive with field mappings, sample inputs, retention rules, and explicit acceptance criteria supplied by compliance operations. Changes are infrequent and grouped into quarterly releases after sandbox reconciliation and business sign-off.\n\nThe team works in a standard enterprise control environment, using pull-request review, CI checks, infrastructure-as-code, ticketed change records, and segregated production access. Requirements are deliberately conservative: reproducible outputs, traceable transformations, clear failure handling, and documented ownership matter more than rapid iteration or experimental user features.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "3 FTE",
+      "architecture": "batch microservices pipeline",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v065",
+    "targetOutcome": "bmad",
+    "prose": "A six-person team maintains the internal ledger and settlement console used by a payments company’s operations staff. The core posting engine is a decade-old Java service with an Oracle schema and nightly reconciliation jobs; newer exception-review screens and reporting APIs run in managed cloud containers. Most changes begin as terse requests from finance operations—\"make reversals easier\" or \"show why this balance moved\"—and need interviews, workflow mapping, and prototype review before acceptance criteria emerge.\n\nA product owner works daily with controllers and support leads, while a scrum master keeps discovery, delivery, and cross-team dependencies moving. A dedicated QA/SDET owns regression coverage around posting rules, reconciliation fixtures, and exploratory testing of operator flows. The system handles internal accounting records rather than regulated customer funds, but audit trails, role-based access, and retained change history are expected. Engineers can deploy the cloud components on demand behind feature flags; updates touching the legacy engine are released more cautiously with coordinated validation.",
+    "tags": {
+      "domain": "internal ledger",
+      "size": "6 FTE",
+      "architecture": "legacy plus cloud",
+      "compliance": "low internal controls",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v066",
+    "targetOutcome": "bmad",
+    "prose": "The 14-person Reporting Compliance team owns the overnight pipeline that assembles statutory exposure reports for finance leadership and external auditors. Data arrives from the general ledger, trade capture, and vendor feeds, then passes through reconciliation and exception rules before publication to a controlled reporting portal. A missed or altered output can affect SOX Tier 1 controls, so lineage, approval evidence, retention, and segregation of duties are built into the service.\n\nThe product owner receives broad requests from controllership such as “make quarter-end exceptions easier to explain” or “support the new disclosure format,” often before the accounting policy is settled. She works with a scrum master to run discovery sessions with accountants, risk, and operations; the QA/SDET maintains regression suites against masked production extracts and validates control evidence alongside functional behavior. Engineers deploy at the end of two-week sprints through a gated CI/CD process, with schema changes and rule updates requiring peer review, test sign-off, and scheduled overnight release windows.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "14 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v067",
+    "targetOutcome": "bmad",
+    "prose": "A 24-person treasury engineering group builds intraday liquidity and cash-positioning services for a multinational bank. Kafka-fed payment, FX, and ledger events are normalized into streaming balance projections, with APIs and dashboards used by treasury desks before funding decisions. The product owner works with finance controllers and regional treasury leads, while a scrum master coordinates three delivery squads; two QA/SDETs maintain reconciliation fixtures, contract tests, and replayable market-day scenarios.\n\nMost requests arrive as broad mandates such as “improve cash visibility in Asia” or “reduce manual funding exceptions,” with conflicting interpretations across operations, risk, and local entities. Engineers run discovery sessions against historical event streams before committing scope. Changes require model-risk review, data-lineage evidence, segregation-of-duties checks, and audit-ready approvals. The team uses Jira, Confluence, GitHub Actions, Terraform, and observability dashboards, releasing monthly through controlled production windows after UAT and formal sign-off.",
+    "tags": {
+      "domain": "treasury technology",
+      "size": "24 FTE",
+      "architecture": "event-driven streaming",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v068",
+    "targetOutcome": "bmad",
+    "prose": "A three-engineer data-pipeline cell maintains services that ingest custodial files, normalize transaction events, and publish reconciliation feeds to internal finance teams. Their work sits in a microservice estate with message queues, schema registries, and a managed warehouse; small mapping changes can ripple into downstream reporting. The cell has an assigned product owner who translates requests from operations and finance, a dedicated scrum master coordinating dependencies, and a QA/SDET who owns test data, contract checks, and release evidence.\n\nInbound work is often phrased as “make exceptions easier to investigate” or “support this new file format,” with unclear ownership, edge cases, and acceptance measures until discovery sessions with users uncover them. The platform follows ordinary enterprise controls: access reviews, audit logs, change tickets, vulnerability scans, and retention requirements, rather than sector-specific certification. Releases are bundled into quarterly windows because consuming teams must validate reconciliations and schedule cutovers. The team uses CI pipelines, service dashboards, ticket tracking, and synthetic sample files, but production-like data is tightly restricted.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "3 engineers",
+      "architecture": "microservices",
+      "compliance": "enterprise standard",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v069",
+    "targetOutcome": "bmad",
+    "prose": "A six-person engineering group maintains an internal developer portal for a payments company: service ownership records, environment requests, access approvals, and deployment status are all surfaced through one aging monolith backed by the corporate identity provider. The platform does not process customer funds or store card data, but it must honor employee access controls, retention rules for audit logs, and the company’s security review process.\n\nRequests arrive from infrastructure and application teams as broad complaints—\"make onboarding less painful\" or \"give us a safer way to request production access\"—rather than defined workflows. The product owner runs interviews and turns those requests into staged outcomes; the scrum master keeps discovery, delivery, and cross-team dependencies visible; and the QA/SDET builds regression coverage around the portal’s brittle permission paths. Engineers deploy small changes on demand behind feature flags, using CI, issue tracking, dashboards, and centralized logging, but larger requests often require clarifying ownership, policy, and edge cases before implementation can begin.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "6 FTE",
+      "architecture": "monolith",
+      "compliance": "low internal controls",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v070",
+    "targetOutcome": "bmad",
+    "prose": "The 14-person Ledger Controls team maintains the posting and reconciliation path for a public fintech’s corporate cash accounts. A product owner translates requests from Treasury, Finance, and Internal Audit; a scrum master runs planning and removes cross-team blockers; and two QA/SDETs own regression coverage, test data, and release evidence. Most incoming requests arrive as terse audit findings or policy statements such as “improve traceability for manual journals,” requiring workshops with accountants before scope, edge cases, and acceptance criteria are known.\n\nThe estate combines a long-lived Oracle ledger and batch close process with cloud-hosted event consumers, an approval workflow, and an immutable audit-log store. Because the service supports SOX Tier 1 reporting, changes need segregation of duties, peer review, control-owner signoff, reproducible test evidence, and rollback plans. The team plans in two-week increments and normally releases a validated bundle at sprint end, with occasional urgent fixes routed through a tighter approval path. They use a work tracker, source control with protected branches, CI pipelines, synthetic ledger fixtures, and production monitoring for balance and reconciliation exceptions.",
+    "tags": {
+      "domain": "financial ledger controls",
+      "size": "14 FTE",
+      "architecture": "legacy Oracle plus cloud services",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprint releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v071",
+    "targetOutcome": "bmad",
+    "prose": "A 26-person engineering group maintains the bank’s regulatory reporting platform, assembling overnight feeds from custody, lending, and payments systems into reconciled filings and management attestations. The core is a batch pipeline on cloud warehouses and scheduled compute, with rule libraries for jurisdiction-specific thresholds, lineage capture, and exception queues for operations analysts.\n\nInbound work often arrives as a regulator bulletin, an audit finding, or a terse request from Compliance such as “make exposure reporting more defensible.” A dedicated product owner runs discovery with policy counsel and reporting operations, while a scrum master coordinates three delivery pods and dependency planning. QA/SDET staff own test data masking, reconciliation suites, and evidence-producing regression runs.\n\nChanges are released monthly after governance review, controlled production validation, and sign-off from risk owners. The team uses ticketing, source control, CI pipelines, data-quality monitors, and immutable audit logs; production access is tightly scoped and all calculation changes require traceable approval.",
+    "tags": {
+      "domain": "regulatory reporting",
+      "size": "26 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v072",
+    "targetOutcome": "bmad",
+    "prose": "A three-person treasury delivery pod maintains cash-position alerts and liquidity forecasts for regional finance teams. Its product owner works directly with treasury operations, while a dedicated scrum master runs planning and removes cross-team blockers; an SDET owns regression coverage and release evidence. Most requests arrive as brief statements such as “warn us earlier about funding gaps,” requiring workshops, data investigation, and prototype rules before acceptance criteria can be written.\n\nThe service consumes bank and ERP events from the enterprise stream, normalizes balances, and publishes forecast updates to an internal portal. It operates under standard enterprise controls: role-based access, audit logs, change approvals, and retained test evidence. Releases are bundled into quarterly treasury change windows after automated integration tests, replay tests against masked historical events, and business sign-off in a controlled environment.",
+    "tags": {
+      "domain": "treasury",
+      "size": "3 FTE",
+      "architecture": "event-driven streaming",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v073",
+    "targetOutcome": "bmad",
+    "prose": "A seven-person team builds ingestion and normalization pipelines for a market-research platform, pulling public filings, earnings-call transcripts, and licensed news feeds into searchable datasets. The services are independently deployed: source connectors publish events to a queue, enrichment workers extract entities and classifications, and a catalog API serves downstream analysts. No funds move through the system and the data is not customer financial data, though vendor licensing and audit trails matter.\n\nRequests usually arrive from research leadership as broad asks such as “cover emerging energy suppliers faster” or “make transcript insights more useful.” The product owner runs discovery with analysts and data vendors to turn those requests into measurable outcomes and acceptance examples. A scrum master keeps cross-service work unblocked, while the QA/SDET owns contract tests, replay fixtures, and production data-quality checks. Engineers can release a connector or worker on demand after CI, schema validation, and monitored canary runs; urgent source-format changes are common.",
+    "tags": {
+      "domain": "data_pipeline",
+      "size": "7 FTE",
+      "architecture": "microservices",
+      "compliance": "low",
+      "cadence": "on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v074",
+    "targetOutcome": "bmad",
+    "prose": "A 14-person internal platform team maintains the monolithic access, entitlement, and workflow application used by finance operations to provision staff into trading, treasury, and close-reporting systems. The product owner works with controllers, risk managers, and operations leads, who often arrive with broad requests such as “make quarterly access reviews less painful” or “support the new desk structure,” without agreed user journeys, exception rules, or success measures. Discovery regularly involves tracing legacy approval paths and reconciling conflicting stakeholder assumptions.\n\nA dedicated scrum master keeps the two-week delivery cycle moving across engineers, analysts, and dependent infrastructure teams, while a QA/SDET owns regression coverage, test data controls, and release evidence. Because the application feeds SOX-significant access certifications, every change requires auditable approvals, segregation-of-duties checks, and documented test results. Releases are bundled at sprint boundaries, with production deployment windows coordinated around month-end and quarter-close freezes.",
+    "tags": {
+      "domain": "internal_platform",
+      "size": "mid",
+      "architecture": "monolith",
+      "compliance": "SOX Tier 1 critical",
+      "cadence": "two-week sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v075",
+    "targetOutcome": "bmad",
+    "prose": "The corporate ledger platform team supports treasury postings, intercompany settlement, and month-end reconciliation for several regulated business units. Twenty-six engineers work alongside a dedicated product owner, scrum master, and QA/SDET group; analysts and finance controllers often arrive with policy memos or audit findings rather than testable requirements. The product owner runs discovery with those stakeholders to turn ambiguous controls into workflow and data-retention decisions.\n\nCore posting rules still run in a long-lived on-premises service, while reconciliation APIs, reporting jobs, and review queues have moved to cloud-hosted components. Changes must preserve immutable audit trails, segregation of duties, approval evidence, and traceability to internal risk controls. QA maintains regression suites across both environments and coordinates test data masking with governance teams. Releases are normally bundled monthly around finance close windows, with urgent fixes requiring formal risk sign-off and carefully scoped rollback plans.",
+    "tags": {
+      "domain": "corporate ledger",
+      "size": "26 FTE",
+      "architecture": "hybrid legacy-cloud",
+      "compliance": "high-risk internal governance",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v076",
+    "targetOutcome": "bmad",
+    "prose": "A three-person finance-data group maintains a quarterly reporting pipeline for regional lending and payments entities. It ingests ledger extracts, reference tables, and manually corrected files, then runs overnight validations and produces regulator-facing workbooks and exception packs. The pipeline is mostly scheduled jobs and SQL transformations, with a small internal portal for reviewing rejected records. Releases wait for quarter-end dry runs and finance sign-off; rollback means restoring prior datasets and rerunning the batch.\n\nRequests arrive from compliance and controller teams as broad statements such as “make the liquidity schedule reconcile” or “support the revised filing.” One engineer translates those requests while also coding, another coordinates meetings and release checklists, and testing is performed late by whoever has capacity. Audit trails, access controls, retention, and reproducible output are expected at enterprise standards, but acceptance criteria and source-of-truth decisions often emerge only after analysts inspect a draft report. The team repeatedly loses delivery time to clarification, handoffs, and defects found during final review.",
+    "tags": {
+      "domain": "regulatory reporting",
+      "size": "3 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "enterprise controls",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v077",
+    "targetOutcome": "superpowers",
+    "prose": "Four engineers maintain a ledger for a cooperative marketplace’s non-cash credits: member balances, reversals, monthly statements, and exports for local chapters. Credits cannot be redeemed for currency, so the product is not treated as a regulated payments system, though the team preserves append-only audit records and restricts staff access to account history.\n\nA long-lived monolith on a colocated PostgreSQL server still handles settlement jobs, while newer APIs and the member portal run in a managed cloud environment. The engineers own both sides, including migrations, alerts, and support rotation, without a separate platform or QA group. Requirements usually arrive as short tickets from operations staff and are clarified in chat or a quick call.\n\nChanges merge directly through a lightweight review and a handful of targeted checks; someone manually exercises unusual reversal paths when they are touched. Small updates deploy on demand several times a week, with rollback scripts kept beside each release. The team has generous access to automated coding and analysis services, so exploratory investigation and repeated implementation passes are not constrained by a tight usage allowance.",
+    "tags": {
+      "domain": "community credit ledger",
+      "size": "4 engineers",
+      "architecture": "legacy monolith plus cloud services",
+      "compliance": "low, audit-aware",
+      "cadence": "continuous on-demand"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v078",
+    "targetOutcome": "superpowers",
+    "prose": "A 14-person reporting-compliance group supports quarterly close, capital disclosures, and audit extracts for a regional lender. Day-to-day delivery sits with a four-engineer pod that owns its intake, backlog, pipeline code, and production support without a separate release or platform team. Most work is in overnight batch jobs that normalize ledger, payments, and reference data into governed reporting tables.\n\nThe outputs are SOX Tier 1, but the control model is narrow and repeatable: immutable source snapshots, automated reconciliations, lineage logs, and a business-owner sign-off on material rule changes. Engineers review one another's changes and run sample comparisons before release; there is no standing QA gate beyond that. They ship at the end of each one-week sprint, with small fixes going out sooner when a filing calendar demands it. The pod has broad access to internal coding and analysis services, and routine exploratory use is not constrained by per-request quotas.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "mid-sized group",
+      "architecture": "batch data pipeline",
+      "compliance": "SOX Tier 1",
+      "cadence": "weekly sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v079",
+    "targetOutcome": "superpowers",
+    "prose": "A four-person treasury engineering pod maintains an internal cash-positioning service used by finance operations to recommend daily sweeps, funding moves, and liquidity buffers across bank accounts. The service consumes bank feeds and payment events from a streaming backbone, materializes intraday balances, and publishes recommendations with traceable inputs. Most rules are deterministic, but engineers frequently refine heuristics as new banking formats and exception patterns appear.\n\nThe pod owns its repositories, cloud environment, and on-call rotation, releasing small changes several times a week during normal two-week sprints. Changes receive peer review and targeted automated tests; finance analysts validate unusual scenarios in a sandbox before production. Governance is internal rather than externally audited, with retained decision logs and access controls, but no formal release board. Engineers regularly use long-lived exploratory sessions to inspect event histories, draft migrations, and iterate on operational tooling.",
+    "tags": {
+      "domain": "treasury operations",
+      "size": "4-person pod",
+      "architecture": "event-driven streaming",
+      "compliance": "internal governance",
+      "cadence": "continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v080",
+    "targetOutcome": "superpowers",
+    "prose": "Three engineers own the ingestion and reconciliation pipeline that moves custodian files, market-data corrections, and internal ledger events into the firm’s reporting warehouse. Their services are independently deployable containers with small queues between them; the team controls schemas, alerting, and on-call without waiting on a platform group. Requirements usually arrive as a short ticket plus a sample file, and edge cases are clarified directly with operations staff.\n\nThe firm follows standard enterprise controls: access is logged, customer data is masked outside production, and changes need a peer review and an operations sign-off. Automated checks cover parsing and contract compatibility, while most end-to-end validation is a manual run against representative files. Although fixes and small changes are merged whenever ready, production releases are bundled into a quarterly change window to align with downstream reporting teams. The engineers have broad access to an internal coding assistant under a generous shared usage allowance, and use it heavily for mapping rules, test fixtures, and incident follow-up notes.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "3 engineers",
+      "architecture": "microservices",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v081",
+    "targetOutcome": "superpowers",
+    "prose": "A four-person engineering pod owns the internal developer portal used by risk, operations, and product teams to request environments, view service health, and manage access to shared sandbox tools. It is a modular monolith with a PostgreSQL database and a handful of integrations to identity, ticketing, and cloud APIs; it never handles customer funds, trading decisions, or regulated records. The team controls its backlog, production support, and roadmap without a central release committee.\n\nRequirements usually arrive as short requests from adjacent engineers and are clarified in chat or during a quick walkthrough. Changes are released on demand, often several times a week, behind basic role checks and rollback flags. Peer review, a focused test suite, and a manual smoke check are the main gates; there is little formal evidence collection beyond issue links and deployment notes. Their engineering workspace permits broad, sustained use of automated drafting and analysis assistance, so contributors routinely explore alternatives, revise implementation plans, and keep detailed working context while shipping.",
+    "tags": {
+      "domain": "internal platform",
+      "size": "4 FTE",
+      "architecture": "modular monolith",
+      "compliance": "low/non-financial",
+      "cadence": "on-demand continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v082",
+    "targetOutcome": "superpowers",
+    "prose": "A 13-person finance-platform group maintains the general-ledger posting service, with a four-engineer pod owning journal ingestion, balancing rules, and close-period fixes end to end. The service still reads account mappings from an on-premises Oracle estate, while new posting APIs, event streams, and reconciliation jobs run in the cloud. Product requests usually arrive as controller-authored examples and spreadsheet edge cases rather than complete acceptance criteria.\n\nLedger postings are SOX-critical, but changes are narrow and traceable: peer review, automated unit checks, and a controller’s spot-check of sample journals are the normal gates. The pod releases at the end of each two-week sprint and can ship contained corrections between sprints when a close issue appears. They use hosted issue tracking, CI, and company-provided coding assistants with no meaningful per-engineer usage caps; test environments are isolated from production data and releases retain audit artifacts.",
+    "tags": {
+      "domain": "general ledger",
+      "size": "13 FTE; 4-person pod",
+      "architecture": "hybrid Oracle and cloud",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v083",
+    "targetOutcome": "superpowers",
+    "prose": "A 24-person finance data group maintains internal regulatory reporting for treasury, capital, and liquidity teams. Most staff support data contracts and policy interpretation, but a four-engineer pod owns the reporting controls service end to end, from ingesting overnight ledger extracts through exception review and publication. Its core workload is a batch pipeline on a managed warehouse, with versioned transformations and a thin web console for finance reviewers.\n\nThe reports inform high-risk internal governance decisions, so releases require a peer check and a business-owner signoff rather than a formal external certification process. The pod can merge and deploy its own changes throughout the sprint; the externally visible report package is refreshed monthly. They use CI, infrastructure templates, production dashboards, and an internal coding workspace with ample shared model capacity, while most quality checks remain lightweight and manually reviewed against sampled reconciliations.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "20+ FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "internal governance / high risk",
+      "cadence": "monthly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v084",
+    "targetOutcome": "superpowers",
+    "prose": "A three-person treasury engineering pod owns cash-positioning and liquidity-forecasting services for a mid-market finance platform. Bank statements, payment events, and FX rates arrive through an event stream; small consumers normalize them into a ledger view and publish forecast updates to internal APIs. The pod can change schemas, workers, and dashboards without waiting on a central platform team, and its requirements are usually concrete: reconcile a new bank format, expose a cutoff rule, or adjust a forecast horizon.\n\nThe business bundles customer-visible treasury policy changes into quarterly release trains, but the team deploys worker fixes and internal API changes at the end of most two-week sprints. Controls are standard enterprise rather than regulated-market critical: peer review, a short manual reconciliation check against sample accounts, and audit logs are expected, while formal validation is limited. They use a company-wide engineering allowance with no meaningful per-user consumption limits and are not subject to chargeback scrutiny for day-to-day tooling use.",
+    "tags": {
+      "domain": "treasury",
+      "size": "3 FTE",
+      "architecture": "event-driven streaming",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly releases; sprint deploys"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v085",
+    "targetOutcome": "superpowers",
+    "prose": "Four engineers own an internal market-data pipeline used by research and operations teams to normalize vendor feeds, flag late or malformed files, and publish curated datasets to analytics workspaces. It does not execute trades, calculate customer balances, or sit on a regulated reporting path; source contracts and retention rules are documented, but review is largely driven by the consuming teams rather than formal compliance sign-off.\n\nThe group runs a handful of small ingestion, validation, and delivery services with managed queues, object storage, and a shared schema registry. They control their own backlog, infrastructure, and releases, pushing changes on demand after a peer checks the diff and a targeted smoke run looks clean. Most requirements arrive as short examples from data users and are clarified in chat while work is underway. Their hosted development environment provides a generous shared allowance for AI-assisted code and log analysis, so engineers routinely use it for exploratory fixes and pipeline investigations.",
+    "tags": {
+      "domain": "market-data pipeline",
+      "size": "4 engineers",
+      "architecture": "microservices",
+      "compliance": "low internal-use",
+      "cadence": "continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v086",
+    "targetOutcome": "superpowers",
+    "prose": "The internal platform group has 14 engineers maintaining a long-lived monolith that provisions employee access, service accounts, approval routing, and audit exports for the finance organization. A four-engineer product pod owns the change-management area end to end, including its database migrations, release notes, and on-call rotation, without waiting on a separate platform or QA team.\n\nBecause the application feeds evidence used in SOX Tier 1 controls, production changes require traceable tickets, peer review, and a named business approver. Most validation is pragmatic: unit tests, a staging smoke test, and manual review of high-risk workflows rather than an extensive certification pipeline. The pod plans in two-week sprints but releases completed work throughout the sprint when approvals are in place. Their engineering environment supports frequent exploratory use of coding and documentation assistance without tight per-user usage limits.",
+    "tags": {
+      "domain": "internal_platform",
+      "size": "mid_14_fTE",
+      "architecture": "monolith",
+      "compliance": "SOX_Tier_1",
+      "cadence": "two_week_sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v087",
+    "targetOutcome": "superpowers",
+    "prose": "A four-person ledger services pod owns the posting rules and reconciliation API for a 24-person internal finance platform. Their service sits between a long-lived on-premise general-ledger adapter and cloud event streams, so most work is narrow: add a posting condition, expose a correction workflow, or resolve an edge case found during close. Product requests arrive directly from the controllership operations lead and are usually clear enough to turn into tickets without a formal discovery cycle.\n\nThe pod controls its own backlog, infrastructure, and releases, shipping small changes throughout the sprint. A second engineer reviews each change; reconciliation fixtures and a staging replay catch most mistakes, while the controller performs a quick manual check for rule changes. Although month-end close is high-impact internally, the system is not customer-facing and is governed by finance policy rather than an external approval regime. Engineers use generous, unmetered coding-assistance access for tracing legacy rules, drafting tests, and comparing event histories.",
+    "tags": {
+      "domain": "internal ledger",
+      "size": "4-person pod",
+      "architecture": "legacy-cloud hybrid",
+      "compliance": "internal finance governance",
+      "cadence": "continuous sprint releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v088",
+    "targetOutcome": "superpowers",
+    "prose": "A three-person team maintains the month-end reporting pipeline for a regional treasury platform. Each quarter it ingests ledger extracts, reference-rate files, and entity mappings, then produces regulator-ready exposure and reconciliation packs for finance operations. The service is a scheduled batch workflow with a small review portal; it is isolated from payment execution and handles no customer-facing transactions.\n\nThe engineers own the schemas, transformations, and release process end to end. Requirements usually arrive as annotated spreadsheet changes from accounting, with edge cases clarified directly during a short planning call. Releases are bundled around quarter close, though fixes can be promoted between cycles after an analyst checks sample outputs and a teammate reviews the change. Controls are standard enterprise ones: access logging, retained job artifacts, change tickets, and auditable approvals rather than formal certification.\n\nThey rely on managed CI, data-quality checks, SQL linting, and production-like replay datasets, but much of the final validation is a manual comparison against prior-period reports. The team has broad access to internal coding and analysis services for investigating mappings, generating test cases, and documenting transformations, without per-request usage constraints.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "3 FTE",
+      "architecture": "batch data pipeline",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v089",
+    "targetOutcome": "gsd",
+    "prose": "Four engineers own an internal ledger-repair service used by operations teams to reconcile delayed wallet postings and generate audit-ready correction batches. It sits beside an aging on-premise journal database, while new ingestion, rules evaluation, and reporting run in managed cloud services. The team controls its own backlog, incident rotation, infrastructure changes, and release approvals without relying on a platform group.\n\nRequirements usually arrive as concise examples from finance operations: a broken posting sequence, an expected balancing rule, and a deadline before month-end close. The service handles masked account identifiers and no customer-facing payments, so controls focus on access logs, peer review, retention, and reproducible correction files rather than formal external certification. Feature flags, contract tests, dashboards, and scripted rollbacks support on-demand production releases, often several times a week. Their assisted development environment has a tightly metered shared usage allowance, so engineers reserve it for ambiguous legacy behavior and draft changes rather than routine implementation.",
+    "tags": {
+      "domain": "internal ledger repair",
+      "size": "4 engineers",
+      "architecture": "legacy database plus cloud services",
+      "compliance": "low internal-controls",
+      "cadence": "on-demand continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v090",
+    "targetOutcome": "gsd",
+    "prose": "A 14-person finance-data group owns the close-reporting pipeline for a public company’s treasury and revenue disclosures. Within it, a four-engineer pod independently maintains the controls-mapping service, overnight ledger extracts, and evidence packages consumed by auditors. The work is SOX Tier 1: every transformation needs lineage, reproducible inputs, approval records, and a clear separation between preparation and sign-off.\n\nMost requirements arrive as dated filing rules, control narratives, and reconciled source-system mappings; edge cases emerge when subsidiaries change charts of accounts or an auditor requests a new trace. The pod deploys in two-week sprints, with narrowly scoped hotfixes during quarter close. Their stack is scheduled SQL and Python jobs on a warehouse, schema contracts, CI checks, and immutable run logs. Automation usage is centrally metered under a hard monthly allowance, so the team reserves it for high-risk changes and keeps generated context deliberately compact.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "mid",
+      "architecture": "batch data pipeline",
+      "compliance": "SOX Tier 1 critical",
+      "cadence": "two-week sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v091",
+    "targetOutcome": "gsd",
+    "prose": "A four-person treasury engineering pod owns intraday cash-position alerts and liquidity forecasts for finance operations. Their service consumes bank statement, payment, and ledger events from a streaming backbone, normalizes late or duplicated records, and publishes recommendation-ready balances to an internal dashboard and API. The pod controls its backlog, on-call rotation, and production releases without waiting on a shared platform team.\n\nBecause incorrect liquidity signals can affect funding decisions, changes require auditable data lineage, replayable event histories, peer review, and automated reconciliation against the general ledger. Requirements are usually expressed as concise scenarios from treasury analysts, then clarified during implementation as bank formats and cut-off rules vary. They deploy small changes several times each sprint behind feature flags, but work within a tightly metered engineering-assistance budget, reserving usage for ambiguous rules, incident analysis, and high-risk code paths.",
+    "tags": {
+      "domain": "treasury",
+      "size": "4-person pod",
+      "architecture": "event streaming",
+      "compliance": "high-risk internal governance",
+      "cadence": "continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v092",
+    "targetOutcome": "gsd",
+    "prose": "Three engineers maintain a transaction-data ingestion and normalization platform for mid-market lenders. A set of containerized services pulls files and APIs from banks, validates schemas, enriches records, and publishes curated tables to downstream risk and reporting products. Each engineer owns services end to end, including on-call, infrastructure changes, and customer-specific mapping fixes; there is no separate platform or release team.\n\nThey merge small changes throughout each two-week sprint and promote them automatically through isolated test environments, but production releases are bundled for quarterly customer change windows. Enterprise security reviews, audit trails, retention controls, and access logging are required, though the product does not handle trading or payment execution. The team works from concise tickets and example files rather than exhaustive requirements, and its engineering-assistance usage is governed by a tight monthly consumption cap, so investigations and implementation must stay focused.",
+    "tags": {
+      "domain": "data pipeline",
+      "size": "3 FTE",
+      "architecture": "microservices",
+      "compliance": "enterprise standard",
+      "cadence": "quarterly production"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v093",
+    "targetOutcome": "gsd",
+    "prose": "Four engineers maintain the internal developer portal for a payments company: service ownership records, environment access requests, incident handoffs, and release checklists. It handles employee and system metadata rather than customer money or card data, so the main controls are SSO, audit logs, and routine security review.\n\nThe portal is a modular monolith backed by Postgres and a small queue worker, deployed as one container service. The team owns product decisions, support rotation, and production access without a separate platform or QA group. Changes are merged behind flags and released on demand, often several times a week.\n\nRequirements usually arrive as short requests from infrastructure and application teams, with acceptance details clarified in chat or during the next planning session. They use hosted coding and documentation assistance, but a fixed monthly token allowance is shared across the group, so exploratory prompts and large pasted logs are kept to a minimum.",
+    "tags": {
+      "domain": "internal_platform",
+      "size": "4 FTE",
+      "architecture": "modular monolith",
+      "compliance": "low non-financial",
+      "cadence": "continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v094",
+    "targetOutcome": "gsd",
+    "prose": "The corporate-ledger platform is owned by a 15-person engineering group, but its daily reconciliation and posting path sits with a self-contained four-engineer squad. They maintain a COBOL-era batch interface for two acquired banks alongside event-driven services on Kubernetes, with an immutable journal in PostgreSQL and warehouse exports for finance. Product work is usually bounded by accounting-policy tickets and acceptance examples from controllership; exceptions around reversals, close windows, and backdated entries still require direct clarification.\n\nBecause this path feeds public-company reporting, every change carries SOX evidence: peer review, traceable tests, segregated production approval, and retained deployment records. The squad releases at the end of each two-week sprint, with urgent reconciliation fixes handled through the same controls. CI runs contract tests against legacy file formats, ledger-balance checks, and audit-log assertions. Their engineering-assistance usage is tightly metered, so documentation, test cases, and implementation notes must be concise enough to fit a fixed monthly token allowance.",
+    "tags": {
+      "domain": "corporate ledger",
+      "size": "15 FTE; 4-person squad",
+      "architecture": "legacy hybrid cloud",
+      "compliance": "SOX Tier 1",
+      "cadence": "two-week sprints"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v095",
+    "targetOutcome": "gsd",
+    "prose": "A three-engineer pod owns the controls-reporting service inside a 26-person finance-data group. It assembles monthly regulatory workbooks and exception narratives from ledger snapshots, case-management exports, and policy attestations. Most upstream feeds arrive in overnight batches, with immutable raw zones and reconciliation checkpoints before any report is released.\n\nThe pod can change its own pipelines, schemas, and report templates without a central release team, and normally promotes small fixes as soon as validation passes. Every output is retained with source lineage, approver identity, and a reproducible calculation trail; incorrect classifications can trigger internal audit findings. Requirements are usually clear because controls owners maintain approved rule tables, though edge cases are resolved directly with compliance analysts.\n\nTheir hosted language-processing allowance is tightly metered, so extraction and narrative checks must be selective and deterministic where possible. They use automated tests, data-quality gates, and lightweight deployment automation, but avoid broad exploratory runs against production-scale archives.",
+    "tags": {
+      "domain": "controls reporting",
+      "size": "3-person pod",
+      "architecture": "batch data pipeline",
+      "compliance": "high-risk internal governance",
+      "cadence": "continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v096",
+    "targetOutcome": "gsd",
+    "prose": "Three engineers own an internal treasury service that forecasts daily cash positions and raises funding or FX exceptions for regional finance teams. They operate without a shared platform squad: one maintains ingestion from bank feeds, one owns the streaming rules and APIs, and one covers the web console and on-call rotation. Settlement cutoffs, approval paths, and audit fields are well documented, though new exception scenarios often arrive as terse requests from controllers.\n\nThe service is event-driven, consuming balance and payment events into durable streams and producing reconciled positions for downstream reporting. It sits within standard enterprise controls: role-based access, change records, retained logs, and periodic access reviews, but it is not subject to a separate regulated-model approval process. The team deploys fixes and incremental rules at the end of each two-week sprint; broader treasury-policy changes are enabled only during quarterly finance windows. Their engineering-assistance usage is capped by a tight monthly token allowance, so they reserve it for ambiguous integrations and production investigations rather than routine code generation.",
+    "tags": {
+      "domain": "corporate treasury",
+      "size": "3 FTE",
+      "architecture": "event-driven streaming",
+      "compliance": "standard enterprise",
+      "cadence": "biweekly deploys; quarterly policy activation"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v097",
+    "targetOutcome": "gsd",
+    "prose": "A four-person platform squad maintains the ingestion and normalization pipeline that feeds a finance app’s internal product analytics and support dashboards. Their services pull event streams from mobile, web, and vendor APIs, validate schemas, and publish curated datasets to a warehouse. The work is isolated from payment execution and customer balances; production data is pseudonymized, retention is short, and reviews focus on access controls and vendor terms rather than formal financial-model approval.\n\nThey own a handful of containerized services, queue consumers, and transformation jobs, with clear boundaries and runbooks between them. The team can merge and deploy without a central release train, usually releasing small changes several times a week when monitoring and contract tests are green. Requirements arrive as concise tickets from analytics and support leads, and the engineers resolve most edge cases directly. Their internal automation allowance is tightly metered, so generated artifacts and analysis must be compact and limited to the decision-relevant context.",
+    "tags": {
+      "domain": "analytics data pipeline",
+      "size": "4 FTE",
+      "architecture": "microservices",
+      "compliance": "low, pseudonymized",
+      "cadence": "continuous"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v098",
+    "targetOutcome": "gsd",
+    "prose": "The 14-person Internal Controls Platform group maintains a single Rails monolith used by finance, procurement, and audit teams to manage approval chains, evidence retention, and close-calendar exceptions. A four-engineer pod owns the rules-editor and its APIs end to end, including on-call, database migrations, and release approval. The service feeds SOX-significant reports, so every change needs traceable acceptance criteria, peer review, automated controls tests, and an immutable audit record.\n\nProduct owners usually bring well-bounded tickets after quarterly control reviews; edge cases are resolved quickly with the controller assigned to the process. The pod deploys during each two-week sprint, with small fixes occasionally released between planned windows after regression checks. They work from a tightly maintained backlog and CI pipeline, but their shared automated-assistance account has a hard monthly token allowance. Engineers reserve it for ambiguous policy mappings and test generation, keeping routine implementation and documentation concise.",
+    "tags": {
+      "domain": "internal_platform",
+      "size": "mid",
+      "architecture": "monolith",
+      "compliance": "SOX Tier 1 critical",
+      "cadence": "two-week sprint"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v099",
+    "targetOutcome": "gsd",
+    "prose": "A 26-person finance platform group maintains the general-ledger posting path for several regulated lending products. Most code still runs in a decade-old Java service with stored procedures and nightly close jobs, while new exception handling and audit views are built on cloud queues and containerized services. A three-engineer reconciliation pod owns its slice end to end, from schema changes through production support, with little reliance on the wider group.\n\nControls are driven by internal audit: every balance-affecting change needs traceable evidence, segregation-of-duties review, and reproducible test data, though product requests often arrive as terse operations tickets. The formal release train is monthly because of the legacy database, but the pod can safely deploy cloud-side fixes during each sprint and is pushing for smaller, independent releases. Their automated code-analysis and drafting allowance is tightly metered, so they reserve it for ambiguous incident work and high-risk changes rather than routine iteration.",
+    "tags": {
+      "domain": "general ledger",
+      "size": "26 FTE, 3-person pod",
+      "architecture": "legacy Java plus cloud",
+      "compliance": "high-risk internal audit",
+      "cadence": "monthly train, sprint fixes"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  },
+  {
+    "id": "v100",
+    "targetOutcome": "gsd",
+    "prose": "Three engineers own a reporting-compliance service for regional lenders. Each night, a batch pipeline ingests ledger extracts, applies jurisdiction-specific filing rules, and produces exception packs for operations staff. The team maintains the rules engine, data contracts, and audit trails without a separate platform or QA group.\n\nRequirements arrive as regulator bulletins and customer filing defects, usually clear enough to turn into small tickets after a short review. They complete and merge work every sprint, but production promotion is bundled into quarterly filing windows because downstream reconciliation and sign-off are expensive. Standard enterprise controls apply: encrypted data stores, role-based access, retained run logs, and change evidence. CI runs contract and replay tests, while a hard monthly cap on external model and summarization usage forces the team to keep automated analysis narrowly scoped.",
+    "tags": {
+      "domain": "reporting compliance",
+      "size": "3 FTE",
+      "architecture": "nightly batch pipeline",
+      "compliance": "standard enterprise",
+      "cadence": "quarterly releases"
+    },
+    "generatorModel": "gpt-5.6-terra"
+  }
+]

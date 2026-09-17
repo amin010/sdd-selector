@@ -3,15 +3,16 @@
 | Field | Value |
 |---|---|
 | Status | Draft — awaiting review |
-| Version | 0.4.0 |
+| Version | 0.4.1 |
 | Owner | Amin Rashidi |
-| Last updated | 2026-09-16 |
-| Source material | *Modern Agentic Spec-Driven Development Frameworks*, Appendix: "Team Diagnostic & SDD Model Selection Decision System"; *Finance Tech Team & Project Diagnostic Questionnaire* (the instrument) |
+| Last updated | 2026-09-17 |
+| Source material | *Modern Agentic Spec-Driven Development Frameworks* (`docs/archive/Agentic Spec-Driven Development Frameworks.md`), Appendix: "Team Diagnostic & SDD Model Selection Decision System"; *Finance Tech Team & Project Diagnostic Questionnaire* (the instrument) |
 | Evidence date | 2026-09-16 (see Appendix A for method) |
 
 **Changelog**
 
-- **0.4.0** — Questionnaire, frameworks, and rules are a validated JSON pack inlined at build time (`DESIGN-EXT-CONFIG.md`). URL marker is a content digest (`v=<digest8>`), not a hand-bumped schema integer. On-screen report trims profile and free-text to Markdown-only (`DESIGN-EXT-UI.md`). Second pack (`general-engineering`) proves the format; authoring guide in `docs/AUTHORING.md`.
+- **0.4.1** — Two QC-driven rule/engine fixes, no new questions. (1) Tier 0 treats an empty framework `runtimes` array as “no runtime restriction” rather than “supports nothing,” so answering `q20_runtimes` no longer drops BMAD (or any other unrestricted framework) from the candidate set; `watch` status is still excluded. (2) Base rule 1 is narrowed to `nonRoadmapShare ≥ 40` only — the architecture-only arm (`q10 ∈ {monolith, hybrid, batch_data}`) was dropped so more-specific later rules can fire. Source appendix order is unchanged (D1): OpenSpec remains first as the brownfield catch, then Spec Kit / BMAD / compact-team. Architecture still drives overlay E, not the base.
+- **0.4.0** — Questionnaire, frameworks, and rules are a validated JSON pack inlined at build time (`docs/archive/DESIGN-EXT-CONFIG.md`). URL marker is a content digest (`v=<digest8>`), not a hand-bumped schema integer. On-screen report trims profile and free-text to Markdown-only (`docs/archive/DESIGN-EXT-UI.md`). Second pack (`general-engineering`) proves the format; authoring guide in `docs/AUTHORING.md`.
 - **0.3.0** — Replaced inferred Q1–Q16 enums with the real Finance Tech diagnostic instrument. Answers are the instrument; the engine reads named derived views where a rule needs an aggregate (§7.6). Q13 and the instrument's open-text Q17 are collected. Design-added questions are Q18–Q21. URL schema `v=3`. New cautions C12 (interrupt-driven) and C13 (vendor-dependent).
 - **0.2.0** — Added evidence-based framework profiles (§8) and cross-cutting decision dimensions (§9) from primary-source research. Added Tier 3 caution rules (§10.4), four new diagnostic questions (§9.3), overlays F and G, and a documented list of divergences from the source document (§11). Corrected adoption metrics; several in the source document were materially wrong.
 - **0.1.0** — Initial design from the source appendix.
@@ -493,7 +494,7 @@ Mapping the source appendix's rules against the **real instrument** (§7.1):
 | Q7 requirements clarity | Base rules 2, 3; Overlay D | Unchanged. |
 | Q8 compliance | Overlay A; C2; Overlay F | `internal_governance` does not fire A or C2 (D16). |
 | Q9 precision | Overlay B; Overlay F; C5 | `standard` replaces the invented `reconciled` value. |
-| Q10 architecture | Base rules 1, 2; Overlay E | `streaming` is in the form; it is not brownfield and not Spec Kit's microservices path (D22). |
+| Q10 architecture | Base rule 2; Overlay E | `streaming` is in the form; it is not brownfield and not Spec Kit's microservices path (D22). Architecture no longer selects OpenSpec as a base (0.4.1). |
 | Q11a deploy cadence | Base rule 4 | Instrument's "once or twice per sprint" is `sprint` (was `weekly`). |
 | Q11b cycle time | No | Collected and reported (D19). |
 | Q12 quality gates | Rule-4 split (D3′); report note on overlay B | Multi-select. `coverageLevel` is derived (D17). |
@@ -544,7 +545,7 @@ Since the strongest governance mechanisms in these frameworks are `advisory`, re
 
 ### 10.1 Tier 0 — runtime feasibility filter
 
-Before base selection, any framework not documenting support for at least one runtime in `q20_runtimes` is removed from the candidate set, and frameworks with `status: 'watch'` are removed as base candidates (F15). If `q20` is unanswered, no filtering occurs. If filtering empties the candidate set, the engine reports "no framework documents support for your runtimes" and lists the closest matches rather than falling through to a default.
+Before base selection, any framework that documents a **non-empty** runtime list and does not overlap `q20_runtimes` is removed from the candidate set, and frameworks with `status: 'watch'` are removed as base candidates (F15). An empty `runtimes` array means the framework documents no runtime restriction — it stays in the candidate set (BMAD is the motivating case; this is generic, not a BMAD special case). If `q20` is unanswered, no filtering occurs. If filtering empties the candidate set, the engine reports "no framework documents support for your runtimes" and lists the closest matches rather than falling through to a default.
 
 ### 10.2 Tier 1 — base selection
 
@@ -552,7 +553,7 @@ Rules are evaluated **in order; the first whose predicate is true wins**, restri
 
 | # | Base | Predicate |
 |---|---|---|
-| 1 | **OpenSpec** | `derived.nonRoadmapShare ≥ 40` **OR** `q10 ∈ {monolith, hybrid, batch_data}` |
+| 1 | **OpenSpec** | `derived.nonRoadmapShare ≥ 40` |
 | 2 | **GitHub Spec Kit** | `q5.roadmap ≥ 60` **AND** `q10 = microservices` **AND** `q7 = structured` **AND** `NOT derived.volatilityIsHigh` |
 | 3 | **BMAD Method** | `derived.hasRoles.{product_owner, scrum_master, qa_sdet}` all true **AND** `q7 ∈ {high_level, vague}` |
 | 4 | **Superpowers** or **GSD Core** | `derived.teamSize < 5` **AND** `q11_deploy_cadence ∈ {continuous, sprint}` **AND** `q14 = autonomous`; split per D3′ below |
@@ -616,7 +617,7 @@ Predicates may read the answers, derived views, and the partial result. Rendered
 
 | ID | Ambiguity | Decision | Rationale |
 |---|---|---|---|
-| D1 | Multiple base rules can fire (e.g., a small autonomous team on a monolith hits rules 1 and 4). | Ordered evaluation, first match wins, in source order; runner-up reported (F13). | Simplest deterministic scheme. Source ordering places brownfield safety before velocity, the conservative choice for finance. Reporting the runner-up removes most of the cost of being wrong. |
+| D1 | Multiple base rules can fire (e.g., a small autonomous team with ≥40% non-roadmap work hits rules 1 and 4). | Ordered evaluation, first match wins, in source order; runner-up reported (F13). | Simplest deterministic scheme. Source ordering places brownfield safety before velocity, the conservative choice for finance. Reporting the runner-up removes most of the cost of being wrong. Architecture alone does not select OpenSpec (0.4.1); overlay E still fires on `q10 = monolith`. |
 | D2 | No base rule fires for some valid inputs. | Fall back to OpenSpec and flag it. | Lowest-ceremony, highest brownfield-fit option; least harmful default. The flag prevents a fallback reading as a strong recommendation. |
 | D3′ | Rule 4 names two frameworks with no split criterion. | `coverageLevel = low` **and** affordable budget → Superpowers; `coverageLevel = low` **and** metered → GSD Core + overlay B; otherwise GSD Core. | Superpowers' value is enforced TDD, which matters most at low coverage — but it is the most token-intensive option, so budget gates it. GSD Core's value is context hygiene, orthogonal to coverage. |
 | D4 | Overlay E's second trigger ("complex multi-file features spanning broad historical files") is not a questionnaire answer. | Dropped; only `q10 = monolith` fires E. | Not evaluable from inputs. |
@@ -661,7 +662,7 @@ Recorded so a reviewer can check each independently.
 
 ## 12. User interface
 
-*Superseded in part by `DESIGN-EXT-UI.md` (EXT-UI): the form is rendered from generic field kinds rather than per-question renderers (§12.2), and the profile and process-mismatch sections move to the Markdown export only (§12.3). Layout and accessibility below stand.*
+*Superseded in part by `docs/archive/DESIGN-EXT-UI.md` (EXT-UI): the form is rendered from generic field kinds rather than per-question renderers (§12.2), and the profile and process-mismatch sections move to the Markdown export only (§12.3). Layout and accessibility below stand.*
 
 ### 12.1 Layout
 
@@ -732,7 +733,7 @@ Minimum fixture coverage:
 - Q5 incomplete or sum ≠ 100 → rules 1 and 2 do not fire from Q5.
 - `derive()`: `interrupt_driven` ⇒ `volatilityIsHigh`; QA/SDET = 0 and PO/SM = none ⇒ all `hasRoles` false; Dedicated or Shared PO ⇒ `hasRoles.product_owner`.
 - `coverageLevel`: only `mostly_manual` (or empty) → `low`; two automated gates → `partial`; three → `high` (D17).
-- Tier 0: `q20 = [gemini_cli]` filters candidates; empty candidate set produces the explicit no-match result, not a fallback (D8).
+- Tier 0: `q20 = [gemini_cli]` filters candidates; empty candidate set produces the explicit no-match result, not a fallback (D8). Answering `q20` does not drop a framework with empty `runtimes` (BMAD remains selectable when base-3 matches).
 - `status: 'watch'` framework never appears as a base (F15).
 - One fixture per overlay, positive and negative, including F and G.
 - Overlay A does **not** fire on `q8 = internal_governance` (D16).
@@ -776,7 +777,7 @@ Appendix A's figures are a snapshot. The refresh procedure is scripted and docum
 
 Ordered by likelihood:
 
-1. **Multiple rule sets** (finance vs. general engineering). Extract data to `rules/<name>.json` with a selector; keep an inlined default so `file://` still works. *Designed in `DESIGN-EXT-CONFIG.md` (EXT-CONFIG), which supersedes this item: packs are authored offline as JSON and inlined at build time, so §6.2's objection to fetching an external rules file still holds and is honoured.*
+1. **Multiple rule sets** (finance vs. general engineering). Extract data to `rules/<name>.json` with a selector; keep an inlined default so `file://` still works. *Designed in `docs/archive/DESIGN-EXT-CONFIG.md` (EXT-CONFIG), which supersedes this item: packs are authored offline as JSON and inlined at build time, so §6.2's objection to fetching an external rules file still holds and is honoured.*
 2. **Weighted scoring** as an alternative to first-match-wins, producing a ranked list with confidence. Engine-only change; §8.1's ceremony / cost / fit ratings become inputs rather than display-only (see D11).
 3. **Rules for currently silent instrument fields** (Q1 domain, Q4 tenure, Q11 cycle time, Q13 branching) if field evidence appears. Do not invent them ahead of evidence (D19, D21).
 4. **Automated evidence refresh**: a small script writing a fresh `FRAMEWORKS.evidence` block from the GitHub API, run on a schedule, so §8 metrics do not rot.

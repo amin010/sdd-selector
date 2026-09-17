@@ -7,14 +7,18 @@
   "scripts": {
     "build": "node tools/build.mjs",
     "build:release": "node tools/build.mjs --strip-fixtures",
-    "test": "node tools/validate.mjs packs/finance-tech.json && node tools/validate.mjs packs/general-engineering.json && node tools/build.mjs && node --test tests/*.test.mjs && node tools/parity.mjs --self --quick && node tools/parity.mjs && node tools/parity.mjs --break-demo && node tools/lint-structure.mjs && node tools/build.mjs --pack packs/general-engineering.json --out /tmp/general-engineering.html && node tools/selftest-page.mjs /tmp/general-engineering.html && node tools/build.mjs",
+    "test": "node tools/validate.mjs packs/finance-tech.json && node tools/validate.mjs packs/general-engineering.json && node tools/build.mjs && node --test tests/*.test.mjs && node tools/parity.mjs --self --quick && node tools/parity.mjs && node tools/parity.mjs --break-demo && node tools/lint-structure.mjs && node tools/build.mjs --pack packs/general-engineering.json --out /tmp/general-engineering.html && node tools/selftest-page.mjs /tmp/general-engineering.html && node tools/build.mjs && node tools/qc/sensitivity.mjs && node tools/qc/analyze.mjs",
     "parity": "node tools/parity.mjs",
     "lint:structure": "node tools/lint-structure.mjs",
     "inline": "node tools/build.mjs",
     "validate": "node tools/validate.mjs packs/finance-tech.json",
     "validate:all": "node tools/validate.mjs packs/finance-tech.json && node tools/validate.mjs packs/general-engineering.json",
     "fixtures:markdown": "node tools/generate-markdown-goldens.mjs",
-    "selftest": "node tools/selftest-page.mjs"
+    "selftest": "node tools/selftest-page.mjs",
+    "qc:sensitivity": "node tools/qc/sensitivity.mjs",
+    "qc:generate": "node tools/qc/personas.mjs && node tools/qc/respond.mjs",
+    "qc:judge": "node tools/qc/judge.mjs",
+    "qc:analyze": "node tools/qc/analyze.mjs"
   },
   "engines": {
     "node": ">=18"

@@ -4,7 +4,7 @@
  */
 import { loadGolden } from "./load-page.mjs";
 
-/** Pinned clock for evidenceAge.stale (IMPLEMENTATION-PLAN §3.1). */
+/** Pinned clock for evidenceAge.stale (docs/archive/IMPLEMENTATION-PLAN.md §3.1). */
 export const PINNED_NOW = Date.parse("2026-09-16T12:00:00Z");
 
 /** Baseline answers used by the in-page selftest helper A(). */
@@ -46,6 +46,15 @@ export function documentedFixtures() {
         product_owner: "dedicated", scrum_master: "shared",
       },
     }) },
+    { name: "base-3-bmad-with-q20", answers: A({
+      q10_architecture: "monolith",
+      q7_requirements: "vague",
+      q2_team: {
+        total: 8, swe: 4, data_engineers: 1, qa_sdet: 1,
+        product_owner: "dedicated", scrum_master: "shared",
+      },
+      q20_runtimes: ["claude_code"],
+    }) },
     { name: "base-4-superpowers", answers: A({
       q10_architecture: "streaming",
       q2_team: {
@@ -58,6 +67,7 @@ export function documentedFixtures() {
     }) },
     { name: "D1-rule1-wins-rule4-runnerup", answers: A({
       q10_architecture: "monolith",
+      q5_work_breakdown: { roadmap: 20, ops: 20, bugs: 20, regulatory: 20, tech_debt: 20 },
       q2_team: {
         total: 3, swe: 3, data_engineers: 0, qa_sdet: 0,
         product_owner: "none", scrum_master: "none",
@@ -135,7 +145,10 @@ export function documentedFixtures() {
       q16_bottlenecks: ["flaky_cicd", "ambiguous_or_shifting", "test_fear"],
       q7_requirements: "structured", q4_domain_familiarity: "high",
     }) },
-    { name: "ov-e-pos", answers: A({ q10_architecture: "monolith" }) },
+    { name: "ov-e-pos", answers: A({
+      q10_architecture: "monolith",
+      q5_work_breakdown: { roadmap: 20, ops: 20, bugs: 20, regulatory: 20, tech_debt: 20 },
+    }) },
     { name: "ov-e-neg", answers: A({ q10_architecture: "microservices" }) },
     { name: "ov-f-pos", answers: A({ q8_compliance: "sox_tier1", q21_ci_maturity: "none" }) },
     { name: "ov-f-neg", answers: A({

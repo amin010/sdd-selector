@@ -11,11 +11,11 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Branching: —
 
 ## Recommended base: OpenSpec
-Non-roadmap work or a monolith/hybrid/batch architecture favors specs written only for the change at hand.
+Non-roadmap work favors specs written only for the change at hand.
 
 - Install: `openspec init (+ openspec config profile for expanded)`
 - Repo: `Fission-AI/OpenSpec`
-- Triggering answers: q5_work_breakdown = {"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5}; q10_architecture = monolith
+- Triggering answers: q5_work_breakdown = {"roadmap":20,"ops":20,"bugs":20,"regulatory":20,"tech_debt":20}
 - Enforcement:
 Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
 Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)

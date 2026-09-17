@@ -10,7 +10,10 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(__dirname, "..");
-/** Frozen P5 finance-tech page — G-PARITY baseline for v0.4.0. */
+/** Frozen finance-tech page — G-PARITY baseline.
+ *  Filename kept as index-v040.html; contents refreshed for pack 0.4.1
+ *  (empty `runtimes` = unrestricted at Tier 0; base-1 is nonRoadmapShare-only).
+ */
 export const GOLDEN_V040 = path.join(ROOT, "tests/golden/index-v040.html");
 /** @deprecated alias kept for a few call sites during P6 cutover */
 export const GOLDEN_PAGE = GOLDEN_V040;

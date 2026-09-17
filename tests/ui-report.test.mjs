@@ -20,6 +20,7 @@ test("empty answers → no Recommended base / fallback card on screen", () => {
   assert.equal(html.includes("Recommended base"), false);
   assert.equal(html.includes("Default recommendation"), false);
   assert.equal(html.includes("Team profile"), false);
+  assert.ok(html.includes("Your recommendation will appear here"), "empty-state orientation");
   assert.equal(
     api.summaryText(result, answers),
     "Answer the questions to see a recommendation.",
@@ -48,7 +49,7 @@ test("rule-relevant answers → base appears; no Team profile / Process mismatch
   assert.equal(html.includes("Team profile"), false);
   assert.equal(html.includes("Process mismatch note"), false);
   const sum = api.summaryText(result, answers);
-  assert.match(sum, /^Recommended base: .+\. \d+ overlays, \d+ cautions\.$/);
+  assert.match(sum, /^Recommended base: .+\. \d+ overlays, \d+ cautions(?:, \d+ high)?\.$/);
 });
 
 test("toMarkdown still includes Team profile and Process mismatch note", () => {
@@ -105,4 +106,40 @@ test("report rebuild micro-bench under 10ms average (evaluate+buildReportHtml)",
   const avg = (performance.now() - t0) / N;
   // Plan exit: rebuild <10ms. evaluate+HTML string is the testable proxy without DOM.
   assert.ok(avg < 10, `avg ${avg.toFixed(3)}ms per evaluate+buildReportHtml (>=10ms)`);
+});
+
+test("completeness HTML uses question numbers; Markdown keeps field ids", () => {
+  const answers = documentedFixtures().find((f) => f.name === "base-1-openspec").answers;
+  const result = api.evaluate(answers, null, PINNED_NOW);
+  const html = api.buildReportHtml(result, answers);
+  assert.ok(result.completeness.couldChangeResult.length, "fixture should leave rule-relevant gaps");
+  const id = result.completeness.couldChangeResult[0];
+  const label = api.questionLabel(id);
+  assert.match(label, /^Q\d+/);
+  assert.ok(label.includes(" · "));
+  assert.equal(label.includes(id), false);
+  assert.ok(html.includes(label), "screen completeness uses human-readable label");
+  assert.ok(html.includes('href="#q-'), "completeness jumps to the question fieldset");
+  const visible = html.replace(/<a href="[^"]*">/g, "").replace(/<\/a>/g, "");
+  assert.equal(visible.includes(id), false, "raw field id is not completeness link text");
+  const md = api.toMarkdown(result, answers);
+  assert.ok(md.includes(id), "Markdown completeness still names field ids");
+  assert.equal(html.includes("Team profile"), false);
+  assert.equal(html.includes("Process mismatch note"), false);
+});
+
+test("questionLabel and progressText helpers", () => {
+  const n = api.QUESTIONS.length;
+  assert.equal(api.progressText({}), `0 of ${n} answered`);
+  const q = api.QUESTIONS.find((item) => item.fields && item.fields[0]);
+  assert.ok(q);
+  const fid = q.fields[0].id;
+  const label = api.questionLabel(fid);
+  assert.match(label, / · /);
+  assert.equal(label.includes(fid), false);
+  const answers = documentedFixtures().find((f) => f.name === "base-1-openspec").answers;
+  const p = api.progressCounts(answers);
+  assert.equal(p.total, n);
+  assert.ok(p.answered > 0 && p.answered < n);
+  assert.equal(api.progressText(answers), `${p.answered} of ${n} answered`);
 });

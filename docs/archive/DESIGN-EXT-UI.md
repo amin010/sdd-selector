@@ -7,9 +7,9 @@
 | Version | 0.1.0 |
 | Owner | Amin Rashidi |
 | Last updated | 2026-09-16 |
-| Extends | `docs/DESIGN.md` v0.3.0 §12 |
-| Depends on | `docs/DESIGN-EXT-CONFIG.md` (EXT-CONFIG) for the pack and field model |
-| Implementation plan | `docs/IMPLEMENTATION-PLAN.md` — this document lands in phases P2 (input path) and P3 (output path) |
+| Extends | `../DESIGN.md` v0.3.0 §12 |
+| Depends on | `DESIGN-EXT-CONFIG.md` (EXT-CONFIG) for the pack and field model |
+| Implementation plan | `IMPLEMENTATION-PLAN.md` — this document lands in phases P2 (input path) and P3 (output path) |
 | Target release | SDD Selector v0.4.0 |
 
 **Changelog**

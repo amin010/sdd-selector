@@ -1,0 +1,3302 @@
+[
+  {
+    "vignetteId": "v001",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield system, volatile ticket fragments, and high volume of narrowly scoped fixes while allowing plans to evolve mid-flight. BMAD adds useful discovery for vague operations requests and a Quick Flow for bugs, while GSD offers traceability and verification suited to fragile, broad-span monolith changes without requiring BMAD-level role ceremony."
+  },
+  {
+    "vignetteId": "v001",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield, high-churn environment, fragmented requirements, and need to specify only small changes without documenting the legacy system up front. BMAD’s discovery roles and Quick Flow suit vague operations tickets plus frequent fixes, while GSD adds useful requirement traceability and context management for the occasional broad monolith change."
+  },
+  {
+    "vignetteId": "v001",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield, high-churn workload, fragmented requirements, and need to revise narrowly scoped changes without heavy ceremony. BMAD’s discovery structure and Quick Flow suit the mix of vague accounting-rule work and frequent bug fixes, while GSD offers useful traceability and verification for broad monolith changes without requiring BMAD-style role adoption."
+  },
+  {
+    "vignetteId": "v002",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the team’s need for auditable review gates, controlled exceptions, concurrent work, and coupled release trains. OpenSpec fits the brownfield, high-churn backlog and change-by-change specification model, though its advisory verification would need CI enforcement for SOX controls. BMAD provides useful discovery for policy-driven requirements and a lighter Quick Flow for frequent fixes, assuming the team can sustain its role separation."
+  },
+  {
+    "vignetteId": "v002",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best balances discovery for ambiguous policy/spreadsheet inputs, enterprise role separation, and a lighter path for frequent fixes. Spec Kitty’s explicit transitions, override records, and review gates suit SOX auditability and coordinated release trains. OpenSpec fits the brownfield, high-churn delta workload well, but its advisory verification would need reinforcement through the team’s CI and approval controls."
+  },
+  {
+    "vignetteId": "v002",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield platform, frequent change deltas, and volatile requirements, while the team can supplement its advisory verification with existing CI and SOX controls. Spec Kitty adds valuable auditable transitions and review gates for concurrent work on coupled releases. BMAD fits the mix of ambiguous policy-driven requirements and urgent maintenance through its role separation and lighter Quick Flow path."
+  },
+  {
+    "vignetteId": "v003",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches vague policy-driven requirements, enterprise role separation, and the need to handle both planned work and urgent fixes with tunable ceremony. Spec Kitty adds auditable review transitions and supports concurrent engineers plus coupled monthly releases, while GSD suits broad monolith changes and end-to-end requirement traceability, though its youth and weaker-than-CI verification make it third."
+  },
+  {
+    "vignetteId": "v003",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches vague, policy-driven requests, enterprise role separation, and the need for formal discovery and design artifacts while retaining a lighter path for urgent fixes. Spec Kitty fits concurrent work, traceable review overrides, and tightly controlled bundled releases. OpenSpec suits the brownfield, incident-heavy backlog and changing requirements, though its advisory verification would need reinforcement through the team’s existing CI and approval controls."
+  },
+  {
+    "vignetteId": "v003",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the group’s distinct operations, risk, QA, and approval roles, while supporting discovery for policy-driven requests and a lighter flow for incidents and fixes. Spec Kitty fits concurrent work, monthly bundled releases, and the need for auditable review overrides; GSD adds useful requirement-to-code traceability across a broad monolith, though its immaturity makes it the riskier third choice."
+  },
+  {
+    "vignetteId": "v004",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield pipeline dominated by small, volatile correction deltas without requiring full-system respecification. Spec Kitty fits the team’s coupled quarterly releases and need for auditable approvals, exceptions, and controlled transitions. BMAD ranks third because its Quick Flow can handle fixes while its discovery and documentation roles help turn vague operational or compliance inputs into governed changes, though the small team may find its persona structure burdensome."
+  },
+  {
+    "vignetteId": "v004",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the team’s concurrent maintenance work, coupled quarterly releases, and need for auditable review gates and controlled overrides. OpenSpec suits brownfield, delta-driven corrections and changing requirements, though its advisory verification must be backed by the team’s existing controls. BMAD’s Quick Flow can handle frequent fixes while its fuller role-based process supports vague compliance requests and larger coordinated changes."
+  },
+  {
+    "vignetteId": "v004",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield pipeline, spreadsheet-driven deltas, changing requirements, and predominance of small corrective work. BMAD adds useful discovery and enterprise documentation while its Quick Flow can keep fixes lightweight. Spec Kitty fits the team’s coupled releases and need for auditable review gates, though its workflow and rebase overhead make it less attractive for frequent small changes."
+  },
+  {
+    "vignetteId": "v005",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a volatile brownfield monolith where urgent, narrowly scoped changes must be specified without documenting the whole legacy system. BMAD is useful for discovering rules behind vague tickets while routing routine fixes through Quick Flow, assuming the six-person team can sustain role separation. GSD adds traceability and fresh-context execution for broad monolith changes, though its youth makes it a less suitable operational dependency."
+  },
+  {
+    "vignetteId": "v005",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield monolith with frequent small changes, volatile requirements, and low tolerance for ceremony. GSD Core is a strong second for broad monolith changes and traceability, though its youth is a risk. BMAD’s discovery structure and Quick Flow can handle vague tickets and urgent fixes, but its role-based ceremony may burden a six-person maintenance-heavy team."
+  },
+  {
+    "vignetteId": "v005",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield monolith with volatile, ticket-driven requirements and little capacity for ceremony, while allowing plans to evolve mid-flight. BMAD adds useful discovery for incomplete requests and a Quick Flow for routine fixes; GSD is a reasonable third choice for broad monolith changes and requirement traceability, though its youth makes it riskier for a maintenance-heavy team."
+  },
+  {
+    "vignetteId": "v006",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s real role separation, discovery-heavy requirements, enterprise documentation needs, and mix of planned work with urgent fixes. Spec Kitty adds the strongest fit for SOX-oriented audit trails, explicit approvals, concurrent work, and coupled release trains. OpenSpec suits the volatile brownfield changes and evolving dependency knowledge, though its advisory verification means the team must continue relying on CI and existing change controls for enforcement."
+  },
+  {
+    "vignetteId": "v006",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-person team’s concurrent work, coupled release train, segregation-of-duties needs, and demand for auditable review transitions. BMAD fits vague audit- and operations-driven requirements, real role separation, and the mix of discovery-heavy changes with quick bug-fix work. OpenSpec is well suited to volatile brownfield changes and incremental legacy retirement, though its advisory verification would need reinforcement through the team’s existing CI and change controls."
+  },
+  {
+    "vignetteId": "v006",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches vague audit-driven intake, enterprise role separation, and the need to tune ceremony between investigations, fixes, and larger retirement work. Spec Kitty adds strong auditable workflow transitions and visible gates for a concurrent 14-person team on coupled release trains. OpenSpec’s revisable delta specs suit volatile brownfield changes, though its advisory verification means the team must continue relying on existing CI and change controls for enforcement."
+  },
+  {
+    "vignetteId": "v007",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches concurrent remediation and support work, coupled monthly releases, and the need for auditable review gates and override records. BMAD fits the analyst/engineering/QA separation, vague inbound regulatory requirements, and mixed workload through its tunable Quick Flow. OpenSpec suits the volatile brownfield change stream, but its advisory verification would need reinforcement through existing CI and approval controls."
+  },
+  {
+    "vignetteId": "v007",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the team’s concurrent remediation work, coupled monthly releases, and need for auditable approvals and controlled transitions. BMAD fits its analyst/engineering/QA role separation, ambiguous legacy requirements, and mix of major initiatives with urgent fixes, while OpenSpec suits volatile brownfield changes but would require added CI controls for mandatory compliance gates."
+  },
+  {
+    "vignetteId": "v007",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the 27-person team's concurrent work, coupled monthly releases, and need for auditable approvals and controlled workflow overrides. BMAD fits enterprise role separation, ambiguous regulatory interpretations, and the mix of major remediation with small urgent fixes. OpenSpec's delta-based workflow suits volatile brownfield changes, though its advisory verification is insufficient alone for the bank's compliance gates."
+  },
+  {
+    "vignetteId": "v008",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the bank’s need for auditable review transitions, segregation-of-duties evidence, concurrent work, and coupled quarterly releases. OpenSpec suits the brownfield monolith, frequent unplanned changes, and requirements clarified mid-investigation, though the team must supply enforceable CI gates. BMAD adds useful discovery and role separation for vague, control-driven requests, with Quick Flow available for urgent defects and patches."
+  },
+  {
+    "vignetteId": "v008",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "superpowers",
+      "speckitty",
+      "speckit"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v008",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches the bank’s need for auditable transitions, approval evidence, concurrent ownership, and bundled releases. OpenSpec suits the brownfield, interruption-heavy environment and requirements clarified mid-investigation, though its advisory verification would need CI controls. GSD adds useful requirement-to-code traceability across a broad monolith, but its youth is a risk for a regulated maintenance setting."
+  },
+  {
+    "vignetteId": "v009",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches brownfield maintenance, frequent small fixes, volatile requirements, and edge cases discovered mid-flight. BMAD supports discovery from vague operational inputs while its Quick Flow can keep routine fixes lightweight. GSD adds useful requirement traceability and verification across the broad legacy application, though its youth makes it a less certain fit."
+  },
+  {
+    "vignetteId": "v009",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "tessl",
+      "openspec"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v009",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "superpowers"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v010",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches an enterprise team needing role separation, discovery of hidden business rules, formal artifacts, and a lighter path for urgent fixes. Spec Kitty adds auditable review transitions and coordination for a 14-person coupled-release environment, while OpenSpec suits incremental brownfield changes but would require the team’s existing CI and controls to supply fail-closed enforcement."
+  },
+  {
+    "vignetteId": "v010",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches vague inbound control findings, enterprise role separation, and the need to scale ceremony between planned changes and urgent fixes. Spec Kitty adds strong auditable workflow transitions and review gates for a concurrent team with coupled releases. OpenSpec fits incremental brownfield discovery and changing plans, though its advisory verification would need reinforcement through the team’s existing CI and SOX controls."
+  },
+  {
+    "vignetteId": "v010",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the team’s concurrent work, coupled release train, and need for auditable approvals and exception records. BMAD supports discovery of rules hidden in legacy artifacts while preserving role separation and offering a lighter path for urgent fixes; OpenSpec’s change-focused delta specs suit volatile brownfield maintenance, though its advisory verification would need reinforcement through the team’s existing CI and controls."
+  },
+  {
+    "vignetteId": "v011",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield estate, frequent requirement revisions, and high volume of incremental fixes. BMAD adds useful discovery, role separation, and tunable ceremony for enterprise controls, while Spec Kitty fits concurrent work, coupled monthly releases, and the need for auditable review gates."
+  },
+  {
+    "vignetteId": "v011",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the bank’s real role separation, vague and evolving requests, enterprise documentation needs, and mix of governed changes with urgent fixes. Spec Kitty adds auditable workflow gates and visibility for concurrent work feeding coupled monthly releases, while OpenSpec fits the volatile brownfield change stream but would require additional CI controls because its verification is only advisory."
+  },
+  {
+    "vignetteId": "v011",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches the group’s real cross-functional role separation, vague and evolving requests, enterprise documentation needs, and mix of planned work with urgent fixes via Quick Flow. OpenSpec fits the brownfield estate and volatile requirements through incremental delta specs and mid-flight revision. Spec Kitty adds useful auditable transitions and coordination for concurrent work and coupled monthly releases, though its workflow and rebase overhead keep it third."
+  },
+  {
+    "vignetteId": "v012",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield estate, volatile regulatory requirements, and need to revise change specifications as reconciliations evolve. BMAD adds useful discovery and role separation across engineering, finance, compliance, and QA while its Quick Flow suits defects and emergency fixes. Spec Kitty is third for its auditable review transitions and support for coupled quarter-end releases, though its workflow overhead may be significant for a three-person team."
+  },
+  {
+    "vignetteId": "v012",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a volatile brownfield estate dominated by defects, regulatory changes, and acceptance criteria that evolve during reconciliation, while keeping ceremony manageable for three engineers. BMAD adds useful discovery and a Quick Flow for small fixes, with analyst, finance-control, compliance, and QA responsibilities providing genuine role separation; Spec Kitty ranks third because its auditable transitions and support for coupled releases suit quarter-end governance, though its workflow and rebase overhead may burden such a small team."
+  },
+  {
+    "vignetteId": "v012",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a volatile brownfield estate where requirements emerge through investigation and reconciliation, while allowing plans to change mid-flight with low ceremony. Spec Kitty fits the team’s coupled quarter-end releases and need for auditable approvals and review gates; BMAD ranks third because its discovery and Quick Flow paths suit vague findings and emergency fixes, though its role-based ceremony may burden a three-person team."
+  },
+  {
+    "vignetteId": "v013",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield system with volatile, example-driven requirements, frequent small fixes, and low tolerance for ceremony. BMAD’s Quick Flow can handle urgent maintenance while its fuller discovery path suits vaguer finance requests; GSD adds useful requirement traceability and monolith-spanning verification without BMAD’s full role overhead."
+  },
+  {
+    "vignetteId": "v013",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield monolith, frequent small fixes, changing bank-format requirements, and need for low-ceremony mid-flight revisions. BMAD’s Quick Flow suits urgent maintenance while its discovery roles can clarify accountant-supplied examples; GSD adds useful requirement traceability and verification across broad monolith changes, though its youth makes it a weaker third choice."
+  },
+  {
+    "vignetteId": "v013",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield system, volatile bank-format requirements, and steady stream of small urgent fixes without demanding up-front documentation. BMAD’s Quick Flow can handle maintenance work while its discovery and role separation help translate accountant examples into clearer requirements. GSD adds useful traceability and verification across a broad monolith, though its youth and heavier agent workflow make it a less certain fit."
+  },
+  {
+    "vignetteId": "v014",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield estate, volatile incident-driven requirements, and frequent corrective changes, though its advisory verification would need reinforcement through existing SOX CI controls. Spec Kitty fits concurrent work, coupled release trains, and the need for auditable state transitions and overrides. BMAD is a strong third choice because discovery helps clarify audit- and incident-derived requirements while Quick Flow limits ceremony for fixes, assuming the team can use its role separation effectively."
+  },
+  {
+    "vignetteId": "v014",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield estate, frequent corrective changes, and requirements that evolve during investigation, while its advisory verification can be supplemented by their existing CI and SOX controls. Spec Kitty fits the 14-person team’s concurrent work, coupled release train, and need for auditable approvals, though its workflow and rebase overhead may be burdensome. BMAD ranks third because discovery plus Quick Flow accommodates vague inputs and production fixes, but its value depends on role separation not clearly established in the story."
+  },
+  {
+    "vignetteId": "v014",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield, high-churn corrective work and evolving requirements, while existing CI and SOX controls can compensate for its advisory verification. BMAD adds useful discovery and role separation for audit-driven requirements, with Quick Flow limiting ceremony for fixes; Spec Kitty ranks third for auditable state transitions, concurrent work, and coupled release coordination."
+  },
+  {
+    "vignetteId": "v015",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches a 28-person team coordinating coupled monthly releases while requiring visible, auditable review gates and documented overrides. BMAD fits the enterprise role separation, vague committee-driven requirements, and mix of substantial remediation work with urgent fixes; OpenSpec is a strong brownfield option for volatile change requests, though its advisory verification makes it less suitable as the primary control mechanism."
+  },
+  {
+    "vignetteId": "v015",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches an enterprise team with distinct governance stakeholders, vague risk-driven intake, and a mix of planned remediation and urgent fixes. Spec Kitty fits the 28-person group’s concurrent work, coupled monthly releases, and need for auditable review transitions. OpenSpec’s delta-based workflow suits frequent brownfield changes, though its advisory verification would need reinforcement through the team’s existing CI and governance gates."
+  },
+  {
+    "vignetteId": "v015",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield monolith, frequent remediation work, and volatile committee- and operations-driven changes; its advisory verification can be supplemented by the team’s existing CI and governance controls. BMAD suits a 28-person enterprise group with role separation, vague inbound requirements, and a mix of major initiatives and urgent fixes, while Spec Kitty adds auditable workflow gates and coordination for concurrent work and coupled monthly releases."
+  },
+  {
+    "vignetteId": "v016",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "superpowers",
+      "openspec",
+      "speckit"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v016",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield monolith dominated by volatile, narrowly scoped fixes and reconstructed requirements, without imposing excessive ceremony. Spec Kitty adds useful auditability and visible review gates for the two engineers and bundled releases, while GSD offers traceability across broad monolith changes without BMAD’s role-persona overhead."
+  },
+  {
+    "vignetteId": "v016",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield, patch-heavy workflow by documenting only each ledger change without requiring an upfront monolith specification. GSD adds useful requirement-to-code traceability and verification for ambiguous accounting requests spanning a legacy monolith, while Spec Kitty’s auditable transitions and review gates suit SOX evidence and bundled releases, albeit with more workflow overhead for a two-person team."
+  },
+  {
+    "vignetteId": "v017",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield platform, volatile urgent requests, and need for low-ceremony change-specific documentation. GSD adds useful requirement traceability and verification across a sprawling monolith, while Spec Kitty’s audit trail and concurrency support fit the six-person team’s policy-driven change records, though its workflow overhead makes it third."
+  },
+  {
+    "vignetteId": "v017",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield platform, volatile urgent requests, and need to specify only incremental changes with low ceremony. GSD adds useful requirement traceability and verification across a sprawling monolith and fragile downstream transformations, while Spec Kitty offers concurrency support and auditable change gates for the six-person team, though its workflow and rebase overhead make it a weaker fit for frequent small fixes."
+  },
+  {
+    "vignetteId": "v017",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield platform with frequent, volatile, small changes and little tolerance for ceremony. GSD adds useful requirement traceability and verification across a sprawling legacy monolith, while Spec Kitty provides auditable change history and coordination for concurrent cleanup and incident work, albeit with more workflow overhead."
+  },
+  {
+    "vignetteId": "v018",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches the team’s role-separated, sprint-based environment, vague inbound requests, and mixed workload through formal discovery plus Quick Flow for fixes. OpenSpec suits the predominantly brownfield, high-churn change stream and allows plans to evolve, though SOX controls would need enforcement through existing CI and approval processes. Spec Kitty adds valuable auditable transitions and coordination for coupled ledger, schema, and release work, despite added workflow and rebase overhead."
+  },
+  {
+    "vignetteId": "v018",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches vague inbound requests, enterprise role separation, sprint delivery, and the need to scale ceremony down for frequent fixes. OpenSpec suits the brownfield estate and incremental, revisable change specifications, though SOX controls would require external CI gates. Spec Kitty adds auditable workflow transitions and coordination for concurrent work and bundled releases, despite its operational friction."
+  },
+  {
+    "vignetteId": "v018",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield, high-churn maintenance workload and allows narrowly scoped change specifications to evolve as behavior is reconstructed. BMAD adds useful discovery, role separation, and a lighter path for fixes, while Spec Kitty’s auditable transitions and concurrency support fit SOX controls and bundled releases, albeit with more workflow overhead."
+  },
+  {
+    "vignetteId": "v019",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the enterprise role separation, vague policy-driven requirements, discovery needs, and mix of planned work with urgent reporting fixes. Spec Kitty adds strong auditability, visible gates, concurrency support, and coupled-release coordination, while OpenSpec suits the brownfield system and frequently revised edge cases, with existing CI and governance compensating for its advisory verification."
+  },
+  {
+    "vignetteId": "v019",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches a sizable enterprise team with vague policy-driven requirements, cross-functional review roles, and a mix of planned work and urgent fixes that benefits from Quick Flow. Spec Kitty’s auditable state transitions and support for concurrent work fit regulated, coupled monthly releases, while OpenSpec is well suited to brownfield volatility but would require added CI enforcement because its verification is advisory."
+  },
+  {
+    "vignetteId": "v019",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches a sizable enterprise team with distinct review roles, ambiguous policy-driven requirements, and a mix of planned work and urgent feed fixes. Spec Kitty adds valuable auditable transitions, ownership, and review gates for concurrent work and coupled monthly releases. OpenSpec suits the brownfield, high-churn environment and evolving edge cases, though its advisory verification means the team must retain its existing CI and governance controls."
+  },
+  {
+    "vignetteId": "v020",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield monolith, frequent small changes, shifting priorities, and need to revise plans without documenting the entire legacy system. Spec Kitty adds auditable transitions and coordination suited to regulated, coupled release windows, while BMAD offers enterprise-grade discovery and documentation with a Quick Flow for fixes, though its persona overhead may be heavy for three engineers."
+  },
+  {
+    "vignetteId": "v020",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield monolith, volatile incident-driven backlog, and need to specify incremental changes without documenting the whole platform. Spec Kitty fits the three-engineer concurrency, bundled releases, and audit-sensitive need for visible state transitions, while GSD adds useful requirement traceability and broad-monolith verification with less role ceremony than BMAD."
+  },
+  {
+    "vignetteId": "v020",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield monolith, volatile production-driven workload, and frequent small changes without requiring an up-front system specification. Spec Kitty fits the team’s auditability needs, concurrent engineers, and coupled quarterly releases, while GSD adds requirement traceability and broad-monolith support without BMAD’s role overhead, though its immaturity is a drawback."
+  },
+  {
+    "vignetteId": "v021",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield, high-churn system where reactive fixes and evolving exception-driven requirements favor lightweight delta specs and easy mid-flight revision. BMAD’s discovery roles and Quick Flow can handle both vague accountant inputs and frequent small fixes, while GSD offers useful traceability and broad-monolith support for riskier reconciliation and database changes."
+  },
+  {
+    "vignetteId": "v021",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield system dominated by volatile, exception-driven maintenance and small changes, while allowing plans to evolve without requiring an upfront specification of the legacy codebase. BMAD’s Quick Flow can handle frequent fixes while its discovery roles help translate accountants’ spreadsheet examples into clearer requirements; GSD adds useful traceability and verification for riskier reconciliation and backfill work across the monolith."
+  },
+  {
+    "vignetteId": "v021",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield system, volatile exception-driven requirements, and need to handle small changes without documenting the entire legacy codebase. BMAD adds useful discovery for accountant-supplied examples while its Quick Flow can keep routine fixes lightweight; GSD ranks third for traceability and verification across a broad monolith, though its immaturity is a drawback for a finance-critical internal system."
+  },
+  {
+    "vignetteId": "v022",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the team’s concurrent work, coupled release windows, and need for auditable review and exception trails. OpenSpec suits the brownfield estate, volatile discrepancy-driven requirements, and incremental changes, though Jenkins controls would need to supply fail-closed verification. BMAD adds useful discovery and role separation for compliance-heavy changes while its Quick Flow can handle defects and urgent corrections."
+  },
+  {
+    "vignetteId": "v022",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches an enterprise team with vague, compliance-driven requirements, real role separation, and a mix of substantial changes and urgent fixes supported by Quick Flow. Spec Kitty adds the visible, auditable gates and coordinated work-package flow valuable for SOX-controlled releases, while OpenSpec fits the brownfield estate and frequently revised change-level requirements but would need CI controls because its verification is only advisory."
+  },
+  {
+    "vignetteId": "v022",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield estate, frequent small regulatory changes, and requirements that evolve during reconciliation, while existing Jenkins and ServiceNow controls can compensate for its advisory verification. Spec Kitty adds valuable auditable transitions and coordination for a 14-person team with coupled release windows, while BMAD fits enterprise role separation and vague inbound requirements with a Quick Flow option for defects and urgent corrections."
+  },
+  {
+    "vignetteId": "v023",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches this brownfield system, frequent small changes, uneven documentation, and evolving requirements without imposing heavy ceremony. GSD adds useful requirement traceability and verification without requiring role separation, while Spec Kitty offers auditable workflow gates and concurrency support, though its state-machine and rebase overhead make it a weaker third choice."
+  },
+  {
+    "vignetteId": "v023",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield system, frequent small changes, evolving requirements, and low tolerance for ceremony. Spec Kitty adds useful concurrency coordination and auditable review transitions for a six-person rotating-ownership team, while GSD offers requirement traceability and verification without assuming dedicated product, QA, or architecture roles."
+  },
+  {
+    "vignetteId": "v023",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield system, frequent small changes, uneven legacy documentation, and low tolerance for role-heavy ceremony. GSD adds useful requirement-to-code traceability without requiring separate personas, while Spec Kitty’s auditable transitions and concurrent-work support suit rotating ownership and ledger changes, though its workflow overhead makes it third."
+  },
+  {
+    "vignetteId": "v024",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield pipelines, evolving finance interpretations, and need to revise change plans without excessive ceremony; its advisory verification can be supplemented by the team’s existing CI and SOX controls. Spec Kitty adds auditable workflow transitions and review gates for concurrent work and grouped releases. GSD provides useful requirement-to-code traceability and verification without requiring the role separation that makes BMAD a poor organizational fit."
+  },
+  {
+    "vignetteId": "v024",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-person team’s concurrent work, coupled releases, and need for auditable review transitions in a SOX-significant environment. OpenSpec fits the brownfield pipelines and requirements that evolve during implementation, while GSD adds requirement-to-code traceability without imposing role separation, though its project immaturity makes it the riskier third choice."
+  },
+  {
+    "vignetteId": "v024",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-person team’s concurrent work, grouped releases, and need for auditable review gates in a SOX-significant environment. OpenSpec fits the brownfield pipelines and requirements that evolve during implementation, while GSD adds useful requirement-to-code traceability and verification without assuming dedicated organizational roles."
+  },
+  {
+    "vignetteId": "v025",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield, vendor-accreted platform and cross-system work whose plans often change mid-flight, while existing CI and risk controls can compensate for its advisory verification. Spec Kitty adds auditable review gates and coordination for concurrent engineers and coupled monthly releases; GSD provides requirement-to-code traceability and broad-change support without imposing role personas the rotating team does not have."
+  },
+  {
+    "vignetteId": "v025",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield platform, uneven edge-case discovery, and need to revise plans mid-flight; the team’s existing CI and review controls can compensate for its advisory verification. Spec Kitty adds strong auditability, visible gates, and coordination for rotating engineers working on coupled releases, while GSD offers useful requirement-to-code traceability and verification without imposing BMAD-style role separation."
+  },
+  {
+    "vignetteId": "v025",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches the 26-person team’s concurrent work, monthly coupled releases, and need for auditable risk and review gates. OpenSpec fits the brownfield, vendor-specific estate and supports mid-flight discovery, while existing CI can compensate for its advisory verification; GSD adds useful requirement traceability without imposing role personas the rotating-ownership team does not have."
+  },
+  {
+    "vignetteId": "v026",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "superpowers"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield services, evolving analyst-driven requirements, and preference for limited ceremony. Spec Kitty fits the three engineers’ concurrent work, quarterly coupled releases, and need for audit-visible change controls, while Superpowers offers strong correctness discipline for reconciliation pipelines, albeit with substantially more workflow and token overhead."
+  },
+  {
+    "vignetteId": "v026",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the team's brownfield services, evolving analyst-driven requirements, and need to revise plans without heavy ceremony. Spec Kitty fits concurrent work, quarterly coupled releases, and audit-friendly change tracking, while GSD adds requirement traceability and verification without requiring BMAD-style dedicated roles."
+  },
+  {
+    "vignetteId": "v026",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the mixed brownfield estate, evolving analyst-driven requirements, and need for low-ceremony mid-flight revision. Spec Kitty fits the team’s concurrent work, quarterly release coordination, and audit-friendly change controls, while GSD offers useful requirement traceability and verification without requiring BMAD-style dedicated roles."
+  },
+  {
+    "vignetteId": "v027",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield modular monolith, frequent mid-rollout exceptions, and preference for small, low-ceremony changes. GSD adds useful requirement traceability across broad monolith changes without relying on fixed team roles, while Spec Kitty is a strong third choice for concurrent work and audit-friendly transition records, though its workflow and rebase overhead may be heavier than this team needs."
+  },
+  {
+    "vignetteId": "v027",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield modular monolith, frequent rollout exceptions, and need to revise small changes without heavy ceremony; existing CI can supply stronger enforcement. GSD adds useful requirement traceability across broad monolith changes, while Spec Kitty fits the six-engineer team's concurrent work and audit-friendly review needs, though with more workflow and rebase overhead."
+  },
+  {
+    "vignetteId": "v027",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield modular monolith, frequent rollout exceptions, and preference for small, low-ceremony changes; its advisory verification can be supplemented by the team’s existing CI and security processes. Spec Kitty adds useful concurrency controls and auditable workflow transitions for six rotating engineers and coordinated integration releases, while GSD offers requirement traceability across broad monolith changes without requiring BMAD-style fixed role separation."
+  },
+  {
+    "vignetteId": "v028",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team's shared product/engineering ownership, analyst input, sprint cadence, mixed ambiguity, and need for both structured discovery and a lighter path for urgent fixes. Spec Kitty fits bundled releases and SOX-driven needs for visible state, approvals, and auditable overrides. OpenSpec suits incremental brownfield changes and evolving cross-system knowledge, though its advisory verification would need reinforcement through the team's existing CI and release controls."
+  },
+  {
+    "vignetteId": "v028",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s real product/engineering/analyst role separation, mixed requirement clarity, sprint cadence, and need to scale ceremony down for urgent fixes. Spec Kitty adds auditable workflow transitions and suits concurrent work bundled into controlled releases, while OpenSpec’s delta-based approach fits incremental brownfield changes but would require the team’s existing CI and approval controls to supply enforceable gates."
+  },
+  {
+    "vignetteId": "v028",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s shared but distinct finance, engineering, analyst, and QA responsibilities, while its discovery phases and Quick Flow accommodate both institutional-knowledge gaps and urgent fixes. Spec Kitty is a strong second for auditable approvals, visible gates, concurrent work, and bundled sprint releases. OpenSpec fits the brownfield, incremental-change workload well, but its advisory verification is less suitable for SOX-controlled changes without additional CI enforcement."
+  },
+  {
+    "vignetteId": "v029",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield pipelines, evolving reporting views, and requirements that may change mid-flight without demanding full-codebase specification. Spec Kitty adds useful auditability and coordination for a 26-person team with shared testing and coupled monthly releases, while BMAD fits the mix of analyst-led discovery, role separation, and a lighter path for defect patches."
+  },
+  {
+    "vignetteId": "v029",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield pipelines, evolving reporting requirements, and need to revise change plans without imposing heavy ceremony. Spec Kitty adds valuable audit trails, visible gates, and coordination for a 26-person team with coupled monthly releases, while GSD offers requirement traceability and verification without assuming the role separation this team lacks."
+  },
+  {
+    "vignetteId": "v029",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield pipeline with evolving requirements, mixed legacy/new work, and a need to revise changes mid-flight without documenting the entire estate. Spec Kitty suits the 26-person team’s concurrent work, monthly coupled releases, and need for auditable review history, while BMAD offers useful discovery and tunable quick-flow handling for loosely defined metrics and patched data defects, though its persona structure may add overhead."
+  },
+  {
+    "vignetteId": "v030",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the pod’s shifting brownfield/new-delivery mix and rules that evolve during implementation, allowing lightweight change specs and mid-flight revision. Spec Kitty fits concurrent work, auditable review gates, and bundled releases, while GSD adds requirement traceability without imposing BMAD’s role-persona overhead."
+  },
+  {
+    "vignetteId": "v030",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the pod’s shifting brownfield/new-delivery mix and rules that are clarified during implementation, allowing delta specs and mid-flight revision without excessive ceremony. Spec Kitty fits three concurrent engineers, coupled quarterly releases, and enterprise demand for visible, auditable transitions, while GSD offers useful requirement traceability without BMAD’s role-separation overhead."
+  },
+  {
+    "vignetteId": "v030",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the pod’s brownfield mix, shifting scope, and rules clarified during implementation. Spec Kitty suits three concurrent engineers, coupled quarterly releases, and enterprise auditability, while GSD adds requirement traceability without imposing BMAD’s role-heavy structure."
+  },
+  {
+    "vignetteId": "v031",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the mix of incremental brownfield changes, exploratory requirements, and on-demand service deployments, while the team’s existing CI compensates for its advisory verification. BMAD’s discovery phases and Quick Flow suit both ambiguous analyst requests and routine connector updates, though its persona overhead is a concern for a six-person team. Spec Kitty fits concurrent cross-service work and provides useful auditability for privacy-sensitive changes, but its workflow and rebase overhead make it the third choice."
+  },
+  {
+    "vignetteId": "v031",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "tessl",
+      "gsd"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v031",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the team’s mostly brownfield services, frequent small changes, and exploratory requirements that evolve after sample data arrives. Spec Kitty supports concurrent cross-service work and provides auditable review gates useful for overlapping ownership and privacy controls, while BMAD offers stronger discovery for vague analyst requests plus a lighter flow for routine connector and operational changes."
+  },
+  {
+    "vignetteId": "v032",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield monolith, changing requirements, and mix of small control updates and evolving process work, while existing CI can supply the enforcement its advisory verification lacks. Spec Kitty adds valuable auditable workflow transitions and review gates for a concurrent 14-person team. GSD provides requirement-to-code traceability across broad monolith changes without imposing BMAD-style role separation, though its youth makes it the riskier third choice."
+  },
+  {
+    "vignetteId": "v032",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield platform, mixed change sizes, and requirements that evolve during refinement; its advisory verification can be supplemented by the team’s existing CI and review controls. GSD adds requirement-to-code traceability and verification without requiring dedicated role personas, while Spec Kitty offers strong auditable workflow gates and concurrency support for the 14-person team, albeit with more process and rebase overhead."
+  },
+  {
+    "vignetteId": "v032",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "gsd",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the team’s need for auditable review gates, visible work-package progress, and coordination across concurrent engineers and coupled sprint releases. GSD adds requirement-to-code traceability and suits a broad modular monolith without requiring dedicated role personas. OpenSpec fits the brownfield system and shifting requirements through incremental, revisable change specs, though its advisory verification means compliance gates must remain enforced through the existing CI and review process."
+  },
+  {
+    "vignetteId": "v033",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield estate, change-scoped documentation, evolving policy interpretation, and need to revise plans without imposing a uniform process; existing CI and reviews can supply stronger gates. Spec Kitty adds auditable approvals and visible coordination for concurrent work and coupled monthly releases, while GSD offers requirement-to-code traceability without BMAD’s mismatched role separation."
+  },
+  {
+    "vignetteId": "v033",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield estate, change-specific documentation, and policy-driven requirements that may evolve during implementation. Spec Kitty fits the 26-person group’s concurrent work, monthly coupled releases, and need for auditable approvals, while GSD offers useful end-to-end requirement traceability without BMAD’s mismatched role-separation overhead."
+  },
+  {
+    "vignetteId": "v033",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches concurrent shared ownership, monthly coupled releases, and the need for auditable approvals and override trails. OpenSpec suits the mixed brownfield estate and evolving policy-derived requirements, while GSD adds requirement-to-code traceability and structured verification across broad legacy and cloud changes, though its immaturity is a drawback."
+  },
+  {
+    "vignetteId": "v034",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield service, evolving reporting requirements, and need to specify incremental changes without documenting years of legacy behavior upfront; existing CI can supply stronger enforcement. Spec Kitty fits the three-engineer concurrency, quarterly coupled releases, and audit-trail needs, while GSD offers useful requirement traceability and verification without requiring the role structure this team lacks."
+  },
+  {
+    "vignetteId": "v034",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield service, evolving reporting requirements, and small team needing change-focused documentation without heavy role ceremony. Spec Kitty fits the enterprise audit trail, shared engineering work, and coupled quarterly releases, though its workflow overhead may require care. GSD adds useful requirement traceability and verification across legacy flows without BMAD-style role separation, but its youth makes it a less certain choice."
+  },
+  {
+    "vignetteId": "v034",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches the team’s concurrent shared work, bundled releases, and need for visible, auditable change and review history. OpenSpec suits the brownfield service and evolving reporting requirements with low ceremony, while GSD adds useful requirement-to-code traceability but carries maturity risk for an enterprise-controlled service."
+  },
+  {
+    "vignetteId": "v035",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield estate, shifting reconciliation requirements, frequent releases, and likely preference for change-scoped ceremony. GSD adds requirement traceability and verification without requiring BMAD-style dedicated roles, while Spec Kitty suits six concurrent engineers and provides auditable review transitions for bank-data-related work."
+  },
+  {
+    "vignetteId": "v035",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "tessl"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield estate, shifting reconciliation rules, frequent incremental releases, and low tolerance for role-heavy ceremony. GSD adds useful requirement traceability and verification across the ingestion, streaming, and reporting components, while Tessl’s lightweight interview technique can help clarify exception-heavy finance requests without imposing a large process."
+  },
+  {
+    "vignetteId": "v035",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield estate, shifting reconciliation requirements, and frequent low-ceremony releases. GSD adds useful requirement traceability and verification without requiring absent specialist roles, while Spec Kitty suits six engineers working concurrently and offers auditable review gates for sensitive bank-data changes, though with more workflow overhead."
+  },
+  {
+    "vignetteId": "v036",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s real role separation, sprint cadence, mixed workload, and need to turn example-driven reconciliation requirements into reviewable artifacts while retaining a lighter path for routine connector changes. Spec Kitty adds valuable auditable transitions and visible gates for a concurrent SOX-relevant team, while OpenSpec fits the brownfield, evolving services but would require the team’s existing CI and approval processes to supply mechanically enforced compliance gates."
+  },
+  {
+    "vignetteId": "v036",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield platform, frequent small connector changes, and evolving reconciliation requirements, while the team can supplement its advisory verification with existing CI and approval controls. Spec Kitty adds valuable audit trails and visible gates for SOX-relevant concurrent work, while BMAD fits the team's sprint cadence, stakeholder role separation, vague inbound requirements, and need to vary ceremony between routine fixes and complex rules."
+  },
+  {
+    "vignetteId": "v036",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s real product/accounting/engineering role separation, mixed requirement clarity, sprint cadence, and need for tunable ceremony with durable planning artifacts. Spec Kitty adds strong auditable workflow gates for SOX-relevant changes and concurrent service work, while OpenSpec suits the brownfield, evolving reconciliation domain but would require the team’s existing CI and approval controls to compensate for its advisory verification."
+  },
+  {
+    "vignetteId": "v037",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield monolith, variable backlog quality, and policy requirements that often change during delivery, while existing CI can supply the enforcement it lacks. Spec Kitty fits the 26-person team’s concurrent work and need for auditable governance and review transitions. BMAD is useful for discovery-heavy finance requests and offers a lighter path for fixes, though its persona-based role separation may add overhead because analysis and release responsibilities are not dedicated."
+  },
+  {
+    "vignetteId": "v037",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield modular monolith, variable backlog quality, and policy requirements that may change during delivery; its advisory verification can be reinforced by the team’s existing CI and governance checks. BMAD adds useful discovery and separation of concerns for finance/audit workshops, while Spec Kitty provides auditable workflow gates and coordination for a sizable concurrent team."
+  },
+  {
+    "vignetteId": "v037",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield monolith, uneven legacy knowledge, and policy-driven requirements that may change mid-delivery, while the team can supplement its advisory verification with existing CI and governance checks. Spec Kitty fits the 26-person team's concurrent work and need for auditable review transitions, while GSD offers useful requirement traceability across a broad monolith without assuming dedicated product or release roles."
+  },
+  {
+    "vignetteId": "v038",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "superpowers"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v038",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the team’s brownfield environment, modest change scope, and need to revise evolving reconciliation requirements without documenting the entire legacy system. BMAD adds useful discovery for ambiguous requests while its Quick Flow accommodates routine fixes; Spec Kitty ranks third because its auditable workflow and support for concurrent, coupled work fit enterprise release windows, though its state-machine overhead may burden a three-person team."
+  },
+  {
+    "vignetteId": "v038",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield ledger, mixed legacy/cloud estate, evolving reconciliation requirements, and need for low-ceremony change-specific documentation. BMAD supports both discovery for ambiguous views and a lighter flow for routine corrections, though its persona structure may be heavy for three people. Spec Kitty suits concurrent work, auditable gates, and bundled quarterly releases, but its state-machine and rebase overhead make it a secondary fit."
+  },
+  {
+    "vignetteId": "v039",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "superpowers",
+      "openspec"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v039",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a small brownfield team replacing components amid changing file formats and informally defined requirements, while keeping ceremony low and allowing plans to evolve. GSD adds useful requirement traceability and verification for calculation and reporting changes without requiring dedicated roles. Spec Kitty is a reasonable third choice for coordinating concurrent component replacements and preserving review history, though its workflow and rebase overhead may be heavier than this team needs."
+  },
+  {
+    "vignetteId": "v039",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches this brownfield, high-churn product and its preference for lightweight change-specific documentation; existing CI and peer review can compensate for advisory verification. GSD adds useful requirement traceability without requiring dedicated product or QA roles. Spec Kitty fits the six-person team's concurrent work and desire for auditable reviews, though its state-machine and rebase overhead make it a less natural fit."
+  },
+  {
+    "vignetteId": "v040",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the mix of loosely framed analyst requests, enterprise controls, two-week sprints, and lighter handling for small fixes through Quick Flow; the team also has enough product, engineering, and finance separation to use its personas meaningfully. Spec Kitty is a strong second for concurrent work and auditable approval transitions under SOX, while OpenSpec suits the brownfield, incremental platform work but would require added CI enforcement for material-control gates."
+  },
+  {
+    "vignetteId": "v040",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-person team’s concurrent work, sprint-end releases, and SOX need for explicit, auditable approvals and overrides. BMAD fits loosely framed analyst requests and offers enterprise documentation plus a lighter path for fixes, though the team would need to formalize its partially shared roles. OpenSpec suits the brownfield platform and mix of incremental, changing work, but its advisory verification would need reinforcement through existing CI and control processes."
+  },
+  {
+    "vignetteId": "v040",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team's vague analyst requests, meaningful product/control role separation, sprint cadence, and mix of substantial work with quick fixes. Spec Kitty adds strong auditability and visible review gates for concurrent engineers and SOX-sensitive changes, while OpenSpec suits the brownfield platform and evolving requirements but would need CI extensions for enforceable compliance gates."
+  },
+  {
+    "vignetteId": "v041",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield system, evolving operational requirements, and preference for lightweight processes that can be revised mid-flight. GSD adds useful requirement traceability and verification for broad monolith/service changes without BMAD’s role overhead, while Spec Kitty suits six concurrent engineers needing visible progress and auditable review gates, though its workflow and rebase friction add cost."
+  },
+  {
+    "vignetteId": "v041",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "tessl"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield Ruby/Go estate, frequent small changes, and requirements that evolve after implementation begins. GSD adds useful traceability and phased verification for changes spanning the monolith and services, while Tessl’s lightweight interview technique could help turn terse operations notes into clearer requirements without imposing heavy ceremony."
+  },
+  {
+    "vignetteId": "v041",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield, mixed-stack system with frequently clarified requirements, rapid deployment, and low ceremony tolerance. GSD adds useful requirement traceability and fresh-context execution for changes spanning the Ruby monolith and Go services without requiring formal roles. BMAD ranks third because its discovery and Quick Flow tracks could help with vague operations notes, though its persona-based structure may add overhead for this small team."
+  },
+  {
+    "vignetteId": "v042",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the team’s need for auditable review gates, controlled overrides, concurrent work, and coupled sprint releases. BMAD fits its real separation among engineering, finance, audit, and QA stakeholders and supports discovery around initially ambiguous findings while retaining a lighter patch flow. OpenSpec is a good brownfield choice for evolving change-level requirements, with the team’s existing CI and approval controls compensating for its advisory verification."
+  },
+  {
+    "vignetteId": "v042",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team's sprint cadence, genuine finance/audit role separation, discovery-heavy requirements, and need for a lighter patch path. Spec Kitty adds strong auditable state transitions and review gates for concurrent work and coupled releases. OpenSpec fits the brownfield pipeline and evolving regulator-driven changes, while the team's existing CI can compensate for its advisory verification."
+  },
+  {
+    "vignetteId": "v042",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-person team’s concurrent work, coupled sprint releases, and need for auditable review gates and documented overrides. BMAD fits the finance/audit discovery process, role separation, sprint cadence, and mixed feature/patch workload. OpenSpec is a strong brownfield choice because requirements evolve during review, though its advisory verification would need reinforcement through the team’s existing CI and approval controls."
+  },
+  {
+    "vignetteId": "v043",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "superpowers"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v043",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the bank’s real stakeholder and review-role separation, evolving exception requirements, and need for PRDs/ADRs with tunable handling for controlled patches. Spec Kitty’s auditable state transitions, concurrency support, and review gates suit a 28-person team operating coupled monthly releases. GSD adds end-to-end requirement traceability and structured verification, though its short maintenance history makes it less attractive in this regulated environment."
+  },
+  {
+    "vignetteId": "v043",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches a 28-person concurrent team needing auditable review gates, controlled overrides, and coordinated monthly releases. BMAD fits the bank’s distinct operations, risk, finance, QA, and engineering roles while supporting formal design records and lighter emergency-fix flows. OpenSpec’s change-focused, revisable delta specs suit brownfield services and country-specific exceptions that emerge mid-implementation, though its advisory verification would need reinforcement through existing GitLab CI controls."
+  },
+  {
+    "vignetteId": "v044",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield system receiving incremental ticket-driven changes whose edge cases can alter plans mid-flight, while GitLab CI can supply stronger enforcement. Spec Kitty fits the three-engineer concurrency, auditable approvals, and tightly coupled quarterly releases. BMAD ranks third because its Quick Flow and discovery structure could handle mixed small changes and ambiguous exceptions, though the small team may not fully benefit from its role-heavy model."
+  },
+  {
+    "vignetteId": "v044",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield pipeline with ticket-sized changes and edge cases that emerge mid-flight, while existing CI and approval controls can compensate for its advisory verification. Spec Kitty fits the three-engineer concurrency, auditable review needs, and coupled quarterly releases. GSD adds useful requirement-to-code traceability and verification, though its youth and emphasis on long-context work make it a weaker third choice."
+  },
+  {
+    "vignetteId": "v044",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches an established brownfield system with ticket-sized changes and edge cases that force mid-flight revision. Spec Kitty fits the three-engineer concurrency, enterprise audit trail, and coordinated quarterly releases; GSD adds useful requirement-to-code traceability and verification without BMAD’s persona overhead, though its youth and agent-heavy workflow are drawbacks."
+  },
+  {
+    "vignetteId": "v045",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield monolith with frequent small changes, evolving Slack-clarified requirements, and low ceremony tolerance. GSD suits broad monolith changes and provides traceability without requiring formal roles, while BMAD’s Quick Flow can handle urgent fixes and its discovery process can help with vague requests, though its persona structure may add overhead."
+  },
+  {
+    "vignetteId": "v045",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield, high-churn platform where concise requirements evolve during implementation and changes must ship with low ceremony. GSD is a strong second for agent-driven work spanning a modular monolith, offering useful traceability and verification without extensive role overhead. BMAD ranks third because Quick Flow can handle urgent fixes, though its persona-heavy main workflow is less aligned with this small engineering-led team."
+  },
+  {
+    "vignetteId": "v045",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield monolith, frequent small changes, evolving edge cases, and low tolerance for deployment-blocking ceremony. GSD adds useful context isolation and traceability for agent-driven changes spanning broad modules, while BMAD ranks third because its Quick Flow can serve urgent fixes, though the team lacks the explicit role separation needed to realize its full value."
+  },
+  {
+    "vignetteId": "v046",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the need for auditable workflow transitions, controlled overrides, concurrent work, and visible review gates in a SOX-critical environment. BMAD adds valuable role separation and discovery for ambiguous legacy mappings while retaining a lighter path for small fixes. OpenSpec fits the brownfield estate and incremental change model, with its advisory verification offset by the team’s existing CI, approval, signing, and deployment controls."
+  },
+  {
+    "vignetteId": "v046",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the sprint cadence, genuine separation of responsibilities, and need to resolve ambiguous legacy requirements while retaining a lighter path for controlled fixes. Spec Kitty adds strong, actor-attributed workflow transitions suited to SOX evidence and concurrent work, while GSD provides end-to-end requirement traceability and verification, though its immaturity makes it the riskier third choice."
+  },
+  {
+    "vignetteId": "v046",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the group’s SOX-driven need for auditable state transitions, controlled overrides, concurrent work, and review gates. BMAD adds strong role separation and discovery structure for ambiguous legacy mappings while retaining a lighter path for small fixes. OpenSpec is a good brownfield option with flexible change-level specifications, though its advisory verification must be backed by the team’s existing CI and approval controls."
+  },
+  {
+    "vignetteId": "v047",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the group’s genuine role separation, ambiguous policy inputs, enterprise documentation needs, and mix of planned releases with controlled patches. Spec Kitty adds auditable review transitions and supports concurrent work around coupled monthly releases. OpenSpec fits the brownfield platform and volatile schemas, though its advisory verification would need reinforcement through the team’s existing CI and approval controls."
+  },
+  {
+    "vignetteId": "v047",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the group’s genuine role separation, ambiguous policy inputs, enterprise documentation needs, and mix of planned releases with controlled patches. Spec Kitty adds auditable state transitions and review gates suited to segregation of duties, concurrent work, and coupled monthly releases. OpenSpec fits the brownfield platform and volatile schemas through revisable change-level specs, though its advisory verification would need reinforcement by the team’s existing CI and approval controls."
+  },
+  {
+    "vignetteId": "v047",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s genuine role separation, ambiguous policy-driven requirements, and enterprise need for PRDs, ADRs, review, and controlled emergency fixes. Spec Kitty fits concurrent work, coupled monthly releases, and auditable approval transitions, while OpenSpec suits the brownfield platform and frequently changing schemas through revisable delta specs, provided the team enforces compliance gates in its existing CI."
+  },
+  {
+    "vignetteId": "v048",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "superpowers",
+      "gsd"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v048",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "superpowers",
+      "tessl"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v048",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the three-engineer concurrency, quarterly coupled releases, and need for auditable workflow overrides. OpenSpec suits an existing brownfield service with ticket-sized changes and requirements that may evolve after control meetings. BMAD adds useful discovery for vague analyst requests and offers a lightweight path for small changes, though its persona overhead makes it a weaker third choice."
+  },
+  {
+    "vignetteId": "v049",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v049",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches brownfield, high-churn connector maintenance where production drift changes the plan and ceremony must stay low. BMAD’s Quick Flow can handle frequent fixes while its discovery structure helps with underspecified feed requirements, though full personas may be excessive. GSD adds useful requirement traceability and verification, but its long-session strengths and young dependency are less aligned with this team’s small, independently deployed changes."
+  },
+  {
+    "vignetteId": "v049",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches brownfield microservice maintenance, frequent small changes, and requirements that evolve as partner feeds drift; its advisory verification is offset by the team’s existing contract-test CI. GSD adds useful planning, verification, and traceability without requiring formal role personas, while BMAD ranks third because its Quick Flow suits fixes and backfills but its broader persona-driven structure may add overhead for this small engineering team."
+  },
+  {
+    "vignetteId": "v050",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-engineer team’s concurrent work, coupled sprint releases, and need for explicit, auditable review transitions. OpenSpec fits the brownfield monolith and tightly scoped control changes, with Buildkite able to supply the mandatory gates its advisory verification lacks. BMAD ranks third because its Quick Flow supports small changes while its role separation and structured artifacts suit enterprise governance and approvals."
+  },
+  {
+    "vignetteId": "v050",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the team's concurrent work, coupled sprint releases, and need for explicit, auditable approval transitions. OpenSpec fits the brownfield monolith and steady flow of tightly scoped control changes, with existing Buildkite and GitHub controls able to supply the enforcement its advisory verification lacks. BMAD adds enterprise-friendly role separation and protected sprint tracking while its Quick Flow limits ceremony for routine changes."
+  },
+  {
+    "vignetteId": "v050",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckit"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v051",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches the group’s need for auditable state transitions, controlled overrides, concurrent work, and coupled monthly releases. BMAD’s role separation and tunable flow align with segregation of duties, finance review, and emergency patches, while GSD adds strong requirement-to-code traceability and broad-monolith support, though its youth and agent-executed verification make it a less certain third choice."
+  },
+  {
+    "vignetteId": "v051",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "tessl",
+      "speckit",
+      "speckitty"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v051",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the group’s need for auditable review gates, explicit override records, concurrent work, and coupled monthly releases. BMAD adds valuable role separation and tunable ceremony for controlled policy changes versus emergency patches. OpenSpec fits the brownfield estate and change-focused requirements, while the team’s existing controlled CI and evidence systems can compensate for its advisory verification."
+  },
+  {
+    "vignetteId": "v052",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches the team’s need for auditable review gates, visible workflow state, concurrent work, and tightly coupled quarterly releases. BMAD fits policy-driven requirements that require analyst discovery and enterprise planning artifacts, while GSD offers useful requirement-to-code traceability with less role ceremony, though its youth is a concern for a regulated pipeline."
+  },
+  {
+    "vignetteId": "v052",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches policy-driven discovery, real separation among engineers, compliance analysts, and reviewers, and enterprise demand for structured decision artifacts. Spec Kitty adds valuable auditable workflow gates and coordination for quarterly coupled releases, while OpenSpec suits incremental brownfield rule changes but would require CI controls to compensate for advisory verification."
+  },
+  {
+    "vignetteId": "v052",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches policy-driven requirements that require discovery with compliance analysts, real role separation, and enterprise-grade planning artifacts, while Quick Flow can limit ceremony for minor fixes. Spec Kitty fits the team’s auditability, review-gate, and coordinated quarterly-release needs; OpenSpec ranks third because its brownfield delta workflow suits incremental transformation changes, though its advisory verification is weaker than this regulated pipeline ideally requires."
+  },
+  {
+    "vignetteId": "v053",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "GitHub Spec Kit best matches a bounded, story-driven greenfield subsystem with stable requirements and a need for structured planning before implementation. Spec Kitty suits six engineers working concurrently where visible work states and auditable gates are valuable, while GSD Core adds useful requirement-to-code traceability and verification without the heavier role ceremony of BMAD."
+  },
+  {
+    "vignetteId": "v053",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "GitHub Spec Kit best matches a bounded, greenfield subsystem with stable, example-rich requirements and deliberate review gates; its weakness around later spec revision is less concerning given low policy volatility. GSD adds useful requirement-to-code traceability and verification, while Spec Kitty suits six-person concurrent delivery where visible workflow and auditable gates help coordinate interdependent services."
+  },
+  {
+    "vignetteId": "v053",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "GitHub Spec Kit best matches a bounded, greenfield subsystem with stable semantics, detailed stories, and planned review checkpoints. Spec Kitty suits six engineers working concurrently where auditable workflow gates help protect ledger behavior, while GSD adds useful requirement-to-code traceability and verification without BMAD’s discovery and role-persona overhead."
+  },
+  {
+    "vignetteId": "v054",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches the greenfield, bounded, story-driven subsystem with stable up-front acceptance criteria and strict human review. Spec Kitty adds explicit auditable workflow transitions well suited to SOX approvals and concurrent work across 14 engineers, while BMAD fits the team's enterprise role separation, sprint cadence, and formal planning needs."
+  },
+  {
+    "vignetteId": "v054",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches the greenfield, story-driven subsystem with stable upfront acceptance criteria and structured human reviews. Spec Kitty adds valuable auditable workflow transitions for SOX-controlled approvals and concurrent delivery, while BMAD fits the enterprise team’s genuine product, engineering, and QA role separation, though its discovery emphasis is less necessary here."
+  },
+  {
+    "vignetteId": "v054",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches the greenfield, structured, story-driven build with stable upfront acceptance criteria and human review gates. Spec Kitty is a strong second for concurrent team execution, controlled releases, and auditable state transitions, while BMAD fits the group’s enterprise role separation and sprint process but adds less value because inbound requirements are already detailed rather than vague."
+  },
+  {
+    "vignetteId": "v055",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches the greenfield, story-driven subsystem, stable requirements, and structured human review needs. Spec Kitty adds strong value for a 26-person team through concurrent work-package coordination, auditable gate overrides, and coupled releases, while BMAD fits the established role separation and enterprise need for formal planning and architecture records."
+  },
+  {
+    "vignetteId": "v055",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the 26-person team's concurrent work, coupled monthly releases, and need for auditable review gates with explicit override records. GitHub Spec Kit fits the structured greenfield subsystem, stable detailed stories, and strict human review needs, while BMAD adds useful enterprise role separation and governance, though its discovery-heavy strengths are less important because requirements are already well defined."
+  },
+  {
+    "vignetteId": "v055",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "gsd",
+      "speckit",
+      "tessl"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v056",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "Spec Kit best matches a greenfield, architecturally partitioned subsystem with stable, pre-broken stories and explicit acceptance criteria. Spec Kitty fits the three-person team’s concurrent work, quarterly coupled releases, and need for auditable enterprise review gates. BMAD also aligns with the existing product, operations, and engineering separation and enterprise planning artifacts, though its discovery ceremony may be less valuable given the already mature requirements."
+  },
+  {
+    "vignetteId": "v056",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches this greenfield, architecturally structured subsystem with stable, story-level requirements and planned review stages. Spec Kitty fits the pod’s concurrent service work, quarterly coupled releases, and need for auditable enterprise gates. BMAD is also suitable because product, operations, and engineering provide genuine role separation, though its discovery-heavy structure is less valuable given the already detailed requirements."
+  },
+  {
+    "vignetteId": "v056",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches a greenfield, architecturally structured subsystem with stable, well-decomposed stories and deliberate review stages. Spec Kitty fits the pod’s concurrent service work, quarterly coupled releases, and need for auditable enterprise gates, while BMAD is a solid third choice because product, operations, and engineering already provide meaningful role separation and documented release criteria."
+  },
+  {
+    "vignetteId": "v057",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches a new, architecturally bounded subsystem with stable, detailed stories and substantial up-front contract and architecture planning. Spec Kitty suits the six-person team's concurrent work and need for visible, auditable gates, while BMAD aligns with enterprise planning and architecture documentation but offers less benefit because inbound requirements are already well defined."
+  },
+  {
+    "vignetteId": "v057",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "gsd",
+      "speckit",
+      "bmad"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v057",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "GitHub Spec Kit best matches the stable, structured, story-driven development of a new bounded subsystem, and its weak revision support is unlikely to hurt given low requirement volatility. Spec Kitty fits the six-person team’s concurrent work and need for visible, auditable gates, while GSD adds useful requirement-to-code traceability and verification without BMAD’s heavier role-persona overhead."
+  },
+  {
+    "vignetteId": "v058",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-person team’s concurrency, coupled releases, and need for auditable state transitions and controlled review gates. GitHub Spec Kit fits the stable, well-specified greenfield subsystem and planned human approvals, while BMAD adds useful enterprise role separation and sprint governance but offers less value because requirements already arrive fully decomposed."
+  },
+  {
+    "vignetteId": "v058",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-person team’s concurrent work, coupled releases, and need for auditable review transitions with documented overrides. Spec Kit fits the stable, well-decomposed greenfield subsystem and strict human review cadence, while BMAD supports enterprise role separation and segregation of duties, though its discovery strengths are less valuable because requirements are already precise."
+  },
+  {
+    "vignetteId": "v058",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-person team's concurrent delivery needs and SOX demand for explicit, auditable review transitions and documented overrides. Spec Kit fits the stable, story-driven greenfield subsystem and human-gated planning model, while BMAD adds valuable enterprise role separation and adjustable sprint ceremony, though its discovery strengths are less useful because requirements are already well defined."
+  },
+  {
+    "vignetteId": "v059",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the 26-person team’s concurrent delivery, auditable state transitions, review gates, and coupled monthly releases. GitHub Spec Kit fits the greenfield subsystem and its structured, human-reviewed planning process, while BMAD suits the enterprise role separation among engineering, policy, legal, risk, and QA stakeholders."
+  },
+  {
+    "vignetteId": "v059",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the 26-person team’s concurrent work, coupled monthly releases, and need for auditable review gates and override records. GitHub Spec Kit fits the greenfield, milestone-driven subsystem with stable upfront specifications and human governance reviews, while BMAD complements the team’s clear policy, legal, risk, QA, and engineering role separation, though its discovery strengths are less important here."
+  },
+  {
+    "vignetteId": "v059",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the 26-person team’s concurrent work, coupled monthly releases, and need for explicit, auditable review transitions. GitHub Spec Kit fits the structured greenfield subsystem, stable up-front requirements, and human governance gates, while BMAD adds useful enterprise role separation and formal planning artifacts for coordination among engineering, policy, legal, risk, and QA."
+  },
+  {
+    "vignetteId": "v060",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches the greenfield, story-driven subsystem, stable requirements, and deliberate human review points. Spec Kitty fits the three-person pod’s concurrent work, auditable gates, and coupled quarterly releases. BMAD is a solid enterprise alternative given product, operations, engineering, and risk role separation, though its discovery ceremony is less valuable because requirements are already detailed."
+  },
+  {
+    "vignetteId": "v060",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches the greenfield, story-driven subsystem with stable requirements, early interface decisions, and formal human review points. Spec Kitty fits the three-person pod’s concurrent work, quarterly coupled releases, and need for auditable gates, while BMAD adds useful enterprise role separation and a lighter path for urgent patches despite its discovery ceremony being less necessary here."
+  },
+  {
+    "vignetteId": "v060",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "Speckit best matches the greenfield, stable, story-driven subsystem with early interface decisions and deliberate human review gates. Spec Kitty fits the three-person team’s concurrent work, auditability, and coupled quarterly releases, while BMAD suits enterprise role separation and offers a lighter path for urgent patches."
+  },
+  {
+    "vignetteId": "v061",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "GitHub Spec Kit best matches the greenfield, architecturally structured, story-driven subsystem with stable requirements and clear review points. Spec Kitty suits a six-person team developing interdependent services concurrently while preserving auditable transitions, and GSD adds useful requirement traceability and phased verification, though its context-management strengths are less essential here."
+  },
+  {
+    "vignetteId": "v061",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "Spec Kit best matches the greenfield, architecturally structured subsystem with stable, groomed stories and clear acceptance criteria. Spec Kitty suits six engineers developing concurrent service work while preserving visible state and auditable reviews, while GSD adds useful requirement-to-code traceability but is less directly aligned because broad monolith context is not the team's main constraint."
+  },
+  {
+    "vignetteId": "v061",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "GitHub Spec Kit best matches the greenfield, architecturally structured, story-driven subsystem with stable requirements and planned service boundaries. Spec Kitty suits six engineers working concurrently across interdependent services while providing visible progress and auditable transitions; BMAD ranks third because stakeholder and engineering role separation is present, though its discovery ceremony adds less value when requirements are already unambiguous."
+  },
+  {
+    "vignetteId": "v062",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "speckit"
+    ],
+    "reasoning": "Spec Kitty best matches a 14-person concurrent team needing auditable review gates, controlled state transitions, and coordinated releases. BMAD fits the enterprise sprint setting and separation among control owners, product stakeholders, and QA, while allowing lighter handling of small changes. Spec Kit suits the subsystem’s structured, stable, story-driven requirements and human review gates, though its greenfield orientation is less ideal beside a legacy system."
+  },
+  {
+    "vignetteId": "v062",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "speckit"
+    ],
+    "reasoning": "Spec Kitty best matches the 14-person team's concurrent work, coordinated releases, and need for auditable, override-tracked review gates. BMAD fits its genuine role separation, enterprise governance, and sprint cadence, while Spec Kit suits the structured, low-volatility development of a new subsystem with strong human review checkpoints."
+  },
+  {
+    "vignetteId": "v062",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "speckit"
+    ],
+    "reasoning": "Spec Kitty best matches the team's need for auditable state transitions, visible review gates, concurrent engineering, and coordinated releases. BMAD fits the established control-owner role separation, enterprise planning, QA, and sprint cadence, while GitHub Spec Kit suits the structured build-out of a new subsystem with stable requirements and human review gates, though its weak revision support is less concerning given low volatility."
+  },
+  {
+    "vignetteId": "v063",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "speckit",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the 26-person team’s concurrent work, coupled releases, and need for auditable, override-tracked review gates. GitHub Spec Kit fits the structured greenfield subsystem and stable, detailed stories, while BMAD adds enterprise-friendly role separation and tunable ceremony for controlled releases and occasional urgent defects."
+  },
+  {
+    "vignetteId": "v063",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "speckit"
+    ],
+    "reasoning": "Spec Kitty best matches the 26-person team’s concurrent work, coupled releases, formal review gates, and need for auditable transition overrides. BMAD fits the enterprise role separation, segregation of duties, and tunable path for rare emergency fixes, while GitHub Spec Kit suits the structured greenfield subsystem and human review model, though its gates require external CI enforcement."
+  },
+  {
+    "vignetteId": "v063",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "speckit"
+    ],
+    "reasoning": "Spec Kitty best matches the group’s concurrent delivery, coupled releases, and need for explicit, auditable review-state transitions. BMAD fits enterprise role separation and formal planning/architecture artifacts, while Spec Kit suits the stable, detailed stories and greenfield ledger subsystem with human review gates."
+  },
+  {
+    "vignetteId": "v064",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "superpowers"
+    ],
+    "reasoning": "GitHub Spec Kit best matches a bounded greenfield subsystem with detailed stories, stable requirements, and deliberate human review gates. Spec Kitty adds auditable workflow transitions well suited to three concurrent engineers and coupled quarterly releases, while Superpowers’ strict TDD progression supports the subsystem’s correctness and reproducibility demands, albeit with heavier process cost."
+  },
+  {
+    "vignetteId": "v064",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "Spec Kit best matches the bounded greenfield subsystem, stable requirements, explicit acceptance criteria, and preference for structured human review. Spec Kitty adds strong auditability and visible workflow gates for three concurrent engineers and coordinated quarterly releases, while GSD provides useful requirement-to-code traceability and verification without BMAD’s role-persona overhead."
+  },
+  {
+    "vignetteId": "v064",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "tessl",
+      "superpowers",
+      "openspec"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v065",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD is the strongest match because the team already has genuine product owner, scrum master, and QA role separation, while vague operations requests require substantial discovery; its Quick Flow also accommodates smaller maintenance changes. OpenSpec fits the brownfield, evolving-requirement environment and allows plans to change mid-flight without documenting the legacy estate upfront. Spec Kitty adds useful coordination and auditable review gates for six concurrent engineers and cautious, coupled legacy releases, though its workflow and rebase overhead make it a less direct fit."
+  },
+  {
+    "vignetteId": "v065",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit product owner, scrum master, and QA role separation, while its discovery phases suit vague operations requests and Quick Flow keeps smaller changes lightweight. OpenSpec fits the brownfield, mixed legacy/cloud environment and evolving requirements through change-focused, revisable delta specs. Spec Kitty adds visible, auditable workflow gates and supports concurrent work plus the coordinated validation needed for coupled legacy releases."
+  },
+  {
+    "vignetteId": "v065",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD is the strongest match because the team has genuine product-owner, scrum-master, and QA role separation, while vague operations requests require structured discovery before implementation. OpenSpec suits the brownfield, mixed legacy/cloud environment and evolving requirements without demanding full-system specification. Spec Kitty adds useful auditable workflow gates and coordination for concurrent work and cautious, coupled legacy releases."
+  },
+  {
+    "vignetteId": "v066",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best mirrors the team’s real product owner, scrum master, QA, and engineering separation while supporting discovery for vague, unsettled compliance requirements. OpenSpec fits the brownfield pipeline and frequent mid-flight policy changes, with the team’s existing gated CI/CD compensating for its advisory verification. Spec Kitty adds valuable auditable workflow transitions and review evidence for concurrent work and tightly controlled releases."
+  },
+  {
+    "vignetteId": "v066",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s established PO, scrum master, and QA role separation, discovery-heavy vague requests, and enterprise need for formal planning artifacts. Spec Kitty aligns with concurrent team delivery, auditable approvals, and tightly controlled release gates. OpenSpec’s revisable delta specs suit evolving accounting policy and brownfield changes, though its advisory verification must remain backed by the team’s existing gated CI/CD controls."
+  },
+  {
+    "vignetteId": "v066",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit product owner, scrum master, and QA separation, as well as its discovery-heavy requirements and enterprise documentation needs. Spec Kitty fits the concurrent team, coupled release process, and need for auditable approval transitions. OpenSpec is useful for evolving accounting-policy requirements and incremental brownfield changes, provided its advisory verification is backed by the team’s existing gated CI/CD controls."
+  },
+  {
+    "vignetteId": "v067",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit PO, scrum-master, and QA role separation, while its discovery and planning phases suit vague, conflicting mandates and enterprise approval artifacts. Spec Kitty’s auditable state transitions and support for concurrent squads fit controlled, coupled releases; GSD ranks third for requirement traceability and verification across broad streaming-system changes."
+  },
+  {
+    "vignetteId": "v067",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit PO, scrum-master, and QA role separation, discovery-heavy vague mandates, and enterprise need for PRDs/ADRs with tunable ceremony. Spec Kitty fits three concurrent squads, controlled monthly releases, and the need for auditable review gates and override records. OpenSpec is a useful third choice for brownfield, evolving requirements and mid-flight revisions, though its advisory verification would need reinforcement through the team’s existing CI and approval controls."
+  },
+  {
+    "vignetteId": "v067",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit PO, scrum-master, and QA role separation, discovery-heavy mandates, and enterprise need for structured PRDs/ADRs. Spec Kitty adds auditable state transitions and review gates suited to three concurrent squads and controlled releases, while GSD provides requirement-to-code traceability and verification for complex, cross-cutting streaming changes."
+  },
+  {
+    "vignetteId": "v068",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches the team’s existing product owner, scrum master, and QA/SDET separation, while its discovery phases address vague requests and Quick Flow keeps small mapping changes manageable. OpenSpec fits the brownfield estate and evolving edge cases through incremental, revisable change specs. Spec Kitty is a strong third choice for concurrent work, auditable review gates, and tightly coordinated quarterly releases, though its workflow and rebase overhead may burden a three-engineer cell."
+  },
+  {
+    "vignetteId": "v068",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD is the strongest fit because the team already has genuine product-owner, scrum-master, and QA role separation, while vague requests require structured discovery and its Quick Flow can handle smaller mapping changes. Spec Kitty suits three concurrent engineers, auditable review gates, and tightly coordinated quarterly releases. OpenSpec ranks third because its change-focused, revisable delta specs fit a brownfield microservice estate with evolving requirements, though its advisory verification would need reinforcement from the team’s existing CI and QA controls."
+  },
+  {
+    "vignetteId": "v068",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit product owner, scrum master, and QA/SDET role separation, while its discovery phases address vague requests and its Quick Flow handles small mapping changes. Spec Kitty fits concurrent engineering, auditable release evidence, and tightly coupled quarterly cutovers. OpenSpec is a strong third choice for incremental brownfield changes and evolving requirements, though its advisory verification is weaker for this control-conscious environment."
+  },
+  {
+    "vignetteId": "v069",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit product owner, scrum master, and QA/SDET separation, vague requests requiring discovery, and need to vary ceremony between complex policy work and small changes. OpenSpec suits the brownfield monolith, incremental feature-flagged delivery, and requirements that evolve during clarification. GSD adds useful requirement traceability and structured verification across a broad monolith, though its youth makes it a less compelling fit than the first two."
+  },
+  {
+    "vignetteId": "v069",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit product owner, scrum master, and QA role separation, vague requests requiring discovery, and need to scale ceremony down for frequent small changes. OpenSpec fits the aging brownfield monolith, evolving requirements, and mid-flight clarification, while GSD adds useful requirement traceability and fresh-context execution for larger changes spanning the monolith."
+  },
+  {
+    "vignetteId": "v069",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit product owner, scrum master, and QA role separation, vague requests requiring discovery, and need to scale ceremony between larger initiatives and small fixes. OpenSpec suits the aging monolith, frequent incremental changes, and evolving requirements, while GSD adds useful requirement traceability and verification for broader changes spanning the monolith."
+  },
+  {
+    "vignetteId": "v070",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team's explicit product owner, scrum master, and QA separation, while supporting discovery for vague audit requests and a lighter path for urgent fixes. Spec Kitty adds auditable state transitions and review gates suited to SOX controls, concurrent work, and bundled releases. OpenSpec fits the brownfield estate and evolving requirements through change-focused, revisable specs, with the team's existing protected branches and CI able to supply stronger enforcement."
+  },
+  {
+    "vignetteId": "v070",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s existing PO, scrum-master, and QA role separation, discovery-heavy requirements, enterprise documentation needs, and separate flow for urgent fixes. Spec Kitty fits concurrent delivery, coupled sprint-end releases, and the need for explicit, auditable review transitions. OpenSpec’s change-focused, revisable delta specs suit this brownfield estate, though its advisory verification would need reinforcement through the team’s existing CI and approval controls."
+  },
+  {
+    "vignetteId": "v070",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s established PO, scrum-master, and QA role separation, discovery-heavy requirements, enterprise documentation needs, and expedited path for urgent fixes. Spec Kitty adds auditable state transitions and review gates well suited to SOX controls, concurrent work, and bundled releases; OpenSpec ranks third because its revisable delta specs fit the brownfield estate, while the team’s existing protected branches and CI can compensate for its advisory verification."
+  },
+  {
+    "vignetteId": "v071",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD is the strongest match for the team’s explicit product owner, scrum master, QA roles, and vague compliance requests that require structured discovery and enterprise documentation. Spec Kitty fits concurrent delivery pods, coupled monthly releases, and the need for auditable review gates. OpenSpec is a good third choice for incremental changes to a brownfield platform, with the team’s existing CI and governance controls able to compensate for its advisory verification."
+  },
+  {
+    "vignetteId": "v071",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD is the strongest fit because the team already has explicit product owner, scrum master, and QA/SDET roles, while vague compliance requests require structured discovery and enterprise planning artifacts. Spec Kitty suits three concurrent pods, coupled monthly releases, and the need for auditable approvals and governed state transitions. OpenSpec’s incremental delta workflow fits a brownfield platform with recurring regulatory changes, while the team’s existing CI and governance controls can compensate for its advisory verification."
+  },
+  {
+    "vignetteId": "v071",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "superpowers"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit product owner, scrum master, and QA/SDET role separation, while supporting discovery for vague compliance requests and enterprise-grade planning artifacts. Spec Kitty fits three concurrent delivery pods, monthly coupled releases, and the need for auditable governance transitions. Superpowers ranks third because its strict TDD and review gates suit correctness-critical regulatory calculations, though its rigidity and cost make it less broadly aligned than the first two."
+  },
+  {
+    "vignetteId": "v072",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD is the strongest fit because the pod has explicit PO, scrum-master, and QA/SDET separation, while vague treasury requests require substantial discovery before planning and implementation. Spec Kitty aligns with the team’s auditable approvals, release evidence, concurrent roles, and bundled change windows; OpenSpec ranks third because its revisable delta-spec approach suits ongoing brownfield changes, though its advisory verification must be supplemented by the team’s existing CI and controls."
+  },
+  {
+    "vignetteId": "v072",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD is the strongest match because the pod already has genuine PO, scrum-master, and QA/SDET role separation, while vague requests require structured discovery before planning. OpenSpec suits ongoing brownfield changes whose requirements evolve during investigation, and Spec Kitty adds auditable workflow transitions and coordination for bundled quarterly releases."
+  },
+  {
+    "vignetteId": "v072",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the pod’s genuine PO, scrum master, and QA/SDET role separation, while its discovery phases suit vague treasury requests and enterprise documentation needs. Spec Kitty fits concurrent delivery, auditable approvals, and coupled quarterly releases; GSD ranks third for end-to-end requirement traceability and verification, though its maturity is a drawback."
+  },
+  {
+    "vignetteId": "v073",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches the team's established product owner, scrum master, and QA/SDET role separation, while supporting discovery for vague requests and a Quick Flow for urgent source changes. OpenSpec fits the brownfield, high-churn environment and mid-flight requirement changes, with the team's existing CI and canary controls supplying stronger enforcement. Spec Kitty adds useful coordination and auditability for concurrent cross-service work, although its coupled-release orientation is less aligned with independently deployed services."
+  },
+  {
+    "vignetteId": "v073",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches the team’s genuine product-owner, scrum-master, and QA/SDET separation, discovery-heavy requests, and need for a lighter path for urgent feed changes. OpenSpec fits independently deployed brownfield services with volatile source formats and low-ceremony, revisable change specs, while Spec Kitty adds useful concurrency visibility and auditable transitions for cross-service work, albeit with more coordination overhead."
+  },
+  {
+    "vignetteId": "v073",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit product owner, scrum master, and QA/SDET separation, discovery-heavy requests, and need for a lightweight path for urgent source changes. OpenSpec fits the brownfield, high-churn pipeline environment and independently deployable incremental changes, while Spec Kitty adds useful concurrency tracking and auditable review history for cross-service work and licensing-sensitive operations."
+  },
+  {
+    "vignetteId": "v074",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "superpowers",
+      "openspec"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v074",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD most directly matches the team’s established product owner, scrum master, and QA role separation while providing structured discovery for vague, conflicting enterprise requirements. Spec Kitty fits concurrent work, coupled sprint releases, and the need for auditable review gates; OpenSpec is a strong third choice for incremental brownfield changes and evolving requirements, though its advisory verification would need reinforcement from the team’s existing CI and compliance controls."
+  },
+  {
+    "vignetteId": "v074",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit PO, scrum-master, and QA role separation, while its discovery and planning phases suit vague, conflicting requirements and enterprise documentation needs. Spec Kitty adds strong auditable workflow gates and fits concurrent work with coupled sprint releases; GSD ranks third for monolith support and end-to-end requirement traceability, though its youth and weaker-than-CI verification are drawbacks."
+  },
+  {
+    "vignetteId": "v075",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team’s established PO, scrum master, and QA role separation, while supporting discovery from ambiguous policy inputs and tunable handling of planned work versus urgent fixes. Spec Kitty adds auditable workflow transitions and visible coordination for a large team with coupled, approval-sensitive releases. OpenSpec fits the brownfield hybrid estate and incremental evolution, though its advisory verification makes it less suitable as the primary compliance gate."
+  },
+  {
+    "vignetteId": "v075",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "BMAD best matches the team’s explicit PO, scrum master, and QA role separation, discovery-heavy requirements, enterprise documentation needs, and separate quick path for urgent fixes. Spec Kitty strongly supports concurrent work, auditable review gates, and coupled monthly releases, while GSD adds end-to-end requirement traceability and verification useful for broad changes spanning legacy and cloud components."
+  },
+  {
+    "vignetteId": "v075",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team's explicit role separation, discovery of ambiguous control requirements, enterprise documentation needs, and lighter flow for urgent fixes. Spec Kitty fits the large concurrent team, coupled monthly releases, and need for auditable review gates and override records. OpenSpec is a strong third choice for incremental changes across a brownfield hybrid platform and mid-flight plan revision, though its advisory verification would need reinforcement through existing CI and governance controls."
+  },
+  {
+    "vignetteId": "v076",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best addresses vague compliance requests, late acceptance discovery, and the team’s existing role separation by formalizing discovery, planning, QA, and enterprise documentation. OpenSpec fits the brownfield pipeline and evolving filing requirements because change-specific specs can be revised mid-flight, while Spec Kitty adds auditable review gates and visible coordination for tightly coupled quarter-end releases."
+  },
+  {
+    "vignetteId": "v076",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best addresses vague compliance requests, emerging role separation, late testing, and enterprise documentation needs while retaining a lighter path for small fixes. Spec Kitty adds auditable review gates and visible coordination for tightly coupled quarter-end releases, while OpenSpec fits the brownfield pipeline and evolving requirements but would need CI controls because its verification is only advisory."
+  },
+  {
+    "vignetteId": "v076",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "superpowers",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best addresses vague compliance requests, enterprise documentation needs, and the team's emerging role separation, while allowing lighter ceremony for smaller fixes. Superpowers directly targets late defect discovery through mandatory planning, TDD, and review; Spec Kitty adds auditable gates and visible coordination well suited to concurrent work and tightly coupled quarter-end releases."
+  },
+  {
+    "vignetteId": "v077",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "gsd",
+      "speckit",
+      "superpowers"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v077",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "tessl"
+    ],
+    "reasoning": "OpenSpec best matches a small team making frequent brownfield changes with volatile, informally clarified requirements and low ceremony. GSD is a good secondary fit for work spanning the monolith and cloud APIs while adding traceability without role-heavy process. Tessl’s lightweight spec interviews could improve short operations tickets, though its weak validation and project inactivity limit it to third place."
+  },
+  {
+    "vignetteId": "v077",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v078",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the pod’s brownfield, high-throughput batch work, frequent small changes, and low-ceremony delivery model. Spec Kitty adds useful auditability and coordination for four concurrent engineers, though its state-machine overhead may exceed the team’s narrow control needs. GSD offers requirement-to-code traceability and verification without heavy role separation, but its youth and context-management focus make it a weaker fit."
+  },
+  {
+    "vignetteId": "v078",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield, fast-moving pod that ships frequent incremental changes with low ceremony and can rely on its existing reconciliation and sign-off controls. Spec Kitty adds useful auditable workflow transitions for four concurrent engineers and coupled sprint releases, while GSD provides requirement-to-code traceability and verification without imposing BMAD-style role separation."
+  },
+  {
+    "vignetteId": "v078",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches the pod’s brownfield, fast-moving backlog and low-ceremony weekly releases while allowing plans to change mid-flight. GSD adds useful requirement traceability and verification without imposing role-heavy process, while Spec Kitty’s auditable transitions suit SOX-sensitive changes but rank lower because its state-machine and concurrency overhead may burden a four-engineer pod."
+  },
+  {
+    "vignetteId": "v079",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent small changes, evolving heuristics, and low-ceremony releases. GSD Core fits the pod’s long exploratory sessions and need for traceable requirements, while Spec Kitty offers useful concurrency and auditability for four engineers, though its workflow overhead makes it a weaker third choice."
+  },
+  {
+    "vignetteId": "v079",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent small changes, evolving heuristics, and low governance ceremony. GSD fits the pod’s long exploratory sessions and need for traceable requirements, while BMAD’s Quick Flow and sprint support are useful, though its persona-heavy structure is less natural for this small cross-functional pod."
+  },
+  {
+    "vignetteId": "v079",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent small, evolving changes and low tolerance for release ceremony. GSD Core fits the pod’s long exploratory sessions and need to trace requirements and decisions into shipped code. Spec Kitty is a reasonable third choice for concurrent repository work and auditable progress, though its state-machine and rebase overhead may exceed this team’s governance needs."
+  },
+  {
+    "vignetteId": "v080",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield pipeline with frequent small changes, ticket-and-sample requirements, and edge cases that evolve during implementation. Spec Kitty fits the three-engineer concurrency, auditable approvals, and quarterly coupled release process, though its workflow overhead may be noticeable. BMAD ranks third because Quick Flow suits fixes and its discovery structure helps with vague inputs, but the team lacks the explicit role separation needed to realize its full value."
+  },
+  {
+    "vignetteId": "v080",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield pipeline with frequent small changes, terse tickets, and requirements refined during implementation. Spec Kitty fits the three-engineer concurrency, auditable peer/operations approvals, and coupled quarterly releases. BMAD ranks third because Quick Flow can keep fixes lightweight while its fuller discovery structure can help when operations-driven requirements are ambiguous, though its persona model may add overhead."
+  },
+  {
+    "vignetteId": "v080",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield pipeline with frequent small changes, sample-driven requirements, and edge cases revised through direct operations feedback. Spec Kitty fits concurrent work, auditable peer/operations approvals, and bundled quarterly releases, while GSD offers useful requirement traceability and verification without imposing BMAD-style role separation."
+  },
+  {
+    "vignetteId": "v081",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "tessl"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield, frequently changing portal team that favors low ceremony, incremental change specs, and mid-flight plan revision. GSD fits the modular monolith and sustained AI-assisted work by managing long-session context while adding lightweight traceability without role-heavy process. Tessl is a narrower third choice because its lightweight spec interviews suit informal inbound requests, though its validation is not a true quality gate."
+  },
+  {
+    "vignetteId": "v081",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "gsd",
+      "superpowers",
+      "speckitty"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v081",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches this brownfield portal’s frequent, evolving changes and low-ceremony delivery model. GSD suits the modular monolith and the team’s sustained use of context-heavy automation, while adding useful traceability without formal role overhead. BMAD ranks third because Quick Flow can accommodate small changes and vague requests, though its persona-based structure is less aligned with this small autonomous pod."
+  },
+  {
+    "vignetteId": "v082",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches vague controller-authored requirements, real cross-functional review, sprint delivery, and the need to scale down ceremony for close-period fixes via Quick Flow. OpenSpec fits the brownfield hybrid estate and narrow, evolving change requests without requiring whole-system specification. Spec Kitty adds useful auditability and concurrent-work coordination for a four-engineer pod, though its workflow and rebase overhead make it less attractive than the first two."
+  },
+  {
+    "vignetteId": "v082",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches narrow, frequently adjusted brownfield changes and the pod’s low-ceremony sprint/close-fix workflow. BMAD adds useful discovery for controller-authored examples, enterprise role separation, and a Quick Flow for contained fixes. GSD is third for end-to-end requirement traceability and verification, though its immaturity makes it less attractive for a SOX-critical service."
+  },
+  {
+    "vignetteId": "v082",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "openspec",
+      "speckitty"
+    ],
+    "reasoning": "BMAD best matches the vague, example-driven requirements, enterprise role separation, sprint cadence, and need to handle both planned work and quick close-period fixes. OpenSpec is a strong fit for narrow brownfield changes and evolving requirements, with the team’s existing CI and audit controls compensating for its advisory verification. Spec Kitty ranks third because its auditable transitions and concurrency support suit SOX-sensitive, coordinated pod work, though its workflow and rebase overhead may be heavier than necessary."
+  },
+  {
+    "vignetteId": "v083",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the group’s genuine separation among engineers, policy specialists, reviewers, and business owners, while its Quick Flow keeps routine maintenance proportionate. Spec Kitty adds auditable review transitions and supports the four-engineer pod’s concurrent work and coupled monthly publication; OpenSpec is a lighter alternative well suited to incremental brownfield changes, though its advisory verification is less aligned with the reporting risk."
+  },
+  {
+    "vignetteId": "v083",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "superpowers",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v083",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the group’s genuine separation among engineers, finance reviewers, and business owners, while its Quick Flow keeps routine pipeline changes from becoming overly ceremonial. Spec Kitty fits concurrent pod work, peer/business approval gates, and the need for an auditable trail around monthly report releases. OpenSpec is a strong lower-ceremony option for incremental brownfield changes, though its advisory verification is less aligned with the service’s governance risk."
+  },
+  {
+    "vignetteId": "v084",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service pod handling frequent, concrete, small changes with low ceremony and occasional mid-flight revision. Spec Kitty adds useful concurrent-work coordination and auditable review history for a three-person team with coupled quarterly releases, though its workflow may be somewhat heavy. BMAD ranks third because Quick Flow can support sprint-level fixes while preserving enterprise process, but its persona-oriented structure is less valuable for this small pod with already-clear requirements."
+  },
+  {
+    "vignetteId": "v084",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield pod making frequent, concrete changes with low ceremony and occasional mid-flight revision. Spec Kitty fits the three-person team’s concurrent work, quarterly coupled releases, and need for auditable review history, while GSD offers useful requirement traceability and verification without BMAD’s role-persona overhead."
+  },
+  {
+    "vignetteId": "v084",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches an autonomous brownfield pod making frequent, concrete incremental changes with low ceremony and occasional mid-flight revision. Spec Kitty fits the three-person team's concurrent work, quarterly coupled releases, and need for visible audit trails, though its workflow may add overhead. GSD Core provides useful requirement-to-code traceability and verification without BMAD's role-persona burden, but its youth and context-heavy design make it a less direct fit."
+  },
+  {
+    "vignetteId": "v085",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "superpowers",
+      "openspec"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v085",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "gsd",
+      "speckitty",
+      "tessl"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v085",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "tessl",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield, fast-changing environment where requirements evolve in chat and the team prefers low-ceremony, change-scoped documentation. Tessl’s lightweight interview technique could improve clarification of user examples without disrupting on-demand delivery, while BMAD ranks third because its Quick Flow and discovery support are useful, though the team lacks the role separation needed to gain full value from it."
+  },
+  {
+    "vignetteId": "v086",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a long-lived brownfield monolith, frequent incremental releases, and pragmatic validation without imposing unnecessary ceremony. GSD adds useful requirement-to-code traceability across broad monolith changes without requiring artificial role separation, while Spec Kitty offers the strongest auditable workflow and approval history but brings heavier state-management and rebase overhead."
+  },
+  {
+    "vignetteId": "v086",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a long-lived brownfield monolith and an autonomous pod that needs lightweight, revisable change specifications. GSD adds useful requirement-to-code traceability across broad monolith changes, while Spec Kitty offers the strongest auditable workflow and approval history for SOX-sensitive work, albeit with more process and concurrency overhead."
+  },
+  {
+    "vignetteId": "v086",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "gsd",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "GSD best matches a broad brownfield monolith while providing requirement-to-code traceability without imposing role personas the autonomous pod does not have. Spec Kitty’s explicit transitions and override audit trail suit SOX change controls, though its workflow and rebase overhead may be heavier than needed; OpenSpec fits incremental, frequently released brownfield changes but would require external controls for enforced approvals and verification."
+  },
+  {
+    "vignetteId": "v087",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent, narrowly scoped changes, evolving edge cases, and low ceremony tolerance. BMAD ranks second because its Quick Flow can handle small fixes despite the pod lacking strong role separation; GSD offers useful verification and traceability for high-impact ledger rules, though its broader workflow and project immaturity make it a weaker fit."
+  },
+  {
+    "vignetteId": "v087",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent, narrowly scoped changes, clear requirements, and low ceremony tolerance. GSD adds useful requirement traceability and verification for financially sensitive rules without requiring BMAD-style role separation. BMAD ranks third because Quick Flow can handle small fixes, though its broader persona-driven process would add overhead for this autonomous pod."
+  },
+  {
+    "vignetteId": "v087",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckit",
+      "tessl",
+      "bmad"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v088",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a small brownfield team handling incremental, occasionally revised reporting changes with low ceremony. Spec Kitty fits the team’s coupled quarter-close releases and need for auditable approvals across concurrent engineers, while GSD adds requirement-to-code traceability without imposing BMAD-style role separation."
+  },
+  {
+    "vignetteId": "v088",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield pipeline with recurring spreadsheet-driven deltas, evolving edge cases, and low tolerance for ceremony. Spec Kitty adds useful audit trails, review gates, and coordination for the three engineers’ coupled quarter-close releases, while GSD offers requirement traceability and verification support that could strengthen the team’s partly manual validation process."
+  },
+  {
+    "vignetteId": "v088",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a small brownfield team making incremental, revisable changes with low ceremony and existing CI controls. Spec Kitty fits the team’s coupled quarter-close releases and need for auditable review transitions, while GSD adds useful requirement-to-code traceability and verification without BMAD’s role overhead."
+  },
+  {
+    "vignetteId": "v089",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent, narrowly scoped changes, evolving legacy understanding, and low-ceremony needs under a metered assistance budget. GSD adds useful requirement-to-code traceability and fresh-context handling for the occasional ambiguous legacy investigation, while Spec Kitty fits the four-engineer concurrency and audit-trail needs but introduces more workflow and rebase overhead."
+  },
+  {
+    "vignetteId": "v089",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield legacy integration, frequent small changes, concise change-specific requirements, and need to conserve metered assisted-development usage. Spec Kitty adds useful concurrency visibility and auditable review transitions for four autonomous engineers, while GSD offers requirement-to-code traceability without BMAD’s mismatched role-persona overhead."
+  },
+  {
+    "vignetteId": "v089",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "gsd",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent small changes, evolving legacy behavior, and low ceremony tolerance. GSD adds useful requirement-to-code traceability for audit-ready corrections and ambiguous cross-system work, while Spec Kitty offers concurrency support and auditable review transitions, though both impose more agent or workflow overhead than OpenSpec."
+  },
+  {
+    "vignetteId": "v090",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the pod’s need for auditable state transitions, explicit override records, concurrent ownership, and preparation/sign-off gates. BMAD adds genuine role separation and a lightweight path for quarter-close hotfixes, while OpenSpec’s compact delta workflow suits brownfield changes and metered automation, with the team’s existing CI supplying the enforcement its advisory verification lacks."
+  },
+  {
+    "vignetteId": "v090",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the pod’s genuine preparation/sign-off role separation, sprint cadence, and need for a lightweight path for close-period hotfixes. Spec Kitty adds strong auditable workflow gates and override records for concurrent engineers, while OpenSpec’s compact change-only specs and mid-flight revision suit brownfield control changes, provided the team relies on its existing CI for mechanically enforced verification."
+  },
+  {
+    "vignetteId": "v090",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the pod’s genuine preparation/sign-off separation, sprint cadence, and need to scale ceremony down for close-period hotfixes. Spec Kitty adds visible, auditable workflow gates and override records for concurrent regulated work, while OpenSpec suits compact brownfield change specs and evolving audit traces, with the team’s existing CI compensating for its advisory verification."
+  },
+  {
+    "vignetteId": "v091",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent small changes, evolving implementation details, and low-ceremony needs, while existing CI can supply the mandatory reconciliation gates its advisory verification lacks. Spec Kitty adds strong audit trails and visible review gates for four concurrent engineers, while GSD provides end-to-end requirement traceability and verification, though its subagent usage may need tight budget controls."
+  },
+  {
+    "vignetteId": "v091",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "superpowers",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v091",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the pod’s brownfield, small-change workflow, evolving bank-rule requirements, and constrained assistance budget, though reconciliation gates should remain enforced in CI. Spec Kitty adds valuable audit trails and review-state controls for concurrent engineers, while BMAD offers useful discovery for ambiguous analyst scenarios and a Quick Flow for routine changes, albeit with some persona overhead."
+  },
+  {
+    "vignetteId": "v092",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "tessl"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield platform with frequent small changes, concise inputs, evolving customer mappings, and low ceremony. Spec Kitty’s auditable transitions and support for concurrent work and bundled releases fit enterprise controls and quarterly production windows, while Tessl offers lightweight clarification that respects the tight consumption cap, provided its anchors are not treated as executable gates."
+  },
+  {
+    "vignetteId": "v092",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "tessl"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield platform with frequent small, evolving changes, concise inputs, and low tolerance for ceremony or token-heavy workflows. Spec Kitty adds useful concurrency tracking and auditable gates for three service owners and bundled quarterly releases, while Tessl’s lightweight spec interviewing can help clarify example-driven tickets without a large process burden."
+  },
+  {
+    "vignetteId": "v092",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield platform with frequent small changes, concise inputs, evolving customer mappings, and a tight consumption cap. Spec Kitty fits the three engineers’ concurrent ownership, quarterly bundled releases, and need for auditable review history, though its workflow overhead is a tradeoff. BMAD’s Quick Flow can support focused fixes, but its persona-driven structure is less suitable for this small team without role separation."
+  },
+  {
+    "vignetteId": "v093",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "tessl",
+      "gsd"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield portal with frequent small changes, evolving acceptance details, and low ceremony. Tessl’s lightweight, one-question-at-a-time specification technique suits terse inbound requests and a constrained token budget, while GSD offers useful traceability and verification for monolith-spanning work but may consume more tokens through its subagent workflow."
+  },
+  {
+    "vignetteId": "v093",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "tessl",
+      "speckitty",
+      "speckit"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v093",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "tessl",
+      "speckitty"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v094",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches the team's real role separation, sprint cadence, enterprise documentation needs, and need to tune ceremony for urgent fixes. Spec Kitty adds auditable workflow transitions and review gates suited to SOX controls, while OpenSpec's concise brownfield delta specs fit the metered budget and can rely on the team's existing CI and approval controls for enforcement."
+  },
+  {
+    "vignetteId": "v094",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches the brownfield environment, bounded change tickets, mid-flight clarification, and strict token budget; its advisory verification is acceptable because the team already has strong CI and SOX controls. Spec Kitty adds valuable auditable workflow transitions and concurrent-work visibility, while BMAD offers enterprise role separation and a lighter path for urgent fixes but may impose more persona and documentation overhead on the four-person squad."
+  },
+  {
+    "vignetteId": "v094",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the four-engineer squad’s concurrent work, coupled sprint releases, and need for explicit, auditable review transitions. BMAD fits the real separation among engineering, controllership, reviewers, and production approvers while offering a lighter flow for urgent fixes; OpenSpec ranks third because its concise delta specs suit a token-metered brownfield system, with the team’s existing CI and SOX controls compensating for its advisory verification."
+  },
+  {
+    "vignetteId": "v095",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "bmad"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent small changes, clear requirements, and low ceremony, while the pod’s existing CI and data-quality gates can compensate for its advisory verification. Spec Kitty adds strong auditability and visible review transitions for three concurrent engineers, though its workflow may be heavier than needed. BMAD ranks third because Quick Flow suits small fixes, but its persona-driven structure is less compelling for a small pod with already-clear requirements."
+  },
+  {
+    "vignetteId": "v095",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "superpowers",
+      "speckit",
+      "openspec"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v095",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches the three-engineer pod’s concurrent work and need for auditable review gates, including recorded overrides. OpenSpec fits its brownfield service, clear change-level requirements, and frequent small fixes, though its advisory verification must be backed by existing CI gates. GSD adds end-to-end requirement traceability and verification, but its subagent-heavy workflow and young age are drawbacks under the team’s metered language-processing budget."
+  },
+  {
+    "vignetteId": "v096",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "tessl",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service with frequent incremental rule changes, evolving controller requests, and low tolerance for token-heavy ceremony. Tessl’s lightweight interview approach can clarify terse exception scenarios economically, while Spec Kitty offers useful concurrency visibility and auditable transitions for three distinct owners and coupled quarterly policy releases, though with more workflow overhead."
+  },
+  {
+    "vignetteId": "v096",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckitty",
+      "tessl"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service receiving frequent incremental rule changes, with low ceremony and plans that can adapt as terse controller requests are clarified. Spec Kitty fits the three engineers’ concurrent component ownership and enterprise need for visible, auditable transitions, though its workflow overhead is a tradeoff. Tessl’s lightweight interview technique could clarify ambiguous exception scenarios within the tight token budget, provided its link anchors are not treated as executable verification gates."
+  },
+  {
+    "vignetteId": "v096",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "speckitty"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield service receiving frequent incremental and evolving rule changes, while keeping ceremony and token use low. BMAD adds useful discovery for terse controller requests and a Quick Flow for sprint-sized fixes, though its personas may be somewhat heavy for three engineers. Spec Kitty fits concurrent component ownership and provides auditable workflow gates for coordinated quarterly policy releases."
+  },
+  {
+    "vignetteId": "v097",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckit",
+      "gsd"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v097",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "bmad",
+      "tessl"
+    ],
+    "reasoning": "OpenSpec best matches a brownfield team shipping frequent, narrowly scoped changes with low ceremony and compact change-only artifacts. BMAD’s Quick Flow can accommodate routine fixes and small enhancements, though its persona structure is more than this autonomous squad needs. Tessl’s lightweight requirements interview is compatible with metered automation, but its weak verification and project inactivity make it a distant third."
+  },
+  {
+    "vignetteId": "v097",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "gsd",
+      "openspec"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v098",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches the pod’s concurrent ownership, coupled sprint releases, and need for visible, auditable review gates. OpenSpec fits bounded brownfield changes and a constrained assistance budget, with the team’s existing CI supplying the enforcement its advisory verification lacks. BMAD ranks third because its real product, engineering, and controls roles plus Quick Flow suit mixed sprint work and fixes, though its broader ceremony may be unnecessary for well-defined tickets."
+  },
+  {
+    "vignetteId": "v098",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the pod’s concurrent ownership, coupled monolith releases, and need for explicit, auditable review transitions. BMAD fits its real product/control roles, sprint cadence, and mix of planned work with quick fixes, while OpenSpec offers a concise brownfield change workflow compatible with the token limit and existing CI-enforced controls."
+  },
+  {
+    "vignetteId": "v098",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches the pod’s need for auditable review gates, immutable transition history, concurrent ownership, and coordinated releases. BMAD fits the existing product-owner/controller/engineering role separation and offers a lighter flow for small fixes, while GSD adds strong requirement-to-code traceability for a monolith but ranks lower because its subagent-heavy workflow may strain the team’s token allowance."
+  },
+  {
+    "vignetteId": "v099",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "bmad",
+      "openspec"
+    ],
+    "reasoning": "Spec Kitty best matches the pod’s need for traceable, auditable review gates and a partly coupled release process. BMAD adds useful role separation and discovery for terse operations tickets while retaining a lighter path for fixes; OpenSpec suits incremental brownfield changes and low ceremony, though its advisory verification means audit gates would need external CI controls."
+  },
+  {
+    "vignetteId": "v099",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "openspec"
+    ],
+    "reasoning": "BMAD best matches terse inbound requests, genuine segregation-of-duties needs, and a mix of high-control changes with smaller fixes through Quick Flow. Spec Kitty adds explicit auditable review transitions and suits concurrent work around coupled monthly releases, while OpenSpec’s lightweight delta approach fits the brownfield system and metered automation budget but would require added CI controls because its verification is advisory."
+  },
+  {
+    "vignetteId": "v099",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "openspec",
+      "speckit",
+      "superpowers"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v100",
+    "judgeIndex": 0,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "gsd"
+    ],
+    "reasoning": "Spec Kitty best matches three concurrent engineers, quarterly coupled releases, and the need for auditable transitions and review evidence. OpenSpec suits ongoing brownfield rule changes and small, clear tickets with low ceremony, while existing CI can compensate for its advisory verification. GSD adds useful requirement-to-code traceability, but its subagent-heavy workflow is less attractive under the hard model-usage cap."
+  },
+  {
+    "vignetteId": "v100",
+    "judgeIndex": 1,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "bmad",
+      "speckitty",
+      "gsd"
+    ],
+    "reasoning": ""
+  },
+  {
+    "vignetteId": "v100",
+    "judgeIndex": 2,
+    "model": "gpt-5.6-sol",
+    "rankedTop3": [
+      "speckitty",
+      "openspec",
+      "bmad"
+    ],
+    "reasoning": "Spec Kitty best matches three concurrent engineers, quarterly coupled releases, and the need for auditable review and override history. OpenSpec suits ongoing brownfield rule changes and small tickets with low ceremony, though its advisory verification must be supplemented by existing CI controls. BMAD ranks third because Quick Flow can handle defects and small regulatory changes, but the team lacks the role separation needed to realize its full value."
+  }
+]

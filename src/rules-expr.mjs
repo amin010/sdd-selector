@@ -63,15 +63,7 @@ export const BASE_RULE_EXPRS = [
   {
     id: "base-1",
     when: {
-      any: [
-        { gte: [{ derived: "nonRoadmapShare" }, 40] },
-        {
-          in: [
-            { answer: "q10_architecture" },
-            ["monolith", "hybrid", "batch_data"],
-          ],
-        },
-      ],
+      gte: [{ derived: "nonRoadmapShare" }, 40],
     },
   },
   {
