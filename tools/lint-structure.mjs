@@ -36,12 +36,19 @@ function scriptBody(html) {
 }
 
 function regionsToLint(script) {
-  const begin = script.indexOf("// BEGIN PACK");
-  const end = script.indexOf("// END PACK");
-  if (begin !== -1 && end !== -1 && end > begin) {
-    return script.slice(0, begin) + script.slice(end + "// END PACK".length);
+  // Strip inlined pack JSON (either comment style) so field/framework ids inside
+  // the pack do not inflate the allowlist.
+  const markers = [
+    ["/* BEGIN PACK */", "/* END PACK */"],
+    ["// BEGIN PACK", "// END PACK"],
+  ];
+  for (const [beginMark, endMark] of markers) {
+    const begin = script.indexOf(beginMark);
+    const end = script.indexOf(endMark);
+    if (begin !== -1 && end !== -1 && end > begin) {
+      return script.slice(0, begin) + script.slice(end + endMark.length);
+    }
   }
-  // P0–P3: no pack markers yet — lint entire script; allowlist covers hits.
   return script;
 }
 

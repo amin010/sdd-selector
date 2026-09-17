@@ -369,6 +369,80 @@ function checkRules(pack, fields, derived, fwData, diagnostics) {
   addDuplicateChecks(allRules.map((item) => item.rule), "id", "E-RULE-060", "rules", diagnostics);
 }
 
+function checkReport(pack, fields, diagnostics) {
+  if (!Object.hasOwn(pack, "report")) return;
+  if (!object(pack.report)) {
+    diagnostics.push(diagnostic("E-PACK-002", "report", "report must be an object."));
+    return;
+  }
+  array(pack.report.profileFields).forEach((entry, index) => {
+    const path = `report.profileFields[${index}]`;
+    if (!object(entry)) {
+      diagnostics.push(diagnostic("E-PACK-002", path, "profileFields entries must be objects."));
+      return;
+    }
+    const ids = [];
+    if (typeof entry.field === "string") ids.push(entry.field);
+    array(entry.fields).forEach((id) => ids.push(id));
+    ids.forEach((id) => {
+      if (!fields.has(id)) {
+        diagnostics.push(diagnostic("E-REF-040", path, `Unknown profile field "${id}".`));
+      }
+    });
+  });
+  array(pack.report.freeTextFields).forEach((id, index) => {
+    if (!fields.has(id)) {
+      diagnostics.push(diagnostic(
+        "E-REF-040",
+        `report.freeTextFields[${index}]`,
+        `Unknown free-text field "${id}".`,
+      ));
+    }
+  });
+}
+
+function checkFixtures(pack, fields, fwData, diagnostics) {
+  if (!Object.hasOwn(pack, "fixtures")) return;
+  if (!Array.isArray(pack.fixtures)) {
+    diagnostics.push(diagnostic("E-PACK-002", "fixtures", "fixtures must be an array."));
+    return;
+  }
+  const names = new Set();
+  array(pack.fixtures).forEach((fx, index) => {
+    const path = `fixtures[${index}]`;
+    if (!object(fx) || typeof fx.name !== "string" || !fx.name) {
+      diagnostics.push(diagnostic("E-PACK-002", `${path}.name`, "Fixture requires a name."));
+      return;
+    }
+    if (names.has(fx.name)) {
+      diagnostics.push(diagnostic("E-PACK-002", `${path}.name`, `Duplicate fixture name "${fx.name}".`));
+    }
+    names.add(fx.name);
+    if (!object(fx.answers)) {
+      diagnostics.push(diagnostic("E-PACK-002", `${path}.answers`, "Fixture answers must be an object."));
+    } else {
+      for (const key of Object.keys(fx.answers)) {
+        if (!fields.has(key)) {
+          diagnostics.push(diagnostic("E-REF-040", `${path}.answers.${key}`, `Unknown answer field "${key}".`));
+        }
+      }
+    }
+    if (!object(fx.expect)) {
+      diagnostics.push(diagnostic("E-PACK-002", `${path}.expect`, "Fixture expect must be an object."));
+      return;
+    }
+    if (Object.hasOwn(fx.expect, "base") && fx.expect.base != null &&
+        !fwData.frameworks.has(fx.expect.base)) {
+      diagnostics.push(diagnostic("E-FW-050", `${path}.expect.base`, "Unknown expected base framework."));
+    }
+    for (const key of ["overlays", "overlaysIncludedInBase", "cautions", "couldChangeResult"]) {
+      if (Object.hasOwn(fx.expect, key) && !Array.isArray(fx.expect[key])) {
+        diagnostics.push(diagnostic("E-PACK-002", `${path}.expect.${key}`, `${key} must be an array.`));
+      }
+    }
+  });
+}
+
 export function validatePack(input) {
   const diagnostics = [];
   try {
@@ -405,6 +479,8 @@ export function validatePack(input) {
     const derived = checkDerived(pack, fields, diagnostics);
     const fwData = checkFrameworks(pack, diagnostics);
     checkRules(pack, fields, derived, fwData, diagnostics);
+    checkReport(pack, fields, diagnostics);
+    checkFixtures(pack, fields, fwData, diagnostics);
     return diagnostics;
   } catch (error) {
     diagnostics.push(diagnostic(

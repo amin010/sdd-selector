@@ -12,5 +12,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Validate pack
+        run: npm run validate
+      - name: Build (inline pack + expr)
+        run: npm run build
+      - name: Assert index.html matches build
+        run: git diff --exit-code -- index.html
       - name: Run suite
         run: npm test

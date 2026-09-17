@@ -5,11 +5,13 @@
   "description": "Finance Tech Spec-Driven Development framework selector",
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.mjs && node tools/parity.mjs --self --quick && node tools/parity.mjs && node tools/parity.mjs --break-demo && node tools/lint-structure.mjs",
+    "build": "node tools/build.mjs",
+    "build:release": "node tools/build.mjs --strip-fixtures",
+    "test": "node tools/validate.mjs packs/finance-tech.json && node tools/build.mjs && node --test tests/*.test.mjs && node tools/parity.mjs --self --quick && node tools/parity.mjs && node tools/parity.mjs --break-demo && node tools/lint-structure.mjs",
     "parity": "node tools/parity.mjs",
     "lint:structure": "node tools/lint-structure.mjs",
-    "inline": "node tools/inline.mjs",
-    "validate": "node tools/validate.mjs",
+    "inline": "node tools/build.mjs",
+    "validate": "node tools/validate.mjs packs/finance-tech.json",
     "fixtures:markdown": "node tools/generate-markdown-goldens.mjs"
   },
   "engines": {

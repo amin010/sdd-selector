@@ -55,20 +55,33 @@ node tools/parity.mjs --quick
 node tools/parity.mjs --self
 node --test tests/*.test.mjs
 npm run lint:structure
-npm run inline              # copy src/expr.mjs into index.html markers
-node tools/validate.mjs packs/some-pack.json   # pack schema checks (P4+)
+npm run build               # inline pack + expr into index.html
+npm run validate            # pack schema checks
 ```
 
 ## Project layout
 
 | Path | Role |
 |---|---|
-| `index.html` | The product: UI + engine in one file |
+| `index.html` | The product: UI + engine in one file (built from pack + `src/`) |
+| `packs/finance-tech.json` | Rule pack source of truth (questions, rules, fixtures) |
 | `docs/` | Design and implementation plan |
 | `tests/` | Automated tests and golden Markdown snapshots |
 | `tests/golden/index-v030.html` | Frozen v0.3.0 baseline for parity |
-| `tools/` | Parity harness, corpus, lint, page loader, validator, inliner |
-| `src/` | Source modules inlined into the page (`expr.mjs`, rule expression tables) |
+| `tools/` | Build, validate, parity harness, corpus, lint, page loader |
+| `src/` | Source modules inlined into the page (`expr.mjs`) |
+
+## Authoring / build
+
+Edit the pack, then rebuild the page (Node is only for tools — the page still opens from disk with no runtime Node):
+
+```bash
+npm run validate          # schema + referential checks
+npm run build             # inline pack + src/expr.mjs into index.html (keeps fixtures for ?selftest)
+npm run build:release     # same, but strips fixtures (~110 KB)
+```
+
+`?selftest` runs pack fixtures plus a few engine invariants.
 
 ## Docs
 

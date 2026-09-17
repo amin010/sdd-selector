@@ -1,35 +1,11 @@
 {
-  "notes": "P2 allowlist after generic field model. Removed form DOM name literals (q2_*, q5_*, q16_*). Remaining hits are engine specials, report profile fields, and fixtures.",
+  "notes": "P4 allowlist: only remaining special cases cleared in P5 (H6–H9 / H21). Pack JSON is excluded via BEGIN/END PACK markers.",
   "fields": [
-    "q10_architecture",
-    "q11_cycle_time",
-    "q11_deploy_cadence",
     "q12_quality_gates",
-    "q13_branching",
-    "q14_release_autonomy",
-    "q15_governance",
-    "q16_bottlenecks",
-    "q17_process_mismatch",
-    "q18_token_budget",
-    "q19_change_volume",
-    "q1_domain",
-    "q20_runtimes",
-    "q21_ci_maturity",
-    "q2_team",
-    "q3_distribution",
-    "q4_domain_familiarity",
-    "q4_tenure",
-    "q5_work_breakdown",
-    "q6_volatility",
-    "q7_requirements",
-    "q8_compliance",
-    "q9_precision"
+    "q18_token_budget"
   ],
   "frameworks": [
-    "bmad",
     "gsd",
-    "openspec",
-    "speckit",
     "superpowers"
   ]
 }
