@@ -100,14 +100,8 @@
 (function () {
   "use strict";
 
-  var SCHEMA_VERSION = 3;
   var FALLBACK_BASE = "openspec";
   var STALE_DAYS = 180;
-  var Q17_MAX = 500;
-  var REPORT_ONLY = {
-    q1_domain: 1, q4_tenure: 1, q11_cycle_time: 1, q13_branching: 1,
-    q17_process_mismatch: 1
-  };
 
   /* BEGIN EXPR */
   var MAX_DEPTH = 32;
@@ -400,16 +394,6 @@
     human_gate: "Human gate"
   };
 
-  var BOTTLENECK_LABEL = {
-    ambiguous_or_shifting: "Ambiguous or shifting requirements",
-    flaky_cicd: "Flaky CI/CD pipelines or slow builds",
-    cross_team_approvals: "Cross-team dependencies and waiting on approvals",
-    test_fear: "Lack of test automation / fear of breaking financial calculations",
-    interruptive_support: "High volume of interruptive support tickets/incidents",
-    compliance_overhead: "Complex compliance/audit documentation overhead",
-    legacy_tech_debt: "Technical debt in legacy codebases"
-  };
-
   var FRAMEWORKS = {
     openspec: {
       id: "openspec", name: "OpenSpec", repo: "Fission-AI/OpenSpec",
@@ -514,186 +498,232 @@
   function opt(value, label) { return { value: value, label: label }; }
 
   var QUESTIONS = [
-    { id: "q1_domain", n: "Q1", section: "instrument", type: "radio", reportOnly: true,
+    { id: "q1_domain", n: "Q1", section: "instrument", reportOnly: true,
       legend: "What is your team's core functional domain?",
       help: "Shown in the report; does not change the recommendation.",
-      options: [
+      fields: [{ kind: "single", id: "q1_domain", hashKey: "q1", options: [
         opt("ledger", "Core Financial Ledger / Accounting Engine"),
         opt("reporting_compliance", "Financial Reporting & Regulatory Compliance"),
         opt("treasury", "Treasury, Liquidity, or Capital Planning"),
         opt("data_pipeline", "Data Pipeline / Lakehouse / Financial Data Analytics"),
         opt("internal_platform", "Internal Platform / Shared Tooling / Infrastructure"),
         opt("other", "Other")
-      ]},
-    { id: "q2_team", n: "Q2", section: "instrument", type: "team",
+      ]}]},
+    { id: "q2_team", n: "Q2", section: "instrument",
       legend: "Team size and makeup (FTE)",
-      help: "Total size and roles drive compact-team and BMAD routing. SWE and data-engineer counts are report-only." },
-    { id: "q3_distribution", n: "Q3", section: "instrument", type: "radio",
+      help: "Total size and roles drive compact-team and BMAD routing. SWE and data-engineer counts are report-only.",
+      fields: [{ kind: "record", id: "q2_team", hashKey: "q2",
+        constraints: {
+          requiredKeys: ["total", "qa_sdet", "product_owner", "scrum_master"],
+          minimums: { total: 1, qa_sdet: 0 },
+          allowedValues: {
+            product_owner: ["dedicated", "shared", "none"],
+            scrum_master: ["dedicated", "shared", "none"]
+          }
+        },
+        fields: [
+          { kind: "number", id: "total", label: "Total team size", min: 1 },
+          { kind: "number", id: "swe", label: "Software engineers", min: 0 },
+          { kind: "number", id: "data_engineers", label: "Data engineers", min: 0 },
+          { kind: "number", id: "qa_sdet", label: "QA / SDET", min: 0 },
+          { kind: "single", id: "product_owner", label: "Product Owner / PM", options: [
+            opt("dedicated", "Dedicated"), opt("shared", "Shared"), opt("none", "None")
+          ]},
+          { kind: "single", id: "scrum_master", label: "Scrum Master / Delivery Lead", options: [
+            opt("dedicated", "Dedicated"), opt("shared", "Shared"), opt("none", "None")
+          ]}
+        ]
+      }]},
+    { id: "q3_distribution", n: "Q3", section: "instrument",
       legend: "Geographic and time-zone distribution",
       help: "Global distribution with little overlap can trigger worktree / Decision Moment practices.",
-      options: [
+      fields: [{ kind: "single", id: "q3_distribution", hashKey: "q3", options: [
         opt("colocated", "Co-located in a single hub"),
         opt("regional", "Distributed across 1–2 compatible time zones"),
         opt("global_timezones", "Highly distributed globally with <3 hours daily overlap")
-      ]},
-    { id: "q4", n: "Q4", section: "instrument", type: "q4",
+      ]}]},
+    { id: "q4", n: "Q4", section: "instrument",
       legend: "Team tenure and domain experience",
-      help: "Tenure is report-only. Low finance-domain familiarity can trigger domain reconnaissance." },
-    { id: "q5_work_breakdown", n: "Q5", section: "instrument", type: "percents",
+      help: "Tenure is report-only. Low finance-domain familiarity can trigger domain reconnaissance.",
+      fields: [
+        { kind: "single", id: "q4_tenure", hashKey: "q4t", reportOnly: true,
+          label: "How long has this core team worked together?",
+          options: [
+            opt("forming", "< 3 months"),
+            opt("3_12_months", "3–12 months"),
+            opt("over_1_year", "> 1 year")
+          ]},
+        { kind: "single", id: "q4_domain_familiarity", hashKey: "q4f",
+          label: "Team familiarity with the functional finance domain",
+          options: [
+            opt("high", "High"), opt("medium", "Medium"), opt("low", "Low")
+          ]}
+      ]},
+    { id: "q5_work_breakdown", n: "Q5", section: "instrument",
       legend: "Breakdown of incoming work (must total 100%)",
-      help: "Non-roadmap share (ops + bugs + regulatory + tech debt) steers brownfield vs greenfield bases." },
-    { id: "q6_volatility", n: "Q6", section: "instrument", type: "radio",
+      help: "Non-roadmap share (ops + bugs + regulatory + tech debt) steers brownfield vs greenfield bases.",
+      fields: [{ kind: "record", id: "q5_work_breakdown", hashKey: "q5",
+        constraints: { sumTo: 100, requiredKeys: ["roadmap", "ops", "bugs", "regulatory", "tech_debt"] },
+        fields: [
+          { kind: "number", id: "roadmap", label: "Roadmap / strategic %", min: 0, max: 100 },
+          { kind: "number", id: "ops", label: "Unplanned ops / triage %", min: 0, max: 100 },
+          { kind: "number", id: "bugs", label: "Bugs / incidents %", min: 0, max: 100 },
+          { kind: "number", id: "regulatory", label: "Regulatory / audit %", min: 0, max: 100 },
+          { kind: "number", id: "tech_debt", label: "Tech debt %", min: 0, max: 100 }
+        ]
+      }]},
+    { id: "q6_volatility", n: "Q6", section: "instrument",
       legend: "How volatile are your business requirements?",
       help: "High or interrupt-driven volatility blocks Spec Kit and adds a low-ceremony fast path.",
-      options: [
+      fields: [{ kind: "single", id: "q6_volatility", hashKey: "q6", options: [
         opt("very_low", "Very low: locked down quarters in advance"),
         opt("moderate", "Moderate: goals clear for 2–4 weeks; occasional mid-sprint change"),
         opt("high", "High: shifting priorities every week"),
         opt("interrupt_driven", "Interrupt-driven: work arrives unpredictably in real time")
-      ]},
-    { id: "q7_requirements", n: "Q7", section: "instrument", type: "radio",
+      ]}]},
+    { id: "q7_requirements", n: "Q7", section: "instrument",
       legend: "How granular and clear are requirements when they reach engineers?",
       help: "Structured stories favor Spec Kit; vague goals favor BMAD and reconnaissance.",
-      options: [
+      fields: [{ kind: "single", id: "q7_requirements", hashKey: "q7", options: [
         opt("structured", "Well-defined user stories with acceptance criteria and test cases"),
         opt("high_level", "High-level functional requirements needing discovery spikes"),
         opt("vague", "Vague business goals requiring heavy refinement")
-      ]},
-    { id: "q8_compliance", n: "Q8", section: "instrument", type: "radio",
+      ]}]},
+    { id: "q8_compliance", n: "Q8", section: "instrument",
       legend: "What level of financial regulatory oversight applies?",
       help: "SOX Tier 1 (not internal governance) triggers a constitution overlay and enforcement cautions.",
-      options: [
+      fields: [{ kind: "single", id: "q8_compliance", hashKey: "q8", options: [
         opt("sox_tier1", "SOX-Critical / Tier 1"),
         opt("internal_governance", "Internal governance: high risk, not external SOX"),
         opt("standard_enterprise", "Standard enterprise security and data governance"),
         opt("low_nonfinancial", "Low / non-financial")
-      ]},
-    { id: "q9_precision", n: "Q9", section: "instrument", type: "radio",
+      ]}]},
+    { id: "q9_precision", n: "Q9", section: "instrument",
       legend: "Data accuracy and precision requirements",
       help: "Zero-tolerance fires autonomous TDD and, with weak CI, a deterministic CI overlay.",
-      options: [
+      fields: [{ kind: "single", id: "q9_precision", hashKey: "q9", options: [
         opt("zero_tolerance", "Zero-tolerance for error (ledger-accurate, immutable audit logs)"),
         opt("analytics", "Near real-time analytical approximations"),
         opt("standard", "Standard operational data integrity")
-      ]},
-    { id: "q10_architecture", n: "Q10", section: "instrument", type: "radio",
+      ]}]},
+    { id: "q10_architecture", n: "Q10", section: "instrument",
       legend: "Primary system architecture",
       help: "Monolith, hybrid, and batch data favor OpenSpec. Streaming is not treated as brownfield or as Spec Kit microservices.",
-      options: [
+      fields: [{ kind: "single", id: "q10_architecture", hashKey: "q10", options: [
         opt("microservices", "Modern cloud-native microservices"),
         opt("batch_data", "Batch data pipelines"),
         opt("streaming", "Event-driven streaming"),
         opt("monolith", "Monolithic or legacy application"),
         opt("hybrid", "Hybrid (legacy backend with modern cloud wrapper)")
-      ]},
-    { id: "q11", n: "Q11", section: "instrument", type: "q11",
+      ]}]},
+    { id: "q11", n: "Q11", section: "instrument",
       legend: "Deployment frequency and production lead time",
-      help: "Cadence (with team size and autonomy) can select Superpowers or GSD Core. Cycle time is report-only." },
-    { id: "q12_quality_gates", n: "Q12", section: "instrument", type: "checkbox",
+      help: "Cadence (with team size and autonomy) can select Superpowers or GSD Core. Cycle time is report-only.",
+      fields: [
+        { kind: "single", id: "q11_deploy_cadence", hashKey: "q11",
+          label: "How often does your team release to production?",
+          options: [
+            opt("continuous", "Multiple times per day / on-demand"),
+            opt("sprint", "Once or twice per sprint (every 1–2 weeks)"),
+            opt("monthly", "Monthly"),
+            opt("quarterly", "Quarterly or longer")
+          ]},
+        { kind: "single", id: "q11_cycle_time", hashKey: "q11b", reportOnly: true,
+          label: "Average cycle time from code commit to running in production (report-only)",
+          options: [
+            opt("under_2h", "< 2 hours"), opt("1_3_days", "1–3 days"),
+            opt("1_2_weeks", "1–2 weeks"), opt("over_2_weeks", "> 2 weeks")
+          ]}
+      ]},
+    { id: "q12_quality_gates", n: "Q12", section: "instrument",
       legend: "Automated testing and quality gates (check all that run on every pull request)",
       help: "Coverage level is derived from how many automated gates you check. Manual-only is low coverage.",
-      options: [
+      fields: [{ kind: "multi", id: "q12_quality_gates", hashKey: "q12", options: [
         opt("unit_coverage", "Unit tests with enforced coverage thresholds"),
         opt("integration_contract", "Integration / API contract tests"),
         opt("e2e", "Automated end-to-end regression tests"),
         opt("financial_reconciliation", "Automated financial data reconciliation tests"),
         opt("sast_dast", "Automated security and dependency scanning (SAST/DAST)"),
         opt("mostly_manual", "Mostly manual QA testing prior to release")
-      ]},
-    { id: "q13_branching", n: "Q13", section: "instrument", type: "radio", reportOnly: true,
+      ]}]},
+    { id: "q13_branching", n: "Q13", section: "instrument", reportOnly: true,
       legend: "Source control and branching strategy",
       help: "Shown in the report; does not change the recommendation.",
-      options: [
+      fields: [{ kind: "single", id: "q13_branching", hashKey: "q13", options: [
         opt("trunk_based", "Trunk-based: short-lived branches merged to main"),
         opt("gitflow", "GitFlow / environment branching"),
         opt("adhoc", "Ad-hoc: no standardized convention")
-      ]},
-    { id: "q14_release_autonomy", n: "Q14", section: "instrument", type: "radio",
+      ]}]},
+    { id: "q14_release_autonomy", n: "Q14", section: "instrument",
       legend: "How dependent is your release cadence on external teams?",
       help: "Coupled or heavy internal dependence can add Spec Kitty practices. Vendor dependence is a caution, not that overlay.",
-      options: [
+      fields: [{ kind: "single", id: "q14_release_autonomy", hashKey: "q14", options: [
         opt("autonomous", "Autonomous: build, test, and deploy independently"),
         opt("coupled", "Coupled releases with other finance tech services"),
         opt("heavy", "Heavy upstream/downstream dependencies"),
         opt("vendor", "Vendor dependent")
-      ]},
-    { id: "q15_governance", n: "Q15", section: "instrument", type: "radio",
+      ]}]},
+    { id: "q15_governance", n: "Q15", section: "instrument",
       legend: "Approval gates and governance",
       help: "CAB on every release triggers a regulatory constitution overlay.",
-      options: [
+      fields: [{ kind: "single", id: "q15_governance", hashKey: "q15", options: [
         opt("automated", "Fully automated via CI/CD policy compliance"),
         opt("lightweight_review", "Peer review (PR) + automated pipeline gates"),
         opt("cab", "CAB / Infosec / Architecture review required for every release")
-      ]},
-    { id: "q16_bottlenecks", n: "Q16", section: "instrument", type: "ranked",
+      ]}]},
+    { id: "q16_bottlenecks", n: "Q16", section: "instrument",
       legend: "Rank your team's top 3 productivity bottlenecks",
       help: "Rank 1 ambiguous-or-shifting fires reconnaissance. Test-fear in the top 2 fires TDD verification.",
-      options: [
-        opt("ambiguous_or_shifting", BOTTLENECK_LABEL.ambiguous_or_shifting),
-        opt("flaky_cicd", BOTTLENECK_LABEL.flaky_cicd),
-        opt("cross_team_approvals", BOTTLENECK_LABEL.cross_team_approvals),
-        opt("test_fear", BOTTLENECK_LABEL.test_fear),
-        opt("interruptive_support", BOTTLENECK_LABEL.interruptive_support),
-        opt("compliance_overhead", BOTTLENECK_LABEL.compliance_overhead),
-        opt("legacy_tech_debt", BOTTLENECK_LABEL.legacy_tech_debt)
-      ]},
-    { id: "q17_process_mismatch", n: "Q17", section: "instrument", type: "textarea", reportOnly: true,
+      fields: [{ kind: "ranked", id: "q16_bottlenecks", hashKey: "q16", ranks: 3, unique: true,
+        rankLabels: ["1st (biggest)", "2nd", "3rd"],
+        options: [
+          opt("ambiguous_or_shifting", "Ambiguous or shifting requirements"),
+          opt("flaky_cicd", "Flaky CI/CD pipelines or slow builds"),
+          opt("cross_team_approvals", "Cross-team dependencies and waiting on approvals"),
+          opt("test_fear", "Lack of test automation / fear of breaking financial calculations"),
+          opt("interruptive_support", "High volume of interruptive support tickets/incidents"),
+          opt("compliance_overhead", "Complex compliance/audit documentation overhead"),
+          opt("legacy_tech_debt", "Technical debt in legacy codebases")
+        ]}]},
+    { id: "q17_process_mismatch", n: "Q17", section: "instrument", reportOnly: true,
       legend: "What currently feels mismatched about your development process or delivery cadence?",
-      help: "Copied into the Markdown report. The engine never reads this text." },
-    { id: "q18_token_budget", n: "Q18", section: "constraints", type: "radio",
+      help: "Copied into the Markdown report. The engine never reads this text.",
+      fields: [{ kind: "text", id: "q17_process_mismatch", hashKey: "q17", maxLength: 500 }]},
+    { id: "q18_token_budget", n: "Q18", section: "constraints",
       legend: "Token / plan budget",
       help: "Metered budgets avoid Superpowers as a base when coverage is low.",
-      options: [
+      fields: [{ kind: "single", id: "q18_token_budget", hashKey: "q18", options: [
         opt("unmetered", "Unmetered"),
         opt("team_plan", "Team plan"),
         opt("individual_pro", "Individual Pro (metered)"),
         opt("strict", "Strict / rationed")
-      ]},
-    { id: "q19_change_volume", n: "Q19", section: "constraints", type: "radio",
+      ]}]},
+    { id: "q19_change_volume", n: "Q19", section: "constraints",
       legend: "Change volume profile",
       help: "Many small changes add a documented fast path beside any heavyweight pipeline.",
-      options: [
+      fields: [{ kind: "single", id: "q19_change_volume", hashKey: "q19", options: [
         opt("many_small", "Many small changes"),
         opt("balanced", "Balanced mix"),
         opt("few_large", "Few large changes")
-      ]},
-    { id: "q20_runtimes", n: "Q20", section: "constraints", type: "checkbox",
+      ]}]},
+    { id: "q20_runtimes", n: "Q20", section: "constraints",
       legend: "Agent runtimes in use",
       help: "Frameworks that do not document at least one selected runtime are removed before base selection.",
-      options: [
+      fields: [{ kind: "multi", id: "q20_runtimes", hashKey: "q20", options: [
         opt("claude_code", "Claude Code"), opt("cursor", "Cursor"), opt("codex", "Codex"),
         opt("copilot", "GitHub Copilot"), opt("gemini_cli", "Gemini CLI"),
         opt("windsurf", "Windsurf"), opt("opencode", "OpenCode"), opt("other", "Other")
-      ]},
-    { id: "q21_ci_maturity", n: "Q21", section: "constraints", type: "radio",
+      ]}]},
+    { id: "q21_ci_maturity", n: "Q21", section: "constraints",
       legend: "Existing CI enforcement maturity",
       help: "SOX or zero-tolerance with tests-only or no CI adds a deterministic CI overlay.",
-      options: [
+      fields: [{ kind: "single", id: "q21_ci_maturity", hashKey: "q21", options: [
         opt("none", "None"),
         opt("tests_only", "Tests only"),
         opt("tests_plus_static", "Tests plus static analysis"),
         opt("contracts_runtime", "Contracts and runtime checks")
-      ]}
+      ]}]}
   ];
-
-  function q5Complete(q5) {
-    if (!q5) return false;
-    var keys = ["roadmap", "ops", "bugs", "regulatory", "tech_debt"];
-    var sum = 0;
-    for (var i = 0; i < keys.length; i++) {
-      var n = q5[keys[i]];
-      if (typeof n !== "number" || !isFinite(n) || n < 0) return false;
-      sum += n;
-    }
-    return sum === 100;
-  }
-
-  function q2RulesComplete(t) {
-    return !!(t && typeof t.total === "number" && t.total >= 1 &&
-      typeof t.qa_sdet === "number" && t.qa_sdet >= 0 &&
-      (t.product_owner === "dedicated" || t.product_owner === "shared" || t.product_owner === "none") &&
-      (t.scrum_master === "dedicated" || t.scrum_master === "shared" || t.scrum_master === "none"));
-  }
 
   function coverageLevel(gates) {
     var automated = (gates || []).filter(function (g) { return g !== "mostly_manual"; });
@@ -702,21 +732,108 @@
     return "high";
   }
 
-  var FIELD_INDEX = {
-    q2_team: { kind: "record", constraints: {
-      requiredKeys: ["total", "qa_sdet", "product_owner", "scrum_master"],
-      minimums: { total: 1, qa_sdet: 0 },
-      allowedValues: {
-        product_owner: ["dedicated", "shared", "none"],
-        scrum_master: ["dedicated", "shared", "none"]
+  function fnv1aHex(s) {
+    var hash = 2166136261 >>> 0;
+    var utf8 = unescape(encodeURIComponent(String(s)));
+    for (var i = 0; i < utf8.length; i++) {
+      hash ^= utf8.charCodeAt(i);
+      hash = Math.imul(hash, 16777619) >>> 0;
+    }
+    return hash.toString(16).padStart(8, "0");
+  }
+
+  function fieldSurfaceParts(f) {
+    var parts = [f.id, f.kind, f.hashKey || f.id];
+    if (f.maxLength != null) parts.push("ml=" + f.maxLength);
+    if (f.ranks != null) parts.push("r=" + f.ranks);
+    if (f.options) {
+      for (var i = 0; i < f.options.length; i++) parts.push("o=" + f.options[i].value);
+    }
+    if (f.fields) {
+      for (var j = 0; j < f.fields.length; j++) {
+        var s = f.fields[j];
+        parts.push("s=" + s.id, s.kind);
+        if (s.options) {
+          for (var k = 0; k < s.options.length; k++) parts.push("o=" + s.options[k].value);
+        }
       }
-    }},
-    q5_work_breakdown: { kind: "record", constraints: {
-      sumTo: 100, requiredKeys: ["roadmap", "ops", "bugs", "regulatory", "tech_debt"]
-    }},
-    q12_quality_gates: { kind: "multi" },
-    q16_bottlenecks: { kind: "ranked" }
-  };
+    }
+    return parts.join("\t");
+  }
+
+  function buildAnswerSurface(questions) {
+    var lines = [];
+    for (var qi = 0; qi < questions.length; qi++) {
+      var fields = questions[qi].fields || [];
+      for (var fi = 0; fi < fields.length; fi++) lines.push(fieldSurfaceParts(fields[fi]));
+    }
+    return lines.join("\n");
+  }
+
+  function compileFields(questions) {
+    var FIELD_INDEX = {};
+    var ALL_FIELD_IDS = [];
+    var HASH_TO_FIELD = {};
+    var FIELD_TO_HASH = {};
+    for (var qi = 0; qi < questions.length; qi++) {
+      var q = questions[qi];
+      var fields = q.fields || [];
+      for (var fi = 0; fi < fields.length; fi++) {
+        var f = fields[fi];
+        ALL_FIELD_IDS.push(f.id);
+        var hashKey = f.hashKey || f.id;
+        FIELD_INDEX[f.id] = {
+          kind: f.kind,
+          hashKey: hashKey,
+          options: f.options,
+          constraints: f.constraints,
+          reportOnly: !!f.reportOnly,
+          questionReportOnly: !!q.reportOnly,
+          maxLength: f.maxLength,
+          ranks: f.ranks,
+          unique: !!f.unique,
+          rankLabels: f.rankLabels,
+          fields: f.fields,
+          min: f.min,
+          max: f.max,
+          label: f.label
+        };
+        HASH_TO_FIELD[hashKey] = f.id;
+        FIELD_TO_HASH[f.id] = hashKey;
+      }
+    }
+    var surface = buildAnswerSurface(questions);
+    var PACK_DIGEST = fnv1aHex(surface);
+    return {
+      FIELD_INDEX: FIELD_INDEX,
+      ALL_FIELD_IDS: ALL_FIELD_IDS,
+      HASH_TO_FIELD: HASH_TO_FIELD,
+      FIELD_TO_HASH: FIELD_TO_HASH,
+      PACK_DIGEST: PACK_DIGEST,
+      ANSWER_SURFACE: surface
+    };
+  }
+
+  var _compiled = compileFields(QUESTIONS);
+  var FIELD_INDEX = _compiled.FIELD_INDEX;
+  var ALL_FIELD_IDS = _compiled.ALL_FIELD_IDS;
+  var HASH_TO_FIELD = _compiled.HASH_TO_FIELD;
+  var FIELD_TO_HASH = _compiled.FIELD_TO_HASH;
+  var PACK_DIGEST = _compiled.PACK_DIGEST;
+  var ANSWER_SURFACE = _compiled.ANSWER_SURFACE;
+  var LEGACY_V3_DIGEST = PACK_DIGEST;
+
+  function isReportOnly(id) {
+    var meta = FIELD_INDEX[id];
+    return !!(meta && (meta.reportOnly || meta.questionReportOnly));
+  }
+
+  function optionLabel(fieldId, value) {
+    var f = FIELD_INDEX[fieldId];
+    if (!f || !f.options) return value;
+    for (var i = 0; i < f.options.length; i++) if (f.options[i].value === value) return f.options[i].label;
+    return value;
+  }
 
   var DERIVED_DEFS = [
     { key: "unplannedShare", expr: {
@@ -1169,12 +1286,14 @@
   }
 
   function fieldPresent(answers, id) {
-    if (id === "q5_work_breakdown") return q5Complete(answers.q5_work_breakdown);
-    if (id === "q2_team") return q2RulesComplete(answers.q2_team);
-    if (id === "q12_quality_gates" || id === "q16_bottlenecks" || id === "q20_runtimes") {
-      return Array.isArray(answers[id]) && answers[id].length > 0;
-    }
+    var meta = FIELD_INDEX[id];
     var v = answers[id];
+    if (!meta) return v !== undefined && v !== null && v !== "";
+    if (meta.kind === "record") return SDDExpr.recordValid(v, meta.constraints || {});
+    if (meta.kind === "multi" || meta.kind === "ranked") {
+      return Array.isArray(v) && v.length > 0;
+    }
+    if (meta.kind === "number") return typeof v === "number" && isFinite(v);
     return v !== undefined && v !== null && v !== "";
   }
 
@@ -1191,21 +1310,13 @@
   function completeness(answers, questions, rules) {
     var answered = [];
     var missing = [];
-    var ids = [
-      "q1_domain", "q2_team", "q3_distribution", "q4_tenure", "q4_domain_familiarity",
-      "q5_work_breakdown", "q6_volatility", "q7_requirements", "q8_compliance", "q9_precision",
-      "q10_architecture", "q11_deploy_cadence", "q11_cycle_time", "q12_quality_gates",
-      "q13_branching", "q14_release_autonomy", "q15_governance", "q16_bottlenecks",
-      "q17_process_mismatch", "q18_token_budget", "q19_change_volume", "q20_runtimes",
-      "q21_ci_maturity"
-    ];
-    ids.forEach(function (id) {
+    ALL_FIELD_IDS.forEach(function (id) {
       if (fieldPresent(answers, id)) answered.push(id);
       else missing.push(id);
     });
     var req = allRuleRequires([rules.BASE_RULES, rules.OVERLAYS, rules.CAUTIONS]);
     var could = missing.filter(function (id) {
-      return !REPORT_ONLY[id] && req.indexOf(id) !== -1;
+      return !isReportOnly(id) && req.indexOf(id) !== -1;
     });
     return { answered: answered, missing: missing, couldChangeResult: could };
   }
@@ -1338,111 +1449,187 @@
   var FIELD_TO_HASH = {};
   Object.keys(HASH_TO_FIELD).forEach(function (k) { FIELD_TO_HASH[HASH_TO_FIELD[k]] = k; });
 
-  function allowedValues(field) {
-    for (var i = 0; i < QUESTIONS.length; i++) {
-      var q = QUESTIONS[i];
-      if (q.id === field && q.options) return q.options.map(function (o) { return o.value; });
-    }
-    if (field === "q4_tenure") return ["forming", "3_12_months", "over_1_year"];
-    if (field === "q4_domain_familiarity") return ["high", "medium", "low"];
-    if (field === "q11_deploy_cadence") return ["continuous", "sprint", "monthly", "quarterly"];
-    if (field === "q11_cycle_time") return ["under_2h", "1_3_days", "1_2_weeks", "over_2_weeks"];
-    return null;
+  function optionValues(meta) {
+    if (!meta || !meta.options) return null;
+    return meta.options.map(function (o) { return o.value; });
   }
 
   function validEnum(field, value) {
-    var allow = allowedValues(field);
+    var meta = FIELD_INDEX[field];
+    var allow = optionValues(meta);
     if (!allow) return true;
     return allow.indexOf(value) !== -1;
   }
 
-  function encodeHash(answers) {
-    var parts = ["v=" + SCHEMA_VERSION];
-    var truncated = false;
-    function push(k, v) { parts.push(k + "=" + v); }
-    if (answers.q1_domain) push("q1", answers.q1_domain);
-    if (q2RulesComplete(answers.q2_team) || (answers.q2_team && answers.q2_team.total)) {
-      var t = answers.q2_team;
-      var swe = typeof t.swe === "number" ? t.swe : 0;
-      var de = typeof t.data_engineers === "number" ? t.data_engineers : 0;
-      var qa = typeof t.qa_sdet === "number" ? t.qa_sdet : 0;
-      if (t.total != null && t.product_owner && t.scrum_master) {
-        push("q2", [t.total, swe, de, qa, t.product_owner, t.scrum_master].join(","));
+  function multiInPackOrder(meta, values) {
+    var set = {};
+    (values || []).forEach(function (v) { set[v] = 1; });
+    return (meta.options || []).map(function (o) { return o.value; }).filter(function (v) { return set[v]; });
+  }
+
+  function canEncodeRecord(meta, rec) {
+    if (!rec || typeof rec !== "object" || Array.isArray(rec)) return false;
+    var constraints = meta.constraints || {};
+    if (SDDExpr.recordValid(rec, constraints)) return true;
+    if (constraints.sumTo != null) return false;
+    var byId = {};
+    (meta.fields || []).forEach(function (s) { byId[s.id] = s; });
+    var req = constraints.requiredKeys || [];
+    for (var i = 0; i < req.length; i++) {
+      var key = req[i];
+      var sub = byId[key];
+      var val = rec[key];
+      if (sub && sub.kind === "number") {
+        var min = constraints.minimums && constraints.minimums[key];
+        if (min != null && min > 0) {
+          if (typeof val !== "number" || !isFinite(val)) return false;
+        }
+      } else if (val == null || val === "") {
+        return false;
       }
     }
-    if (answers.q3_distribution) push("q3", answers.q3_distribution);
-    if (answers.q4_tenure) push("q4t", answers.q4_tenure);
-    if (answers.q4_domain_familiarity) push("q4f", answers.q4_domain_familiarity);
-    if (q5Complete(answers.q5_work_breakdown)) {
-      var q5 = answers.q5_work_breakdown;
-      push("q5", [q5.roadmap, q5.ops, q5.bugs, q5.regulatory, q5.tech_debt].join(","));
+    return req.length > 0;
+  }
+
+  function encodeRecordValue(meta, rec) {
+    return (meta.fields || []).map(function (sub) {
+      var val = rec[sub.id];
+      if (sub.kind === "number") {
+        if (typeof val !== "number" || !isFinite(val)) return "0";
+        return String(val);
+      }
+      return val == null ? "" : String(val);
+    }).join(",");
+  }
+
+  function decodeRecordValue(meta, raw) {
+    var parts = String(raw).split(",");
+    var subs = meta.fields || [];
+    if (parts.length !== subs.length) return null;
+    var rec = {};
+    var constraints = meta.constraints || {};
+    for (var i = 0; i < subs.length; i++) {
+      var sub = subs[i];
+      if (sub.kind === "number") {
+        var n = +parts[i];
+        if (!isFinite(n)) return null;
+        rec[sub.id] = n;
+      } else {
+        var sv = parts[i];
+        if (sub.options && sub.options.map(function (o) { return o.value; }).indexOf(sv) === -1) return null;
+        if (constraints.allowedValues && constraints.allowedValues[sub.id] &&
+            constraints.allowedValues[sub.id].indexOf(sv) === -1) return null;
+        rec[sub.id] = sv;
+      }
     }
-    ["q6_volatility", "q7_requirements", "q8_compliance", "q9_precision", "q10_architecture",
-      "q11_deploy_cadence", "q11_cycle_time", "q13_branching", "q14_release_autonomy",
-      "q15_governance", "q18_token_budget", "q19_change_volume", "q21_ci_maturity"].forEach(function (f) {
-      if (answers[f]) push(FIELD_TO_HASH[f], answers[f]);
-    });
-    ["q12_quality_gates", "q16_bottlenecks", "q20_runtimes"].forEach(function (f) {
-      if (answers[f] && answers[f].length) push(FIELD_TO_HASH[f], answers[f].join(","));
-    });
-    if (answers.q17_process_mismatch) {
-      var text = answers.q17_process_mismatch;
-      if (text.length > Q17_MAX) { text = text.slice(0, Q17_MAX); truncated = true; }
-      push("q17", encodeURIComponent(text));
+    if (constraints.minimums) {
+      for (var k in constraints.minimums) {
+        if (Object.prototype.hasOwnProperty.call(constraints.minimums, k) &&
+            typeof rec[k] === "number" && rec[k] < constraints.minimums[k]) return null;
+      }
     }
+    return rec;
+  }
+
+  function encodeHash(answers) {
+    var parts = ["v=" + PACK_DIGEST];
+    var truncated = false;
+    function push(k, v) {
+      if (v == null) return;
+      var s = String(v);
+      if (s.indexOf("NaN") !== -1) return;
+      parts.push(k + "=" + s);
+    }
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      var hk = meta.hashKey;
+      var val = answers[fid];
+      if (meta.kind === "single") {
+        if (val) push(hk, val);
+      } else if (meta.kind === "multi" || meta.kind === "ranked") {
+        if (val && val.length) {
+          var ordered = meta.kind === "multi" ? multiInPackOrder(meta, val) : val;
+          if (ordered.length) push(hk, ordered.join(","));
+        }
+      } else if (meta.kind === "text") {
+        if (val) {
+          var text = String(val);
+          var max = meta.maxLength != null ? meta.maxLength : text.length;
+          if (text.length > max) { text = text.slice(0, max); truncated = true; }
+          push(hk, encodeURIComponent(text));
+        }
+      } else if (meta.kind === "number") {
+        if (typeof val === "number" && isFinite(val)) push(hk, val);
+      } else if (meta.kind === "record") {
+        if (canEncodeRecord(meta, val)) push(hk, encodeRecordValue(meta, val));
+      }
+    });
     return { hash: parts.join("&"), truncated: truncated };
   }
 
   function decodeHash(hash) {
-    var raw = String(hash || "").replace(/^#/, "");
-    if (!raw) return { answers: {}, notice: null };
-    var params = {};
-    raw.split("&").forEach(function (pair) {
-      var i = pair.indexOf("=");
-      if (i === -1) return;
-      params[decodeURIComponent(pair.slice(0, i))] = pair.slice(i + 1);
-    });
-    var ver = parseInt(params.v, 10);
-    if (params.v && ver !== SCHEMA_VERSION) {
-      return { answers: {}, notice: "This link uses questionnaire schema v" + params.v + ", which is not compatible with v" + SCHEMA_VERSION + ". The form was not filled from the link." };
-    }
-    var a = {};
-    function take(hk, field) {
-      if (params[hk] == null || params[hk] === "") return;
-      var val = params[hk];
-      if (field === "q2_team") {
-        var p = val.split(",");
-        if (p.length !== 6) return;
-        var team = {
-          total: +p[0], swe: +p[1], data_engineers: +p[2], qa_sdet: +p[3],
-          product_owner: p[4], scrum_master: p[5]
+    try {
+      var raw = String(hash || "").replace(/^#/, "");
+      if (!raw) return { answers: {}, notice: null };
+      var params = {};
+      raw.split("&").forEach(function (pair) {
+        var i = pair.indexOf("=");
+        if (i === -1) return;
+        params[decodeURIComponent(pair.slice(0, i))] = pair.slice(i + 1);
+      });
+      var ver = params.v;
+      var legacyOk = PACK_DIGEST === LEGACY_V3_DIGEST;
+      if (ver === PACK_DIGEST) {
+        /* current digest — decode */
+      } else if (!ver || ver === "3") {
+        if (!legacyOk) {
+          return {
+            answers: {},
+            notice: "This link uses questionnaire schema v3, which is not compatible with the current digest " + PACK_DIGEST + ". The form was not filled from the link."
+          };
+        }
+      } else {
+        return {
+          answers: {},
+          notice: "This link uses questionnaire version " + ver + ", which does not match this page's digest " + PACK_DIGEST + ". The form was not filled from the link."
         };
-        if (!(team.total >= 1)) return;
-        if (["dedicated", "shared", "none"].indexOf(team.product_owner) === -1) return;
-        if (["dedicated", "shared", "none"].indexOf(team.scrum_master) === -1) return;
-        a.q2_team = team;
-        return;
       }
-      if (field === "q5_work_breakdown") {
-        var n = val.split(",").map(Number);
-        if (n.length !== 5 || n.some(function (x) { return !isFinite(x); })) return;
-        a.q5_work_breakdown = { roadmap: n[0], ops: n[1], bugs: n[2], regulatory: n[3], tech_debt: n[4] };
-        return;
-      }
-      if (field === "q12_quality_gates" || field === "q16_bottlenecks" || field === "q20_runtimes") {
-        var arr = val.split(",").filter(function (x) { return validEnum(field, x); });
-        if (arr.length) a[field] = arr;
-        return;
-      }
-      if (field === "q17_process_mismatch") {
-        try { a.q17_process_mismatch = decodeURIComponent(val).slice(0, Q17_MAX); } catch (e) {}
-        return;
-      }
-      var decoded = decodeURIComponent(val);
-      if (validEnum(field, decoded)) a[field] = decoded;
+      var a = {};
+      Object.keys(HASH_TO_FIELD).forEach(function (hk) {
+        if (params[hk] == null || params[hk] === "") return;
+        var field = HASH_TO_FIELD[hk];
+        var meta = FIELD_INDEX[field];
+        var val = params[hk];
+        if (!meta) return;
+        if (meta.kind === "record") {
+          var rec = decodeRecordValue(meta, val);
+          if (rec) a[field] = rec;
+          return;
+        }
+        if (meta.kind === "multi" || meta.kind === "ranked") {
+          var arr = val.split(",").filter(function (x) { return validEnum(field, x); });
+          if (arr.length) a[field] = arr;
+          return;
+        }
+        if (meta.kind === "text") {
+          try {
+            var max = meta.maxLength != null ? meta.maxLength : 500;
+            a[field] = decodeURIComponent(val).slice(0, max);
+          } catch (e) {}
+          return;
+        }
+        if (meta.kind === "number") {
+          var n = +decodeURIComponent(val);
+          if (isFinite(n)) a[field] = n;
+          return;
+        }
+        var decoded = decodeURIComponent(val);
+        if (validEnum(field, decoded)) a[field] = decoded;
+      });
+      return { answers: a, notice: null };
+    } catch (e) {
+      return { answers: {}, notice: null };
     }
-    Object.keys(HASH_TO_FIELD).forEach(function (hk) { take(hk, HASH_TO_FIELD[hk]); });
-    return { answers: a, notice: null };
   }
 
   function deepEqual(x, y) {
@@ -1739,7 +1926,10 @@
     applyCautions: applyCautions, toMarkdown: toMarkdown, encodeHash: encodeHash, decodeHash: decodeHash,
     completeness: completeness, coverageLevel: coverageLevel, runSelftest: runSelftest,
     FRAMEWORKS: FRAMEWORKS, QUESTIONS: QUESTIONS, FIELD_INDEX: FIELD_INDEX, DERIVED_DEFS: DERIVED_DEFS,
-    BASE_RULES: BASE_RULES, OVERLAYS: OVERLAYS, CAUTIONS: CAUTIONS, SDDExpr: SDDExpr
+    BASE_RULES: BASE_RULES, OVERLAYS: OVERLAYS, CAUTIONS: CAUTIONS, SDDExpr: SDDExpr,
+    PACK_DIGEST: PACK_DIGEST, LEGACY_V3_DIGEST: LEGACY_V3_DIGEST, ALL_FIELD_IDS: ALL_FIELD_IDS,
+    HASH_TO_FIELD: HASH_TO_FIELD, FIELD_TO_HASH: FIELD_TO_HASH, optionLabel: optionLabel,
+    buildAnswerSurface: buildAnswerSurface, compileFields: compileFields, ANSWER_SURFACE: ANSWER_SURFACE
   };
 
   function fwName(id) {
@@ -1828,12 +2018,12 @@
     lines.push("## Bottleneck resolution");
     if (!result.bottleneckMatrix.length) lines.push("_No bottlenecks ranked._");
     result.bottleneckMatrix.forEach(function (row) {
-      lines.push((row.rank) + ". " + BOTTLENECK_LABEL[row.bottleneck] + " — " +
+      lines.push((row.rank) + ". " + optionLabel("q16_bottlenecks", row.bottleneck) + " — " +
         (row.resolvedBy ? row.resolvedBy.join(", ") : "not addressed by this stack"));
     });
     var unaddr = ["interruptive_support", "compliance_overhead", "legacy_tech_debt"];
     lines.push("");
-    lines.push("Overlays in this revision do not address: " + unaddr.map(function (id) { return BOTTLENECK_LABEL[id]; }).join("; ") + ".");
+    lines.push("Overlays in this revision do not address: " + unaddr.map(function (id) { return optionLabel("q16_bottlenecks", id); }).join("; ") + ".");
     lines.push("");
     if (answers.q17_process_mismatch) {
       lines.push("## Process mismatch note");
@@ -1864,6 +2054,72 @@
     return n;
   }
 
+  function renderSingleInputs(container, field, name) {
+    if (field.label) container.appendChild(el("p", { class: "help", text: field.label }));
+    (field.options || []).forEach(function (o) {
+      var id = name + "-" + o.value;
+      var lab = el("label", { "for": id });
+      lab.appendChild(el("input", { type: "radio", name: name, value: o.value, id: id }));
+      lab.appendChild(document.createTextNode(" " + o.label));
+      container.appendChild(lab);
+    });
+  }
+
+  function renderMultiInputs(container, field) {
+    (field.options || []).forEach(function (o) {
+      var id = field.id + "-" + o.value;
+      var lab = el("label", { "for": id });
+      lab.appendChild(el("input", { type: "checkbox", name: field.id, value: o.value, id: id }));
+      lab.appendChild(document.createTextNode(" " + o.label));
+      container.appendChild(lab);
+    });
+  }
+
+  function renderField(field, container) {
+    if (field.kind === "single") {
+      renderSingleInputs(container, field, field.id);
+    } else if (field.kind === "multi") {
+      renderMultiInputs(container, field);
+    } else if (field.kind === "text") {
+      var attrs = { name: field.id, id: field.id, "aria-describedby": field.id + "-help" };
+      if (field.maxLength != null) attrs.maxlength = String(field.maxLength);
+      container.appendChild(el("textarea", attrs));
+    } else if (field.kind === "ranked") {
+      var ranks = field.ranks || 3;
+      var labels = field.rankLabels || [];
+      for (var r = 1; r <= ranks; r++) {
+        var rlab = labels[r - 1] || String(r);
+        var lab = el("label", { "for": field.hashKey + "-" + r, text: rlab });
+        var sel = el("select", { name: field.hashKey + "_" + r, id: field.hashKey + "-" + r });
+        sel.appendChild(el("option", { value: "", text: "—" }));
+        (field.options || []).forEach(function (o) {
+          sel.appendChild(el("option", { value: o.value, text: o.label }));
+        });
+        lab.appendChild(sel);
+        container.appendChild(lab);
+      }
+    } else if (field.kind === "record") {
+      var hk = field.hashKey || field.id;
+      (field.fields || []).forEach(function (sub) {
+        if (sub.kind === "number") {
+          var lab = el("label", { "for": hk + "-" + sub.id });
+          lab.appendChild(document.createTextNode((sub.label || sub.id) + " "));
+          var nattrs = { type: "number", name: hk + "_" + sub.id, id: hk + "-" + sub.id, step: "1" };
+          if (sub.min != null) nattrs.min = String(sub.min);
+          if (sub.max != null) nattrs.max = String(sub.max);
+          lab.appendChild(el("input", nattrs));
+          container.appendChild(lab);
+        } else if (sub.kind === "single") {
+          var subName = hk + "_" + sub.id;
+          renderSingleInputs(container, sub, subName);
+        }
+      });
+      if (field.constraints && field.constraints.sumTo != null) {
+        container.appendChild(el("p", { id: hk + "-sum", class: "help", text: "Sum: 0" }));
+      }
+    }
+  }
+
   function renderForm(questions, container) {
     container.innerHTML = "";
     var inst = el("div");
@@ -1872,180 +2128,82 @@
     questions.forEach(function (q) {
       var fs = el("fieldset");
       fs.appendChild(el("legend", { text: q.n + ". " + q.legend }));
-      fs.appendChild(el("p", { class: "help", text: q.help }));
-      if (q.type === "radio") {
-        q.options.forEach(function (o) {
-          var id = q.id + "-" + o.value;
-          var lab = el("label", { "for": id });
-          lab.appendChild(el("input", { type: "radio", name: q.id, value: o.value, id: id }));
-          lab.appendChild(document.createTextNode(" " + o.label));
-          fs.appendChild(lab);
-        });
-      } else if (q.type === "checkbox") {
-        q.options.forEach(function (o) {
-          var id = q.id + "-" + o.value;
-          var lab = el("label", { "for": id });
-          lab.appendChild(el("input", { type: "checkbox", name: q.id, value: o.value, id: id }));
-          lab.appendChild(document.createTextNode(" " + o.label));
-          fs.appendChild(lab);
-        });
-      } else if (q.type === "textarea") {
-        fs.appendChild(el("textarea", { name: q.id, id: q.id, maxlength: String(Q17_MAX), "aria-describedby": q.id + "-help" }));
-      } else if (q.type === "percents") {
-        ["roadmap", "ops", "bugs", "regulatory", "tech_debt"].forEach(function (k) {
-          var lab = el("label", { "for": "q5-" + k, text: "" });
-          var titles = { roadmap: "Roadmap / strategic %", ops: "Unplanned ops / triage %", bugs: "Bugs / incidents %", regulatory: "Regulatory / audit %", tech_debt: "Tech debt %" };
-          lab.appendChild(document.createTextNode(titles[k] + " "));
-          lab.appendChild(el("input", { type: "number", name: "q5_" + k, id: "q5-" + k, min: "0", max: "100", step: "1" }));
-          fs.appendChild(lab);
-        });
-        fs.appendChild(el("p", { id: "q5-sum", class: "help", text: "Sum: 0" }));
-      } else if (q.type === "team") {
-        [["total", "Total team size"], ["swe", "Software engineers"], ["data_engineers", "Data engineers"], ["qa_sdet", "QA / SDET"]].forEach(function (pair) {
-          var lab = el("label", { "for": "q2-" + pair[0] });
-          lab.appendChild(document.createTextNode(pair[1] + " "));
-          lab.appendChild(el("input", { type: "number", name: "q2_" + pair[0], id: "q2-" + pair[0], min: pair[0] === "total" ? "1" : "0", step: "1" }));
-          fs.appendChild(lab);
-        });
-        function roleRadios(name, title) {
-          fs.appendChild(el("p", { text: title, class: "help" }));
-          ["dedicated", "shared", "none"].forEach(function (v) {
-            var id = name + "-" + v;
-            var lab = el("label", { "for": id });
-            lab.appendChild(el("input", { type: "radio", name: name, value: v, id: id }));
-            lab.appendChild(document.createTextNode(" " + v.charAt(0).toUpperCase() + v.slice(1)));
-            fs.appendChild(lab);
-          });
-        }
-        roleRadios("q2_product_owner", "Product Owner / PM");
-        roleRadios("q2_scrum_master", "Scrum Master / Delivery Lead");
-      } else if (q.type === "q4") {
-        fs.appendChild(el("p", { class: "help", text: "How long has this core team worked together?" }));
-        [
-          opt("forming", "< 3 months"),
-          opt("3_12_months", "3–12 months"),
-          opt("over_1_year", "> 1 year")
-        ].forEach(function (o) {
-          var id = "q4_tenure-" + o.value;
-          var lab = el("label", { "for": id });
-          lab.appendChild(el("input", { type: "radio", name: "q4_tenure", value: o.value, id: id }));
-          lab.appendChild(document.createTextNode(" " + o.label));
-          fs.appendChild(lab);
-        });
-        fs.appendChild(el("p", { class: "help", text: "Team familiarity with the functional finance domain" }));
-        [
-          opt("high", "High"), opt("medium", "Medium"), opt("low", "Low")
-        ].forEach(function (o) {
-          var id = "q4_domain_familiarity-" + o.value;
-          var lab = el("label", { "for": id });
-          lab.appendChild(el("input", { type: "radio", name: "q4_domain_familiarity", value: o.value, id: id }));
-          lab.appendChild(document.createTextNode(" " + o.label));
-          fs.appendChild(lab);
-        });
-      } else if (q.type === "q11") {
-        fs.appendChild(el("p", { class: "help", text: "How often does your team release to production?" }));
-        [
-          opt("continuous", "Multiple times per day / on-demand"),
-          opt("sprint", "Once or twice per sprint (every 1–2 weeks)"),
-          opt("monthly", "Monthly"),
-          opt("quarterly", "Quarterly or longer")
-        ].forEach(function (o) {
-          var id = "q11_deploy_cadence-" + o.value;
-          var lab = el("label", { "for": id });
-          lab.appendChild(el("input", { type: "radio", name: "q11_deploy_cadence", value: o.value, id: id }));
-          lab.appendChild(document.createTextNode(" " + o.label));
-          fs.appendChild(lab);
-        });
-        fs.appendChild(el("p", { class: "help", text: "Average cycle time from code commit to running in production (report-only)" }));
-        [
-          opt("under_2h", "< 2 hours"), opt("1_3_days", "1–3 days"),
-          opt("1_2_weeks", "1–2 weeks"), opt("over_2_weeks", "> 2 weeks")
-        ].forEach(function (o) {
-          var id = "q11_cycle_time-" + o.value;
-          var lab = el("label", { "for": id });
-          lab.appendChild(el("input", { type: "radio", name: "q11_cycle_time", value: o.value, id: id }));
-          lab.appendChild(document.createTextNode(" " + o.label));
-          fs.appendChild(lab);
-        });
-      } else if (q.type === "ranked") {
-        [1, 2, 3].forEach(function (rank) {
-          var lab = el("label", { "for": "q16-" + rank, text: rank === 1 ? "1st (biggest)" : rank === 2 ? "2nd" : "3rd" });
-          var sel = el("select", { name: "q16_" + rank, id: "q16-" + rank });
-          sel.appendChild(el("option", { value: "", text: "—" }));
-          q.options.forEach(function (o) {
-            sel.appendChild(el("option", { value: o.value, text: o.label }));
-          });
-          lab.appendChild(sel);
-          fs.appendChild(lab);
-        });
-      }
+      if (q.help) fs.appendChild(el("p", { class: "help", text: q.help }));
+      (q.fields || []).forEach(function (f) { renderField(f, fs); });
       (q.section === "constraints" ? cons : inst).appendChild(fs);
     });
     container.appendChild(inst);
     container.appendChild(cons);
   }
 
+  function readRecordFromForm(fd, meta) {
+    var hk = meta.hashKey;
+    var subs = meta.fields || [];
+    var constraints = meta.constraints || {};
+    if (constraints.sumTo != null) {
+      var perc = subs.map(function (s) { return fd.get(hk + "_" + s.id); });
+      if (!perc.some(function (x) { return x !== null && x !== ""; })) return undefined;
+      var obj = {};
+      subs.forEach(function (s, i) {
+        obj[s.id] = perc[i] === "" || perc[i] == null ? NaN : +perc[i];
+      });
+      return obj;
+    }
+    var rec = {};
+    var any = false;
+    subs.forEach(function (s) {
+      if (s.kind === "number") {
+        var raw = fd.get(hk + "_" + s.id);
+        var min = constraints.minimums && constraints.minimums[s.id];
+        var primary = min != null && min > 0;
+        if (primary) {
+          if (raw !== null && raw !== "") any = true;
+          rec[s.id] = raw === "" || raw == null ? undefined : +raw;
+        } else {
+          rec[s.id] = raw === "" || raw == null ? 0 : +raw;
+        }
+      } else if (s.kind === "single") {
+        var sv = fd.get(hk + "_" + s.id);
+        if (sv) { any = true; rec[s.id] = String(sv); }
+      }
+    });
+    if (!any) return undefined;
+    return rec;
+  }
+
   function readAnswers(form) {
     var fd = new FormData(form);
     var a = {};
-    function radio(name) {
-      var v = fd.get(name);
-      return v ? String(v) : undefined;
-    }
-    function checks(name) {
-      return fd.getAll(name).map(String);
-    }
-    a.q1_domain = radio("q1_domain");
-    var total = fd.get("q2_total");
-    var po = radio("q2_product_owner");
-    var sm = radio("q2_scrum_master");
-    if (total || po || sm) {
-      a.q2_team = {
-        total: total === "" || total == null ? undefined : +total,
-        swe: fd.get("q2_swe") === "" || fd.get("q2_swe") == null ? 0 : +fd.get("q2_swe"),
-        data_engineers: fd.get("q2_data_engineers") === "" || fd.get("q2_data_engineers") == null ? 0 : +fd.get("q2_data_engineers"),
-        qa_sdet: fd.get("q2_qa_sdet") === "" || fd.get("q2_qa_sdet") == null ? 0 : +fd.get("q2_qa_sdet"),
-        product_owner: po,
-        scrum_master: sm
-      };
-      if (a.q2_team.total == null || !a.q2_team.product_owner || !a.q2_team.scrum_master) {
-        if (a.q2_team.total == null && !po && !sm) delete a.q2_team;
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      if (meta.kind === "single") {
+        var v = fd.get(fid);
+        if (v) a[fid] = String(v);
+      } else if (meta.kind === "multi") {
+        var checks = fd.getAll(fid).map(String);
+        if (checks.length) a[fid] = checks;
+      } else if (meta.kind === "text") {
+        var t = fd.get(fid);
+        if (t) {
+          var max = meta.maxLength != null ? meta.maxLength : String(t).length;
+          a[fid] = String(t).slice(0, max);
+        }
+      } else if (meta.kind === "ranked") {
+        var ranks = [];
+        var n = meta.ranks || 3;
+        for (var i = 1; i <= n; i++) {
+          var rv = fd.get(meta.hashKey + "_" + i);
+          if (rv) ranks.push(String(rv));
+        }
+        if (ranks.length) a[fid] = ranks;
+      } else if (meta.kind === "record") {
+        var rec = readRecordFromForm(fd, meta);
+        if (rec !== undefined) a[fid] = rec;
+      } else if (meta.kind === "number") {
+        var raw = fd.get(fid);
+        if (raw !== null && raw !== "") a[fid] = +raw;
       }
-    }
-    a.q3_distribution = radio("q3_distribution");
-    a.q4_tenure = radio("q4_tenure");
-    a.q4_domain_familiarity = radio("q4_domain_familiarity");
-    var perc = ["roadmap", "ops", "bugs", "regulatory", "tech_debt"].map(function (k) { return fd.get("q5_" + k); });
-    if (perc.some(function (x) { return x !== null && x !== ""; })) {
-      a.q5_work_breakdown = {
-        roadmap: perc[0] === "" || perc[0] == null ? NaN : +perc[0],
-        ops: perc[1] === "" || perc[1] == null ? NaN : +perc[1],
-        bugs: perc[2] === "" || perc[2] == null ? NaN : +perc[2],
-        regulatory: perc[3] === "" || perc[3] == null ? NaN : +perc[3],
-        tech_debt: perc[4] === "" || perc[4] == null ? NaN : +perc[4]
-      };
-    }
-    a.q6_volatility = radio("q6_volatility");
-    a.q7_requirements = radio("q7_requirements");
-    a.q8_compliance = radio("q8_compliance");
-    a.q9_precision = radio("q9_precision");
-    a.q10_architecture = radio("q10_architecture");
-    a.q11_deploy_cadence = radio("q11_deploy_cadence");
-    a.q11_cycle_time = radio("q11_cycle_time");
-    var gates = checks("q12_quality_gates");
-    if (gates.length) a.q12_quality_gates = gates;
-    a.q13_branching = radio("q13_branching");
-    a.q14_release_autonomy = radio("q14_release_autonomy");
-    a.q15_governance = radio("q15_governance");
-    var ranks = [fd.get("q16_1"), fd.get("q16_2"), fd.get("q16_3")].filter(function (x) { return x; }).map(String);
-    if (ranks.length) a.q16_bottlenecks = ranks;
-    var mismatch = fd.get("q17_process_mismatch");
-    if (mismatch) a.q17_process_mismatch = String(mismatch).slice(0, Q17_MAX);
-    a.q18_token_budget = radio("q18_token_budget");
-    a.q19_change_volume = radio("q19_change_volume");
-    var rts = checks("q20_runtimes");
-    if (rts.length) a.q20_runtimes = rts;
-    a.q21_ci_maturity = radio("q21_ci_maturity");
+    });
     Object.keys(a).forEach(function (k) { if (a[k] === undefined) delete a[k]; });
     return a;
   }
@@ -2056,73 +2214,73 @@
       var n = form.querySelector('input[name="' + name + '"][value="' + CSS.escape(val) + '"]');
       if (n) n.checked = true;
     }
-    checkRadio("q1_domain", answers.q1_domain);
-    if (answers.q2_team) {
-      var t = answers.q2_team;
-      ["total", "swe", "data_engineers", "qa_sdet"].forEach(function (k) {
-        var inp = form.querySelector("#q2-" + k);
-        if (inp && t[k] != null) inp.value = t[k];
-      });
-      checkRadio("q2_product_owner", t.product_owner);
-      checkRadio("q2_scrum_master", t.scrum_master);
-    }
-    checkRadio("q3_distribution", answers.q3_distribution);
-    checkRadio("q4_tenure", answers.q4_tenure);
-    checkRadio("q4_domain_familiarity", answers.q4_domain_familiarity);
-    if (answers.q5_work_breakdown) {
-      var q5 = answers.q5_work_breakdown;
-      Object.keys(q5).forEach(function (k) {
-        var inp = form.querySelector("#q5-" + k);
-        if (inp) inp.value = q5[k];
-      });
-    }
-    ["q6_volatility", "q7_requirements", "q8_compliance", "q9_precision", "q10_architecture",
-      "q11_deploy_cadence", "q11_cycle_time", "q13_branching", "q14_release_autonomy",
-      "q15_governance", "q18_token_budget", "q19_change_volume", "q21_ci_maturity"].forEach(function (f) {
-      checkRadio(f, answers[f]);
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      var val = answers[fid];
+      if (val == null) return;
+      if (meta.kind === "single") {
+        checkRadio(fid, val);
+      } else if (meta.kind === "multi") {
+        (val || []).forEach(function (v) {
+          var n = form.querySelector("#" + CSS.escape(fid + "-" + v));
+          if (n) n.checked = true;
+        });
+      } else if (meta.kind === "text") {
+        var ta = form.querySelector("#" + CSS.escape(fid));
+        if (ta) ta.value = val;
+      } else if (meta.kind === "ranked") {
+        (val || []).forEach(function (v, i) {
+          var sel = form.querySelector("#" + meta.hashKey + "-" + (i + 1));
+          if (sel) sel.value = v;
+        });
+      } else if (meta.kind === "record") {
+        (meta.fields || []).forEach(function (sub) {
+          if (sub.kind === "number") {
+            var inp = form.querySelector("#" + meta.hashKey + "-" + sub.id);
+            if (inp && val[sub.id] != null && isFinite(val[sub.id])) inp.value = val[sub.id];
+          } else if (sub.kind === "single") {
+            checkRadio(meta.hashKey + "_" + sub.id, val[sub.id]);
+          }
+        });
+      }
     });
-    (answers.q12_quality_gates || []).forEach(function (v) {
-      var n = form.querySelector('#q12_quality_gates-' + CSS.escape(v));
-      if (n) n.checked = true;
-    });
-    (answers.q20_runtimes || []).forEach(function (v) {
-      var n = form.querySelector('#q20_runtimes-' + CSS.escape(v));
-      if (n) n.checked = true;
-    });
-    (answers.q16_bottlenecks || []).forEach(function (v, i) {
-      var sel = form.querySelector("#q16-" + (i + 1));
-      if (sel) sel.value = v;
-    });
-    if (answers.q17_process_mismatch) {
-      var ta = form.querySelector("#q17_process_mismatch");
-      if (ta) ta.value = answers.q17_process_mismatch;
-    }
   }
 
   function preventRankDupes(form) {
-    var sels = [1, 2, 3].map(function (i) { return form.querySelector("#q16-" + i); });
-    var chosen = sels.map(function (s) { return s && s.value; });
-    sels.forEach(function (sel, idx) {
-      if (!sel) return;
-      Array.prototype.forEach.call(sel.options, function (opt) {
-        if (!opt.value) { opt.disabled = false; return; }
-        opt.disabled = chosen.some(function (v, j) { return v && v === opt.value && j !== idx; });
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      if (!meta || meta.kind !== "ranked" || !meta.unique) return;
+      var n = meta.ranks || 3;
+      var sels = [];
+      for (var i = 1; i <= n; i++) sels.push(form.querySelector("#" + meta.hashKey + "-" + i));
+      var chosen = sels.map(function (s) { return s && s.value; });
+      sels.forEach(function (sel, idx) {
+        if (!sel) return;
+        Array.prototype.forEach.call(sel.options, function (opt) {
+          if (!opt.value) { opt.disabled = false; return; }
+          opt.disabled = chosen.some(function (v, j) { return v && v === opt.value && j !== idx; });
+        });
       });
     });
   }
 
-  function updateQ5Sum(form) {
-    var sumEl = form.querySelector("#q5-sum");
-    if (!sumEl) return;
-    var keys = ["roadmap", "ops", "bugs", "regulatory", "tech_debt"];
-    var sum = 0;
-    var filled = 0;
-    keys.forEach(function (k) {
-      var inp = form.querySelector("#q5-" + k);
-      if (inp && inp.value !== "") { sum += +inp.value; filled++; }
+  function updateRecordSum(form) {
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      if (!meta || meta.kind !== "record" || !meta.constraints || meta.constraints.sumTo == null) return;
+      var sumEl = form.querySelector("#" + meta.hashKey + "-sum");
+      if (!sumEl) return;
+      var keys = meta.constraints.requiredKeys || (meta.fields || []).map(function (s) { return s.id; });
+      var sum = 0;
+      var filled = 0;
+      keys.forEach(function (k) {
+        var inp = form.querySelector("#" + meta.hashKey + "-" + k);
+        if (inp && inp.value !== "") { sum += +inp.value; filled++; }
+      });
+      var target = meta.constraints.sumTo;
+      sumEl.textContent = filled ? ("Sum: " + sum + (sum === target ? " ✓" : " (must equal " + target + " for work-breakdown rules)")) : "Sum: 0";
+      sumEl.className = filled && sum !== target ? "err" : "help";
     });
-    sumEl.textContent = filled ? ("Sum: " + sum + (sum === 100 ? " ✓" : " (must equal 100 for work-breakdown rules)")) : "Sum: 0";
-    sumEl.className = filled && sum !== 100 ? "err" : "help";
   }
 
   function renderReport(result, container, answers, extra) {
@@ -2142,7 +2300,7 @@
     } else {
       html.push("<p>No unanswered rule-relevant questions.</p>");
     }
-    var optionalMissing = c.missing.filter(function (id) { return REPORT_ONLY[id]; });
+    var optionalMissing = c.missing.filter(function (id) { return isReportOnly(id); });
     if (optionalMissing.length) {
       html.push('<p class="muted">Optional / report-only unanswered: ' + esc(optionalMissing.join(", ")) + "</p>");
     }
@@ -2227,7 +2385,7 @@
     else {
       html.push("<table><thead><tr><th>Rank</th><th>Bottleneck</th><th>Resolved by</th></tr></thead><tbody>");
       result.bottleneckMatrix.forEach(function (row) {
-        html.push("<tr><td>" + row.rank + "</td><td>" + esc(BOTTLENECK_LABEL[row.bottleneck]) + "</td><td>" +
+        html.push("<tr><td>" + row.rank + "</td><td>" + esc(optionLabel("q16_bottlenecks", row.bottleneck)) + "</td><td>" +
           esc(row.resolvedBy ? row.resolvedBy.join(", ") : "Not addressed") + "</td></tr>");
       });
       html.push("</tbody></table>");
@@ -2258,7 +2416,7 @@
 
     function refresh(fromUser) {
       preventRankDupes(form);
-      updateQ5Sum(form);
+      updateRecordSum(form);
       var answers = readAnswers(form);
       var result = evaluate(answers);
       var enc = encodeHash(answers);

@@ -44,6 +44,12 @@ export function loadPage(htmlPath, { now } = {}) {
     isFinite,
     isNaN,
     undefined,
+    encodeURIComponent,
+    decodeURIComponent,
+    encodeURI,
+    decodeURI,
+    unescape,
+    escape,
   };
   // Pin Date.now when requested so evidenceAge.stale is stable.
   if (now != null) {
