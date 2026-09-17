@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Status | Draft — awaiting review |
-| Version | 0.3.0 |
+| Version | 0.4.0 |
 | Owner | Amin Rashidi |
 | Last updated | 2026-09-16 |
 | Source material | *Modern Agentic Spec-Driven Development Frameworks*, Appendix: "Team Diagnostic & SDD Model Selection Decision System"; *Finance Tech Team & Project Diagnostic Questionnaire* (the instrument) |
@@ -11,6 +11,7 @@
 
 **Changelog**
 
+- **0.4.0** — Questionnaire, frameworks, and rules are a validated JSON pack inlined at build time (`DESIGN-EXT-CONFIG.md`). URL marker is a content digest (`v=<digest8>`), not a hand-bumped schema integer. On-screen report trims profile and free-text to Markdown-only (`DESIGN-EXT-UI.md`). Second pack (`general-engineering`) proves the format; authoring guide in `docs/AUTHORING.md`.
 - **0.3.0** — Replaced inferred Q1–Q16 enums with the real Finance Tech diagnostic instrument. Answers are the instrument; the engine reads named derived views where a rule needs an aggregate (§7.6). Q13 and the instrument's open-text Q17 are collected. Design-added questions are Q18–Q21. URL schema `v=3`. New cautions C12 (interrupt-driven) and C13 (vendor-dependent).
 - **0.2.0** — Added evidence-based framework profiles (§8) and cross-cutting decision dimensions (§9) from primary-source research. Added Tier 3 caution rules (§10.4), four new diagnostic questions (§9.3), overlays F and G, and a documented list of divergences from the source document (§11). Corrected adoption metrics; several in the source document were materially wrong.
 - **0.1.0** — Initial design from the source appendix.
@@ -19,7 +20,7 @@
 
 ## 1. Summary
 
-SDD Selector is a single-file, static HTML page that takes a team's answers to a diagnostic questionnaire and deterministically recommends a spec-driven development (SDD) stack: one **base framework** (the daily workflow harness), zero or more **practice overlays** (techniques borrowed from other frameworks for specific constraints), and zero or more **cautions** (known failure modes of the recommended stack against this team's profile). It runs entirely in the browser with no backend, build step, or dependencies.
+SDD Selector is a single-file, static HTML page that takes a team's answers to a diagnostic questionnaire and deterministically recommends a spec-driven development (SDD) stack: one **base framework** (the daily workflow harness), zero or more **practice overlays** (techniques borrowed from other frameworks for specific constraints), and zero or more **cautions** (known failure modes of the recommended stack against this team's profile). It runs entirely in the browser with no backend and no runtime dependencies. The questionnaire, frameworks, and rules ship as a **validated JSON pack** inlined into the page at build time (`packs/finance-tech.json` → `index.html`); authors edit the pack offline and rebuild (see `docs/AUTHORING.md`).
 
 The decision logic originates in the source document's appendix but has been revised against primary-source research into each framework (§8, §11). The most consequential finding: **the source document overstates what several frameworks enforce**. Spec Kit's `constitution.md` is prompt context, not an independent gate; OpenSpec's `/opsx:verify` does not block archiving; Tessl's `[@test]` anchors are references, not executable assertions. A tool that recommends these to a SOX Tier 1 finance team without saying so would be actively misleading, so surfacing enforcement gaps is a first-class output, not a footnote.
 
@@ -42,19 +43,21 @@ This design adds a third tier:
 - G2. Deterministic: identical answers always yield identical output.
 - G3. Zero infrastructure: open `index.html` from disk or any static host.
 - G4. Shareable: a completed questionnaire is encodable in the URL.
-- G5. Rules are data, not code; a non-developer can adjust a threshold or add an overlay.
+- G5. The questionnaire, frameworks, and rules are a validated JSON pack; no code change is needed to add a framework, change a question, or adjust a rule.
 - G6. Accessible (WCAG 2.1 AA), usable on desktop and mobile.
 - G7. Testable without a browser: the engine is a pure function with fixture-based tests.
 - G8. **Honest about enforcement.** Every recommended practice is labeled with what it actually enforces — hard gate, advisory prompt, or human checkpoint.
 - G9. **Evidence-dated.** Adoption and maintenance claims carry the date they were verified, because they decay fast.
+- G10. Pack-supplied content is never executed (no `eval`, no dynamic code from the pack).
 
 ### Non-goals
 
-- Not a general-purpose survey engine. The question set is fixed per release.
+- Not a general-purpose survey engine. The question set is fixed per release (one pack inlined per build).
 - Not an installer. Output references commands but executes nothing.
 - No persistence beyond the URL hash. No accounts, no server storage, no analytics.
 - No LLM involvement. Boolean rules only.
 - Not a framework benchmark. It does not measure output quality; it matches operational profiles to documented capabilities.
+- No in-page pack editor or pack loader. Authoring is offline (`docs/AUTHORING.md`).
 
 ## 4. Users and primary scenario
 
@@ -674,6 +677,8 @@ Two-column at ≥ 900 px (form left, sticky report right); single column stacked
 
 ### 12.3 Report
 
+*On-screen trim (EXT-UI): sections 2 (team profile) and 8 (process mismatch / free text) are Markdown-only. The live report keeps completeness, base, runner-up, overlays, cautions, bottleneck matrix, directory layout, and actions.*
+
 Rendered into an `aria-live="polite"` region. Sections in order:
 
 1. **Completeness banner** (when questions that rules read are missing): unanswered rule-relevant questions, highlighting those that could change the result. Report-only fields (D19, D20) are listed separately as optional, not as `couldChangeResult`.
@@ -699,14 +704,14 @@ Rendered into an `aria-live="polite"` region. Sections in order:
 
 Answers encode into the fragment (`#`), never the query string, so they are never sent to a server if the file is hosted.
 
-Format: `#v=3&q1=ledger&q3=global_timezones&q5=50,10,10,20,10&q2=8,5,1,1,dedicated,shared&q12=unit_coverage,mostly_manual&q16=test_fear,flaky_cicd,legacy_tech_debt&q20=claude_code,cursor&…`
+Format: `#v=<digest8>&q1=ledger&q3=global_timezones&…` where `<digest8>` is an FNV-1a digest of the pack's answer-affecting surface (field ids, kinds, option values, order, hash keys). A mismatch refuses the fragment rather than partially applying answers against a different questionnaire.
 
-- `v=3` schema version, incremented by v0.3.0's instrument alignment. Unknown versions are ignored with a visible notice. A `v=2` fragment is not migrated: the question IDs and enums are not compatible.
+- Legacy `v=3` finance-tech fragments still restore when the digest matches the frozen instrument (compatibility shim). Unknown or mismatched markers show a visible notice. A `v=2` fragment is not migrated.
 - Q5 encodes as five comma-separated integers in instrument order: roadmap, ops, bugs, regulatory, tech_debt.
 - Q2 encodes as `total,swe,data_engineers,qa_sdet,product_owner,scrum_master`.
 - Q17 is URI-encoded. Values longer than 500 characters are truncated on encode, with a visible notice.
 - Only answered questions are encoded. Q17 omitted when empty.
-- The decoder validates every value against `QUESTIONS`; unknown values are dropped silently and the question shows as unanswered.
+- The decoder validates every value against the pack's fields; unknown values are dropped silently and the question shows as unanswered.
 - `history.replaceState` avoids polluting back-button history on every keystroke.
 - Derived views are never encoded.
 

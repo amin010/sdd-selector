@@ -12,11 +12,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Validate pack
-        run: npm run validate
-      - name: Build (inline pack + expr)
+      - name: Validate packs
+        run: npm run validate:all
+      - name: Build finance-tech (shipped index.html)
         run: npm run build
       - name: Assert index.html matches build
         run: git diff --exit-code -- index.html
       - name: Run suite
         run: npm test
+
+  general-engineering:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate general-engineering pack
+        run: node tools/validate.mjs --report packs/general-engineering.json
+      - name: Build throwaway HTML (not index.html)
+        run: node tools/build.mjs --pack packs/general-engineering.json --out /tmp/general-engineering.html
+      - name: Assert shipped index.html untouched
+        run: git diff --exit-code -- index.html
+      - name: Selftest throwaway page
+        run: node tools/selftest-page.mjs /tmp/general-engineering.html

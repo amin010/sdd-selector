@@ -3,28 +3,28 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadGolden, loadCurrent, GOLDEN_V030, CURRENT_PAGE } from "../tools/load-page.mjs";
+import { loadGolden, loadCurrent, GOLDEN_V040, CURRENT_PAGE } from "../tools/load-page.mjs";
 import {
   PINNED_NOW,
   documentedFixtures,
   boundarySweep,
   malformedSets,
   seededRandom,
-  buildCorpus,
-  flattenCorpus,
 } from "../tools/corpus.mjs";
 import { projectRec, runParity } from "../tools/parity.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MD_DIR = path.join(__dirname, "markdown");
 
-test("golden freeze file exists and stays frozen", () => {
-  assert.ok(fs.existsSync(GOLDEN_V030));
-  const golden = fs.readFileSync(GOLDEN_V030, "utf8");
+test("v0.4.0 golden freeze file exists", () => {
+  assert.ok(fs.existsSync(GOLDEN_V040));
+  const golden = fs.readFileSync(GOLDEN_V040, "utf8");
   assert.ok(golden.includes("SDDSelector"));
   assert.ok(golden.includes("module.exports"));
-  // After P0, index.html may diverge; the golden file must not be edited.
-  assert.ok(!golden.includes("/* BEGIN EXPR */"), "v0.3.0 golden must not contain P1 interpreter");
+  assert.ok(golden.includes("/* BEGIN EXPR */"), "v0.4.0 golden must contain interpreter");
+  assert.ok(golden.includes("finance-tech"), "golden must be finance-tech pack");
+  assert.ok(!fs.existsSync(path.join(__dirname, "golden/index-v030.html")),
+    "v0.3.0 golden must be deleted");
 });
 
 test("load-page exports evaluate/toMarkdown without document", () => {
@@ -102,4 +102,16 @@ test("in-page selftest still passes under vm", () => {
   const api = loadCurrent({ now: PINNED_NOW });
   const out = api.runSelftest();
   assert.equal(out.ok, true, out.fails && out.fails.join("\n"));
+});
+
+test("current page matches golden when both are finance-tech P5", () => {
+  assert.ok(fs.existsSync(CURRENT_PAGE));
+  const report = runParity({
+    leftApi: loadCurrent({ now: PINNED_NOW }),
+    rightApi: loadGolden({ now: PINNED_NOW }),
+    cases: documentedFixtures(),
+    label: "current↔golden-doc",
+    stopAt: 3,
+  });
+  assert.equal(report.ok, true, JSON.stringify(report.failures, null, 2));
 });

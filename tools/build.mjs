@@ -1,8 +1,8 @@
 /**
- * Build pipeline (EXT-CONFIG §13): validate pack → inline pack + src/expr.mjs into index.html.
+ * Build pipeline (EXT-CONFIG §13): validate pack → inline pack + src/expr.mjs into HTML.
  *
  * Usage:
- *   node tools/build.mjs [--pack packs/finance-tech.json] [--strip-fixtures]
+ *   node tools/build.mjs [--pack packs/finance-tech.json] [--out index.html] [--strip-fixtures]
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 import { validatePack } from "./validate.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const pagePath = path.join(root, "index.html");
+const templatePath = path.join(root, "index.html");
 const exprPath = path.join(root, "src", "expr.mjs");
 const defaultPack = path.join(root, "packs", "finance-tech.json");
 
@@ -21,6 +21,7 @@ const PACK_END = "/* END PACK */";
 
 function parseArgs(argv) {
   let packPath = defaultPack;
+  let outPath = templatePath;
   let stripFixtures = false;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -29,12 +30,16 @@ function parseArgs(argv) {
       packPath = path.resolve(argv[++i] || "");
     } else if (arg.startsWith("--pack=")) {
       packPath = path.resolve(arg.slice("--pack=".length));
+    } else if (arg === "--out") {
+      outPath = path.resolve(argv[++i] || "");
+    } else if (arg.startsWith("--out=")) {
+      outPath = path.resolve(arg.slice("--out=".length));
     } else if (arg === "--help" || arg === "-h") {
-      console.log("usage: node tools/build.mjs [--pack path] [--strip-fixtures]");
+      console.log("usage: node tools/build.mjs [--pack path] [--out path] [--strip-fixtures]");
       process.exit(0);
     }
   }
-  return { packPath, stripFixtures };
+  return { packPath, outPath, stripFixtures };
 }
 
 function replaceMarkerBlock(page, begin, end, body) {
@@ -76,7 +81,7 @@ function inlinePack(page, pack, stripFixtures) {
 }
 
 function main() {
-  const { packPath, stripFixtures } = parseArgs(process.argv.slice(2));
+  const { packPath, outPath, stripFixtures } = parseArgs(process.argv.slice(2));
   if (!fs.existsSync(packPath)) {
     console.error(`pack not found: ${packPath}`);
     process.exit(1);
@@ -99,18 +104,20 @@ function main() {
     process.exit(1);
   }
 
-  let page = fs.readFileSync(pagePath, "utf8");
+  // Always read the on-disk index.html as the template (finance-tech or prior build).
+  let page = fs.readFileSync(templatePath, "utf8");
   if (!page.includes(PACK_BEGIN) || !page.includes(PACK_END)) {
     throw new Error("index.html is missing BEGIN/END PACK markers");
   }
   page = inlineExpr(page);
   page = inlinePack(page, pack, stripFixtures);
-  fs.writeFileSync(pagePath, page);
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, page);
 
   const bytes = Buffer.byteLength(page, "utf8");
   const fixtureCount = Array.isArray(pack.fixtures) ? pack.fixtures.length : 0;
   console.log(
-    `built ${path.relative(root, pagePath)} from ${path.relative(root, packPath)}` +
+    `built ${path.relative(root, outPath)} from ${path.relative(root, packPath)}` +
     ` (${bytes} bytes` +
     (stripFixtures ? `, fixtures stripped; source had ${fixtureCount}` : `, ${fixtureCount} fixtures`) +
     ")",

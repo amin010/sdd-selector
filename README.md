@@ -2,7 +2,7 @@
 
 A single-file diagnostic that recommends a **spec-driven development (SDD)** stack for a finance-tech team: one base framework, optional practice overlays, and cautions for known failure modes.
 
-Open `index.html` in a browser — no server, no build, no dependencies at runtime. Answers stay on the page; a shareable link encodes the questionnaire in the URL.
+Open `index.html` in a browser — no server, no runtime dependencies. Answers stay on the page; a shareable link encodes the questionnaire in the URL. The questionnaire and rules come from `packs/finance-tech.json`, inlined by `npm run build`.
 
 ## What it does
 
@@ -42,10 +42,13 @@ npm test
 
 That runs:
 
+- Pack validation and build
 - Unit / harness tests under `tests/`
-- **G-PARITY** — current engine vs the frozen v0.3.0 page over a large answer corpus
-- A deliberate break-demo (proves the parity gate can fail)
+- **G-PARITY** — current engine vs the frozen v0.4.0 finance-tech page over a large answer corpus
+- **G-MARKDOWN** — Markdown export snapshots for documented fixtures
+- A deliberate break-demo (proves the parity gate can fail on a pack threshold edit)
 - Structural lint (hard-coded field / framework ids outside an allowlist)
+- Second-pack selftest (general-engineering built to a throwaway HTML)
 
 Useful individual commands:
 
@@ -57,6 +60,7 @@ node --test tests/*.test.mjs
 npm run lint:structure
 npm run build               # inline pack + expr into index.html
 npm run validate            # pack schema checks
+node tools/validate.mjs --report packs/finance-tech.json
 ```
 
 ## Project layout
@@ -64,10 +68,12 @@ npm run validate            # pack schema checks
 | Path | Role |
 |---|---|
 | `index.html` | The product: UI + engine in one file (built from pack + `src/`) |
-| `packs/finance-tech.json` | Rule pack source of truth (questions, rules, fixtures) |
-| `docs/` | Design and implementation plan |
+| `packs/finance-tech.json` | Shipped rule pack (questions, rules, fixtures) |
+| `packs/general-engineering.json` | Second pack — format proof; CI artifact only |
+| `docs/` | Design, extensions, implementation plan, authoring guide |
+| `docs/AUTHORING.md` | How to edit packs |
 | `tests/` | Automated tests and golden Markdown snapshots |
-| `tests/golden/index-v030.html` | Frozen v0.3.0 baseline for parity |
+| `tests/golden/index-v040.html` | Frozen v0.4.0 finance-tech baseline for parity |
 | `tools/` | Build, validate, parity harness, corpus, lint, page loader |
 | `src/` | Source modules inlined into the page (`expr.mjs`) |
 
@@ -81,15 +87,18 @@ npm run build             # inline pack + src/expr.mjs into index.html (keeps fi
 npm run build:release     # same, but strips fixtures (~110 KB)
 ```
 
+See [docs/AUTHORING.md](docs/AUTHORING.md) for the full loop, cookbook pointers, and how to change a threshold or add a framework.
+
 `?selftest` runs pack fixtures plus a few engine invariants.
 
 ## Docs
 
 - [DESIGN.md](docs/DESIGN.md) — product design and rules
+- [AUTHORING.md](docs/AUTHORING.md) — pack authoring guide
 - [DESIGN-EXT-CONFIG.md](docs/DESIGN-EXT-CONFIG.md) — pack / config extension
 - [DESIGN-EXT-UI.md](docs/DESIGN-EXT-UI.md) — UI extension
 - [IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md) — phased migration to v0.4.0
 
 ## License / status
 
-Private / draft. Version **0.3.0** — working selector with an automated regression harness and expression-based rules (P1); pack-based configuration continues in later plan phases.
+Private / draft. Version **0.4.0** — pack-based configuration, generic UI, second-pack format proof, and snapshot regression gates.

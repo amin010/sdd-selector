@@ -1,0 +1,906 @@
+{
+  "schema": 1,
+  "meta": {
+    "id": "general-engineering",
+    "version": "0.4.0",
+    "title": "General Engineering SDD Selector",
+    "description": "Spec-driven development framework selector for general software engineering teams (non-finance).",
+    "updated": "2026-09-16"
+  },
+  "settings": {
+    "fallbackBase": "openspec",
+    "staleDays": 180,
+    "tierZero": {
+      "runtimeField": "q_runtimes",
+      "frameworkKey": "runtimes",
+      "excludeStatusesFromBase": ["watch"],
+      "onEmptyCandidates": "no_match"
+    },
+    "ratings": [
+      {
+        "key": "ceremony",
+        "label": "Ceremony",
+        "min": 1,
+        "max": 5,
+        "lowLabel": "Light",
+        "highLabel": "Heavy"
+      },
+      {
+        "key": "tokenCost",
+        "label": "Token cost",
+        "min": 1,
+        "max": 5,
+        "lowLabel": "Low",
+        "highLabel": "High"
+      },
+      {
+        "key": "brownfieldFit",
+        "label": "Brownfield fit",
+        "min": 1,
+        "max": 5,
+        "lowLabel": "Poor",
+        "highLabel": "Strong"
+      },
+      {
+        "key": "midFlightChange",
+        "label": "Mid-flight change",
+        "min": 1,
+        "max": 5,
+        "lowLabel": "Rigid",
+        "highLabel": "Flexible"
+      }
+    ],
+    "statuses": [
+      {
+        "id": "recommended",
+        "label": "Recommended",
+        "selectableAsBase": true
+      },
+      {
+        "id": "viable",
+        "label": "Viable",
+        "selectableAsBase": true
+      },
+      {
+        "id": "watch",
+        "label": "Watch",
+        "selectableAsBase": false,
+        "badge": "watch"
+      }
+    ],
+    "enforcementClasses": [
+      {
+        "id": "hard_gate",
+        "label": "Hard gate",
+        "description": "Blocks progress until satisfied."
+      },
+      {
+        "id": "agent_gate",
+        "label": "Agent gate",
+        "description": "Agent-enforced practice."
+      },
+      {
+        "id": "advisory",
+        "label": "Advisory",
+        "description": "Prompt context; not an independent control."
+      },
+      {
+        "id": "human_gate",
+        "label": "Human gate",
+        "description": "Requires human judgment to advance."
+      }
+    ]
+  },
+  "frameworks": [
+    {
+      "id": "openspec",
+      "name": "OpenSpec",
+      "repo": "Fission-AI/OpenSpec",
+      "status": "recommended",
+      "evidence": {
+        "verifiedOn": "2026-09-16",
+        "stars": 68430,
+        "commitsLast30d": 66,
+        "latestRelease": "v1.13.0",
+        "language": "TypeScript",
+        "license": "MIT"
+      },
+      "runtimes": ["claude_code", "cursor", "codex", "copilot"],
+      "ratings": {
+        "ceremony": 2,
+        "tokenCost": 2,
+        "brownfieldFit": 5,
+        "midFlightChange": 5
+      },
+      "install": "openspec init",
+      "commands": [
+        "/opsx:explore",
+        "/opsx:propose",
+        "/opsx:apply",
+        "/opsx:archive"
+      ],
+      "artifacts": [
+        "openspec/specs/",
+        "openspec/changes/"
+      ],
+      "enforcement": [
+        {
+          "practice": "Delta specs ADDED/MODIFIED/REMOVED",
+          "class": "human_gate",
+          "note": "Human archives."
+        }
+      ]
+    },
+    {
+      "id": "speckit",
+      "name": "GitHub Spec Kit",
+      "repo": "github/spec-kit",
+      "status": "recommended",
+      "evidence": {
+        "verifiedOn": "2026-09-16",
+        "stars": 137140,
+        "commitsLast30d": 100,
+        "latestRelease": "v1.0.7",
+        "language": "Python",
+        "license": "MIT"
+      },
+      "runtimes": ["copilot", "claude_code", "cursor"],
+      "ratings": {
+        "ceremony": 4,
+        "tokenCost": 4,
+        "brownfieldFit": 2,
+        "midFlightChange": 2
+      },
+      "install": "uvx specify init",
+      "commands": [
+        "/speckit.specify",
+        "/speckit.plan",
+        "/speckit.tasks",
+        "/speckit.implement"
+      ],
+      "artifacts": [
+        "constitution.md",
+        "spec.md",
+        "plan.md",
+        "tasks.md"
+      ],
+      "enforcement": [
+        {
+          "practice": "Specify → plan → tasks progression",
+          "class": "agent_gate",
+          "note": "Agent expects artifacts before implement."
+        }
+      ]
+    },
+    {
+      "id": "gsd",
+      "name": "GSD Core",
+      "repo": "gsd-build/gsd-core",
+      "status": "viable",
+      "evidence": {
+        "verifiedOn": "2026-09-16",
+        "stars": 1200,
+        "commitsLast30d": 40,
+        "latestRelease": "v0.9.0",
+        "language": "TypeScript",
+        "license": "MIT"
+      },
+      "runtimes": ["claude_code", "cursor", "codex"],
+      "ratings": {
+        "ceremony": 2,
+        "tokenCost": 2,
+        "brownfieldFit": 4,
+        "midFlightChange": 4
+      },
+      "install": "npx gsd init",
+      "commands": [
+        "/gsd:new-project",
+        "/gsd:plan-phase",
+        "/gsd:execute-phase",
+        "/gsd:resume-work"
+      ],
+      "artifacts": [
+        ".planning/",
+        "STATE.md"
+      ],
+      "enforcement": [
+        {
+          "practice": "STATE.md context hygiene",
+          "class": "advisory",
+          "note": "Resume reads structured pause state."
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "id": "team",
+      "title": "Team & delivery"
+    },
+    {
+      "id": "practice",
+      "title": "Practice & constraints"
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_product_stage",
+      "number": "Q1",
+      "section": "team",
+      "legend": "Where is the product in its lifecycle?",
+      "help": "Early products favor exploration; mature products can afford more ceremony.",
+      "fields": [
+        {
+          "kind": "single",
+          "id": "q_product_stage",
+          "hashKey": "stage",
+          "options": [
+            { "value": "early", "label": "Early / finding product-market fit" },
+            { "value": "growth", "label": "Growth / scaling features" },
+            { "value": "mature", "label": "Mature / optimizing and hardening" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_team_size",
+      "number": "Q2",
+      "section": "team",
+      "legend": "How many engineers ship on this product?",
+      "help": "Small teams (≤5) get a compact harness path.",
+      "fields": [
+        {
+          "kind": "number",
+          "id": "q_team_size",
+          "hashKey": "size",
+          "min": 1,
+          "max": 200,
+          "integer": true
+        }
+      ]
+    },
+    {
+      "id": "q_cadence",
+      "number": "Q3",
+      "section": "team",
+      "legend": "How often do you ship to production?",
+      "help": "Continuous or weekly shipping favors lighter ceremony.",
+      "fields": [
+        {
+          "kind": "single",
+          "id": "q_cadence",
+          "hashKey": "cad",
+          "options": [
+            { "value": "continuous", "label": "Continuous / multiple times a day" },
+            { "value": "weekly", "label": "Weekly" },
+            { "value": "fortnightly", "label": "Every two weeks" },
+            { "value": "monthly", "label": "Monthly or slower" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_repo_shape",
+      "number": "Q4",
+      "section": "team",
+      "legend": "How is the codebase organized?",
+      "help": "Polyrepos with unclear ownership lean toward delta-style change specs.",
+      "fields": [
+        {
+          "kind": "single",
+          "id": "q_repo_shape",
+          "hashKey": "repo",
+          "options": [
+            { "value": "monolith", "label": "Single service / monolith" },
+            { "value": "monorepo", "label": "Monorepo with multiple packages" },
+            { "value": "polyrepo", "label": "Many repos / services" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_spec_practice",
+      "number": "Q5",
+      "section": "practice",
+      "legend": "How do you write specs today?",
+      "help": "Formal specs unlock Spec Kit; absent specs favor OpenSpec exploration.",
+      "fields": [
+        {
+          "kind": "single",
+          "id": "q_spec_practice",
+          "hashKey": "spec",
+          "options": [
+            { "value": "none", "label": "We rarely write specs" },
+            { "value": "ad_hoc", "label": "Ad-hoc tickets and chat" },
+            { "value": "lightweight", "label": "Lightweight written plans" },
+            { "value": "formal", "label": "Formal specs before coding" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_change_rate",
+      "number": "Q6",
+      "section": "practice",
+      "legend": "How often do requirements change mid-flight?",
+      "help": "Chaotic change conflicts with heavy ceremony pipelines.",
+      "fields": [
+        {
+          "kind": "single",
+          "id": "q_change_rate",
+          "hashKey": "chg",
+          "options": [
+            { "value": "stable", "label": "Stable — plans usually hold" },
+            { "value": "moderate", "label": "Moderate — some mid-sprint pivots" },
+            { "value": "chaotic", "label": "Chaotic — goals shift weekly" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_test_layers",
+      "number": "Q7",
+      "section": "practice",
+      "legend": "Which automated test layers do you trust today?",
+      "help": "Select all that apply. Thin coverage triggers a testing overlay.",
+      "fields": [
+        {
+          "kind": "multi",
+          "id": "q_test_layers",
+          "hashKey": "test",
+          "options": [
+            { "value": "unit", "label": "Unit tests" },
+            { "value": "integration", "label": "Integration / API tests" },
+            { "value": "e2e", "label": "End-to-end / UI tests" },
+            { "value": "contract", "label": "Contract tests" },
+            { "value": "mostly_manual", "label": "Mostly manual QA" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_bottlenecks",
+      "number": "Q8",
+      "section": "practice",
+      "legend": "Rank your top delivery bottlenecks",
+      "help": "Different vocabulary from finance-tech — goals, reviews, flakes, context, onboarding, meetings.",
+      "fields": [
+        {
+          "kind": "ranked",
+          "id": "q_bottlenecks",
+          "hashKey": "bn",
+          "ranks": 3,
+          "unique": true,
+          "options": [
+            { "value": "ambiguous_goals", "label": "Ambiguous goals / unclear acceptance" },
+            { "value": "review_lag", "label": "Slow code review" },
+            { "value": "flake_tax", "label": "Flaky tests / CI noise" },
+            { "value": "lost_context", "label": "Lost context across sessions" },
+            { "value": "onboarding_drag", "label": "Onboarding / knowledge silos" },
+            { "value": "meeting_tax", "label": "Meeting overhead" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_runtimes",
+      "number": "Q9",
+      "section": "practice",
+      "legend": "Which agent runtimes will you use?",
+      "help": "Tier 0 filters frameworks that do not document support for any selected runtime.",
+      "fields": [
+        {
+          "kind": "multi",
+          "id": "q_runtimes",
+          "hashKey": "rt",
+          "options": [
+            { "value": "claude_code", "label": "Claude Code" },
+            { "value": "cursor", "label": "Cursor" },
+            { "value": "codex", "label": "Codex / OpenAI" },
+            { "value": "copilot", "label": "GitHub Copilot" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_collab",
+      "number": "Q10",
+      "section": "practice",
+      "legend": "How does the team collaborate day to day?",
+      "help": "Async-remote teams benefit more from durable written state.",
+      "fields": [
+        {
+          "kind": "single",
+          "id": "q_collab",
+          "hashKey": "col",
+          "options": [
+            { "value": "colocated", "label": "Mostly colocated" },
+            { "value": "hybrid", "label": "Hybrid" },
+            { "value": "async_remote", "label": "Mostly async / remote" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_notes",
+      "number": "Q11",
+      "section": "practice",
+      "legend": "Anything else the recommendation should know?",
+      "help": "Report-only free text; never read by rules.",
+      "reportOnly": true,
+      "fields": [
+        {
+          "kind": "text",
+          "id": "q_notes",
+          "hashKey": "note",
+          "maxLength": 500
+        }
+      ]
+    }
+  ],
+  "derived": [
+    {
+      "key": "teamIsSmall",
+      "expr": {
+        "lte": [{ "answer": "q_team_size" }, 5]
+      }
+    },
+    {
+      "key": "changeIsChaotic",
+      "expr": {
+        "eq": [{ "answer": "q_change_rate" }, "chaotic"]
+      }
+    },
+    {
+      "key": "testDepth",
+      "expr": {
+        "bucket": {
+          "value": {
+            "countSelected": {
+              "field": "q_test_layers",
+              "except": ["mostly_manual"]
+            }
+          },
+          "cuts": [
+            { "lte": 0, "then": "none" },
+            { "lte": 1, "then": "thin" }
+          ],
+          "else": "solid"
+        }
+      }
+    },
+    {
+      "key": "shipsOften",
+      "expr": {
+        "in": [
+          { "answer": "q_cadence" },
+          ["continuous", "weekly"]
+        ]
+      }
+    }
+  ],
+  "baseRules": [
+    {
+      "id": "base-1",
+      "label": "OpenSpec — unclear goals or thin specs",
+      "when": {
+        "any": [
+          {
+            "rankAtMost": {
+              "field": "q_bottlenecks",
+              "of": "ambiguous_goals",
+              "n": 2
+            }
+          },
+          {
+            "in": [
+              { "answer": "q_spec_practice" },
+              ["none", "ad_hoc"]
+            ]
+          },
+          {
+            "all": [
+              { "eq": [{ "answer": "q_repo_shape" }, "polyrepo"] },
+              { "eq": [{ "answer": "q_product_stage" }, "early"] }
+            ]
+          }
+        ]
+      },
+      "adopt": {
+        "framework": "openspec",
+        "rationale": "Ambiguous goals, ad-hoc specs, or early polyrepo work need delta-style change proposals more than a heavy specify→plan pipeline."
+      }
+    },
+    {
+      "id": "base-2",
+      "label": "GSD Core — small team shipping often",
+      "when": {
+        "all": [
+          { "derived": "teamIsSmall" },
+          { "derived": "shipsOften" },
+          {
+            "in": [
+              { "answer": "q_spec_practice" },
+              ["lightweight", "formal"]
+            ]
+          }
+        ]
+      },
+      "adopt": {
+        "framework": "gsd",
+        "rationale": "A small team that already writes plans and ships weekly or faster benefits from GSD's compact phase loop and STATE.md resume."
+      }
+    },
+    {
+      "id": "base-3",
+      "label": "Spec Kit — formal specs on a stable cadence",
+      "when": {
+        "all": [
+          { "eq": [{ "answer": "q_spec_practice" }, "formal"] },
+          { "not": { "derived": "changeIsChaotic" } },
+          {
+            "in": [
+              { "answer": "q_product_stage" },
+              ["growth", "mature"]
+            ]
+          }
+        ]
+      },
+      "adopt": {
+        "framework": "speckit",
+        "rationale": "Growth or mature products with formal specs and non-chaotic change can pay Spec Kit's ceremony for stronger plan/task artifacts."
+      }
+    }
+  ],
+  "overlays": [
+    {
+      "id": "overlay-context",
+      "label": "Durable session state",
+      "when": {
+        "any": [
+          {
+            "rankAtMost": {
+              "field": "q_bottlenecks",
+              "of": "lost_context",
+              "n": 2
+            }
+          },
+          {
+            "eq": [{ "answer": "q_collab" }, "async_remote"]
+          }
+        ]
+      },
+      "providedByBase": ["gsd"],
+      "resolves": ["lost_context"],
+      "adopt": {
+        "framework": "gsd",
+        "practice": "Keep a living STATE.md / handoff artifact across sessions",
+        "artifacts": ["STATE.md", ".continue-here.md"],
+        "commands": ["/gsd:resume-work"],
+        "rationale": "Lost context or async-remote collaboration needs durable written state, not only chat history."
+      }
+    },
+    {
+      "id": "overlay-tests",
+      "label": "Strengthen automated verification",
+      "when": {
+        "any": [
+          {
+            "rankAtMost": {
+              "field": "q_bottlenecks",
+              "of": "flake_tax",
+              "n": 2
+            }
+          },
+          {
+            "in": [
+              { "derived": "testDepth" },
+              ["none", "thin"]
+            ]
+          }
+        ]
+      },
+      "resolves": ["flake_tax"],
+      "adopt": {
+        "framework": null,
+        "practice": "Treat failing CI as the gate; grow a trusted unit+integration suite before adding agent ceremony",
+        "artifacts": [".github/workflows/", "tests/"],
+        "rationale": "Thin or flaky coverage makes any SDD stack guess. Fix the feedback loop first."
+      }
+    }
+  ],
+  "cautions": [
+    {
+      "id": "C-ceremony",
+      "label": "Formal specs under chaotic change",
+      "when": {
+        "all": [
+          { "eq": [{ "answer": "q_spec_practice" }, "formal"] },
+          { "derived": "changeIsChaotic" }
+        ]
+      },
+      "caution": {
+        "severity": "high",
+        "kind": "warning",
+        "finding": "Formal specify→plan→tasks investment assumes plans hold. Chaotic change burns that ceremony before the pipeline finishes.",
+        "mitigation": "Keep day-to-day work on OpenSpec-style deltas; reserve a heavy pipeline for the rare stable initiative.",
+        "source": "general-engineering pack"
+      }
+    },
+    {
+      "id": "C-notests",
+      "label": "No trusted automated tests",
+      "when": {
+        "eq": [{ "derived": "testDepth" }, "none"]
+      },
+      "caution": {
+        "severity": "medium",
+        "kind": "warning",
+        "finding": "With no trusted automated layers, agent-written changes lack a mechanical check.",
+        "mitigation": "Add at least unit or integration coverage before expanding agent autonomy. Overlay-tests names the minimum practice.",
+        "source": "general-engineering pack"
+      }
+    }
+  ],
+  "report": {
+    "profileFields": [
+      { "field": "q_product_stage", "label": "Product stage" },
+      { "field": "q_team_size", "label": "Team size" },
+      { "field": "q_cadence", "label": "Ship cadence" },
+      { "field": "q_repo_shape", "label": "Repo shape" }
+    ],
+    "freeTextFields": ["q_notes"],
+    "unaddressedBottlenecks": "auto"
+  },
+  "fixtures": [
+    {
+      "name": "base-1 openspec ambiguous goals",
+      "answers": {
+        "q_product_stage": "growth",
+        "q_team_size": 8,
+        "q_cadence": "fortnightly",
+        "q_repo_shape": "monolith",
+        "q_spec_practice": "lightweight",
+        "q_change_rate": "moderate",
+        "q_test_layers": ["unit", "integration"],
+        "q_bottlenecks": ["ambiguous_goals", "review_lag", "meeting_tax"],
+        "q_runtimes": ["claude_code", "cursor"],
+        "q_collab": "hybrid"
+      },
+      "expect": {
+        "base": "openspec",
+        "fallback": false,
+        "overlays": [],
+        "cautions": []
+      }
+    },
+    {
+      "name": "base-1 openspec thin specs",
+      "answers": {
+        "q_product_stage": "mature",
+        "q_team_size": 12,
+        "q_cadence": "monthly",
+        "q_repo_shape": "monorepo",
+        "q_spec_practice": "ad_hoc",
+        "q_change_rate": "stable",
+        "q_test_layers": ["unit", "integration", "e2e"],
+        "q_bottlenecks": ["review_lag", "meeting_tax", "onboarding_drag"],
+        "q_runtimes": ["cursor"],
+        "q_collab": "colocated"
+      },
+      "expect": {
+        "base": "openspec",
+        "fallback": false
+      }
+    },
+    {
+      "name": "base-2 gsd compact team",
+      "answers": {
+        "q_product_stage": "growth",
+        "q_team_size": 4,
+        "q_cadence": "continuous",
+        "q_repo_shape": "monolith",
+        "q_spec_practice": "lightweight",
+        "q_change_rate": "moderate",
+        "q_test_layers": ["unit", "integration"],
+        "q_bottlenecks": ["review_lag", "meeting_tax", "onboarding_drag"],
+        "q_runtimes": ["claude_code"],
+        "q_collab": "hybrid"
+      },
+      "expect": {
+        "base": "gsd",
+        "fallback": false,
+        "overlays": [],
+        "cautions": []
+      }
+    },
+    {
+      "name": "base-3 speckit formal stable",
+      "answers": {
+        "q_product_stage": "mature",
+        "q_team_size": 10,
+        "q_cadence": "fortnightly",
+        "q_repo_shape": "monorepo",
+        "q_spec_practice": "formal",
+        "q_change_rate": "stable",
+        "q_test_layers": ["unit", "integration", "e2e", "contract"],
+        "q_bottlenecks": ["review_lag", "onboarding_drag", "meeting_tax"],
+        "q_runtimes": ["copilot", "claude_code"],
+        "q_collab": "colocated"
+      },
+      "expect": {
+        "base": "speckit",
+        "fallback": false,
+        "overlays": [],
+        "cautions": []
+      }
+    },
+    {
+      "name": "fallback openspec empty-ish",
+      "answers": {
+        "q_product_stage": "growth",
+        "q_team_size": 9,
+        "q_cadence": "monthly",
+        "q_repo_shape": "monolith",
+        "q_spec_practice": "lightweight",
+        "q_change_rate": "moderate",
+        "q_test_layers": ["unit", "integration"],
+        "q_bottlenecks": ["review_lag", "meeting_tax", "onboarding_drag"],
+        "q_runtimes": ["cursor"],
+        "q_collab": "hybrid"
+      },
+      "expect": {
+        "base": "openspec",
+        "fallback": true
+      }
+    },
+    {
+      "name": "overlay-context lost context",
+      "answers": {
+        "q_product_stage": "growth",
+        "q_team_size": 8,
+        "q_cadence": "weekly",
+        "q_repo_shape": "monolith",
+        "q_spec_practice": "ad_hoc",
+        "q_change_rate": "moderate",
+        "q_test_layers": ["unit", "integration"],
+        "q_bottlenecks": ["lost_context", "review_lag", "meeting_tax"],
+        "q_runtimes": ["claude_code"],
+        "q_collab": "hybrid"
+      },
+      "expect": {
+        "base": "openspec",
+        "overlays": ["overlay-context"],
+        "cautions": []
+      }
+    },
+    {
+      "name": "overlay-context async remote",
+      "answers": {
+        "q_product_stage": "mature",
+        "q_team_size": 4,
+        "q_cadence": "continuous",
+        "q_repo_shape": "monolith",
+        "q_spec_practice": "lightweight",
+        "q_change_rate": "moderate",
+        "q_test_layers": ["unit", "integration"],
+        "q_bottlenecks": ["review_lag", "meeting_tax", "onboarding_drag"],
+        "q_runtimes": ["claude_code"],
+        "q_collab": "async_remote"
+      },
+      "expect": {
+        "base": "gsd",
+        "overlays": ["overlay-context"],
+        "overlaysIncludedInBase": ["overlay-context"]
+      }
+    },
+    {
+      "name": "overlay-tests thin coverage",
+      "answers": {
+        "q_product_stage": "growth",
+        "q_team_size": 8,
+        "q_cadence": "fortnightly",
+        "q_repo_shape": "monolith",
+        "q_spec_practice": "ad_hoc",
+        "q_change_rate": "moderate",
+        "q_test_layers": ["unit"],
+        "q_bottlenecks": ["review_lag", "meeting_tax", "onboarding_drag"],
+        "q_runtimes": ["cursor"],
+        "q_collab": "hybrid"
+      },
+      "expect": {
+        "base": "openspec",
+        "overlays": ["overlay-tests"],
+        "cautions": []
+      }
+    },
+    {
+      "name": "overlay-tests flake bottleneck",
+      "answers": {
+        "q_product_stage": "mature",
+        "q_team_size": 10,
+        "q_cadence": "fortnightly",
+        "q_repo_shape": "monorepo",
+        "q_spec_practice": "formal",
+        "q_change_rate": "stable",
+        "q_test_layers": ["unit", "integration", "e2e"],
+        "q_bottlenecks": ["flake_tax", "review_lag", "meeting_tax"],
+        "q_runtimes": ["copilot"],
+        "q_collab": "colocated"
+      },
+      "expect": {
+        "base": "speckit",
+        "overlays": ["overlay-tests"]
+      }
+    },
+    {
+      "name": "caution no tests",
+      "answers": {
+        "q_product_stage": "early",
+        "q_team_size": 6,
+        "q_cadence": "weekly",
+        "q_repo_shape": "polyrepo",
+        "q_spec_practice": "none",
+        "q_change_rate": "moderate",
+        "q_test_layers": ["mostly_manual"],
+        "q_bottlenecks": ["ambiguous_goals", "onboarding_drag", "meeting_tax"],
+        "q_runtimes": ["claude_code"],
+        "q_collab": "hybrid"
+      },
+      "expect": {
+        "base": "openspec",
+        "overlays": ["overlay-tests"],
+        "cautions": ["C-notests"]
+      }
+    },
+    {
+      "name": "caution formal chaotic",
+      "answers": {
+        "q_product_stage": "growth",
+        "q_team_size": 8,
+        "q_cadence": "fortnightly",
+        "q_repo_shape": "monolith",
+        "q_spec_practice": "formal",
+        "q_change_rate": "chaotic",
+        "q_test_layers": ["unit", "integration"],
+        "q_bottlenecks": ["review_lag", "meeting_tax", "onboarding_drag"],
+        "q_runtimes": ["cursor"],
+        "q_collab": "hybrid"
+      },
+      "expect": {
+        "base": "openspec",
+        "fallback": true,
+        "overlays": [],
+        "cautions": ["C-ceremony"]
+      }
+    },
+    {
+      "name": "derived teamIsSmall boundary",
+      "answers": {
+        "q_team_size": 5,
+        "q_test_layers": []
+      },
+      "expect": {
+        "derived": {
+          "teamIsSmall": true,
+          "testDepth": "none"
+        }
+      }
+    },
+    {
+      "name": "derived shipsOften weekly",
+      "answers": {
+        "q_cadence": "weekly",
+        "q_change_rate": "chaotic",
+        "q_test_layers": ["unit", "integration"]
+      },
+      "expect": {
+        "derived": {
+          "shipsOften": true,
+          "changeIsChaotic": true,
+          "testDepth": "solid"
+        }
+      }
+    }
+  ]
+}

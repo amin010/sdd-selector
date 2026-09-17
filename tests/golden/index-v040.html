@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>SDD Selector</title>
+  <style>
+    :root {
+      --bg: #f4f1ea; --fg: #1c1917; --muted: #57534e; --card: #fffcf7;
+      --line: #d6d3d1; --accent: #1d4ed8; --accent-fg: #fff;
+      --warn: #9a3412; --warn-bg: #ffedd5; --ok: #14532d; --ok-bg: #dcfce7;
+      --high: #7f1d1d; --high-bg: #fee2e2; --focus: #1d4ed8; --deemph: #78716c;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1917; --fg: #f5f5f4; --muted: #a8a29e; --card: #292524;
+        --line: #44403c; --accent: #93c5fd; --accent-fg: #1c1917;
+        --warn: #fdba74; --warn-bg: #431407; --ok: #86efac; --ok-bg: #14532d;
+        --high: #fecaca; --high-bg: #7f1d1d; --focus: #93c5fd; --deemph: #a8a29e;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font: 16px/1.45 system-ui, sans-serif; color: var(--fg); background: var(--bg);
+    }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 1rem 1.25rem 3rem; }
+    header h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+    header p { margin: 0 0 1rem; color: var(--muted); }
+    .layout { display: grid; gap: 1.25rem; }
+    @media (min-width: 900px) {
+      .layout { grid-template-columns: 1fr 1fr; align-items: start; }
+      #report { position: sticky; top: .75rem; max-height: calc(100vh - 1.5rem); overflow: auto; }
+    }
+    #report-summary {
+      position: sticky; top: 0; z-index: 1; background: var(--bg);
+      padding: .55rem 0 .45rem; margin: 0 0 .65rem; font-weight: 650;
+      border-bottom: 1px solid var(--line);
+    }
+    .link-warn { color: var(--warn); font-size: .9rem; margin: .35rem 0 0; flex-basis: 100%; }
+    fieldset {
+      border: 1px solid var(--line); background: var(--card); border-radius: 8px;
+      margin: 0 0 .85rem; padding: .75rem 1rem 1rem;
+    }
+    legend { font-weight: 650; padding: 0 .35rem; }
+    .help { color: var(--muted); font-size: .9rem; margin: .15rem 0 .6rem; }
+    .err { color: var(--high); font-size: .9rem; }
+    label { display: block; margin: .2rem 0; }
+    input[type="number"], select, textarea {
+      font: inherit; color: inherit; background: var(--card); border: 1px solid var(--line);
+      border-radius: 4px; padding: .35rem .5rem; width: 100%; max-width: 28rem;
+    }
+    textarea { min-height: 4.5rem; max-width: 100%; }
+    .row { display: flex; flex-wrap: wrap; gap: .5rem 1rem; }
+    .row label { min-width: 8rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 1rem; }
+    button {
+      font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--line);
+      background: var(--card); color: var(--fg); padding: .45rem .8rem;
+    }
+    button.primary { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
+    .banner, .card {
+      border: 2px solid var(--line); background: var(--card); border-radius: 8px;
+      padding: .85rem 1rem; margin: 0 0 .85rem;
+    }
+    .card.caution { border-width: 2px; }
+    .card.caution.high { border-color: var(--high); background: var(--high-bg); color: var(--fg); }
+    .card.caution.medium { border-color: var(--warn); background: var(--warn-bg); }
+    .card.caution.positive { border-color: var(--ok); background: var(--ok-bg); }
+    .card.included { opacity: .92; border-style: dashed; }
+    .badge { display: inline-block; font-size: .8rem; font-weight: 650; margin-right: .35rem; }
+    .muted { color: var(--muted); }
+    .deemph { color: var(--deemph); }
+    pre {
+      overflow: auto; background: var(--bg); border: 1px solid var(--line);
+      padding: .75rem; border-radius: 6px; font-size: .85rem;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+    th, td { text-align: left; border-bottom: 1px solid var(--line); padding: .35rem .4rem; }
+    h2 { font-size: 1.15rem; margin: 1.1rem 0 .4rem; }
+    h3 { font-size: 1rem; margin: .2rem 0 .35rem; }
+    .notice { background: var(--warn-bg); color: var(--warn); padding: .6rem .8rem; border-radius: 6px; margin-bottom: 1rem; }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 id="pack-title">SDD Selector</h1>
+      <p id="pack-blurb">Answer the Finance Tech diagnostic. A base framework, overlays, and cautions update as you type. Nothing leaves this page.</p>
+      <p id="pack-identity" class="muted" hidden></p>
+    </header>
+    <div id="selftest-banner" hidden class="notice" role="status"></div>
+    <div id="schema-notice" hidden class="notice" role="status"></div>
+    <div class="actions">
+      <button type="button" id="reset-btn">Reset</button>
+      <button type="button" class="primary" id="copy-md">Copy as Markdown</button>
+      <button type="button" id="copy-link">Copy link</button>
+      <p id="link-warn" class="link-warn" hidden></p>
+    </div>
+    <div class="layout">
+      <form id="qform"></form>
+      <div id="report">
+        <div id="report-summary" class="report-summary" aria-live="polite"></div>
+        <div id="report-body"></div>
+      </div>
+    </div>
+  </div>
+<script>
+(function () {
+  "use strict";
+
+
+  /* BEGIN EXPR */
+  var MAX_DEPTH = 32;
+  var MAX_NODES = 10_000;
+
+  var OPERATORS = new Set([
+    "answer", "derived", "result", "flag", "rank",
+    "all", "any", "not",
+    "eq", "ne", "gt", "gte", "lt", "lte",
+    "in", "hasAny", "hasAll", "hasNone", "isSet", "rankAtMost",
+    "add", "sub", "mul", "min", "max", "sumFields", "count",
+    "countSelected", "bucket", "coalesce",
+  ]);
+
+  function isOperator(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+    var keys = Object.keys(value);
+    return keys.length === 1 && OPERATORS.has(keys[0]);
+  }
+
+  function depthOf(value, seen = new WeakSet()) {
+    if (!value || typeof value !== "object") return 1;
+    if (seen.has(value)) return Infinity;
+    seen.add(value);
+    var children = Array.isArray(value)
+      ? value
+      : Object.keys(value).map((key) => value[key]);
+    var depth = 1;
+    for (var child of children) depth = Math.max(depth, 1 + depthOf(child, seen));
+    seen.delete(value);
+    return depth;
+  }
+
+  function own(obj, key) {
+    return obj != null && Object.prototype.hasOwnProperty.call(obj, key);
+  }
+
+  function isFiniteNumber(value) {
+    return typeof value === "number" && Number.isFinite(value);
+  }
+
+  function recordValid(value, constraints = {}) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+    var required = Array.isArray(constraints.requiredKeys)
+      ? constraints.requiredKeys
+      : [];
+    for (var key of required) {
+      if (!own(value, key)) return false;
+      var item = value[key];
+      if (!(isFiniteNumber(item) || (typeof item === "string" && item.length > 0))) {
+        return false;
+      }
+      if (constraints.minimums && own(constraints.minimums, key) &&
+          (!isFiniteNumber(item) || item < constraints.minimums[key])) {
+        return false;
+      }
+      if (constraints.allowedValues && own(constraints.allowedValues, key) &&
+          (!Array.isArray(constraints.allowedValues[key]) ||
+           constraints.allowedValues[key].indexOf(item) === -1)) {
+        return false;
+      }
+    }
+    if (own(constraints, "sumTo")) {
+      if (!isFiniteNumber(constraints.sumTo) || required.length === 0) return false;
+      var sum = 0;
+      for (var key of required) {
+        var item = value[key];
+        if (!isFiniteNumber(item) || item < 0) return false;
+        sum += item;
+      }
+      if (sum !== constraints.sumTo) return false;
+    }
+    return true;
+  }
+
+  function readAnswer(path, ctx) {
+    if (typeof path !== "string" || !path) return null;
+    var parts = path.split(".");
+    var root = parts[0];
+    var answers = ctx.answers || {};
+    if (!own(answers, root)) return null;
+    var meta = (ctx.fieldIndex || {})[root];
+    var value = answers[root];
+    if (meta && meta.kind === "record" && !recordValid(value, meta.constraints || {})) {
+      return null;
+    }
+    for (var i = 1; i < parts.length; i++) {
+      if (!value || typeof value !== "object" || !own(value, parts[i])) return null;
+      value = value[parts[i]];
+    }
+    return value === undefined ? null : value;
+  }
+
+  function rankOf(field, value, ctx) {
+    var ranked = readAnswer(field, ctx);
+    if (!Array.isArray(ranked)) return null;
+    var index = ranked.indexOf(value);
+    return index === -1 ? null : index + 1;
+  }
+
+  function isSet(value) {
+    if (value == null || value === "") return false;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "number") return Number.isFinite(value);
+    return true;
+  }
+
+  function list(value) {
+    return Array.isArray(value) ? value : null;
+  }
+
+  function numericArgs(raw, state, depth, minimum = 2) {
+    if (!Array.isArray(raw) || raw.length < minimum) return null;
+    var values = raw.map((item) => evalNode(item, state, depth + 1));
+    return values.every(isFiniteNumber) ? values : null;
+  }
+
+  function ordered(raw, state, depth, compare) {
+    var values = numericArgs(raw, state, depth, 2);
+    return values && values.length === 2 ? compare(values[0], values[1]) : false;
+  }
+
+  function membership(raw, state, depth, mode) {
+    if (!Array.isArray(raw) || raw.length !== 2) return false;
+    var left = evalNode(raw[0], state, depth + 1);
+    var right = evalNode(raw[1], state, depth + 1);
+    if (left == null || !Array.isArray(right)) return false;
+    if (mode === "in") return right.indexOf(left) !== -1;
+    if (!Array.isArray(left)) return false;
+    if (mode === "hasAny") return right.some((item) => left.indexOf(item) !== -1);
+    if (mode === "hasAll") return right.every((item) => left.indexOf(item) !== -1);
+    return !right.some((item) => left.indexOf(item) !== -1);
+  }
+
+  function evalNode(expr, state, depth) {
+    state.nodes += 1;
+    if (state.nodes > MAX_NODES || depth > MAX_DEPTH) throw state.limit;
+    if (Array.isArray(expr)) return expr.map((item) => evalNode(item, state, depth + 1));
+    if (!expr || typeof expr !== "object") return expr;
+
+    var keys = Object.keys(expr);
+    if (keys.length !== 1 || !OPERATORS.has(keys[0])) return false;
+    var op = keys[0];
+    var raw = expr[op];
+    var ctx = state.ctx;
+
+    if (op === "answer") return readAnswer(raw, ctx);
+    if (op === "derived") return own(ctx.derived || {}, raw) ? ctx.derived[raw] : null;
+    if (op === "result") return own(ctx.result || {}, raw) ? ctx.result[raw] : null;
+    if (op === "flag") return !!(ctx.flags && ctx.flags[raw] === true);
+    if (op === "rank") {
+      return raw && typeof raw === "object" ? rankOf(raw.field, raw.of, ctx) : null;
+    }
+    if (op === "all" || op === "any") {
+      if (!Array.isArray(raw)) return false;
+      var values = raw.map((item) => evalNode(item, state, depth + 1));
+      return op === "all" ? values.every(Boolean) : values.some(Boolean);
+    }
+    if (op === "not") {
+      var value = evalNode(raw, state, depth + 1);
+      return value == null ? false : !value;
+    }
+    if (op === "eq" || op === "ne") {
+      if (!Array.isArray(raw) || raw.length !== 2) return false;
+      var left = evalNode(raw[0], state, depth + 1);
+      var right = evalNode(raw[1], state, depth + 1);
+      if (left == null || right == null) return false;
+      return op === "eq" ? left === right : left !== right;
+    }
+    if (op === "gt") return ordered(raw, state, depth, (a, b) => a > b);
+    if (op === "gte") return ordered(raw, state, depth, (a, b) => a >= b);
+    if (op === "lt") return ordered(raw, state, depth, (a, b) => a < b);
+    if (op === "lte") return ordered(raw, state, depth, (a, b) => a <= b);
+    if (op === "in" || op === "hasAny" || op === "hasAll" || op === "hasNone") {
+      return membership(raw, state, depth, op);
+    }
+    if (op === "isSet") return isSet(evalNode(raw, state, depth + 1));
+    if (op === "rankAtMost") {
+      if (!raw || typeof raw !== "object" || !isFiniteNumber(raw.n)) return false;
+      var rank = rankOf(raw.field, raw.of, ctx);
+      return rank != null && rank <= raw.n;
+    }
+    if (["add", "sub", "mul", "min", "max"].indexOf(op) !== -1) {
+      var values = numericArgs(raw, state, depth);
+      if (!values) return null;
+      if (op === "add") return values.reduce((a, b) => a + b, 0);
+      if (op === "sub") return values.slice(1).reduce((a, b) => a - b, values[0]);
+      if (op === "mul") return values.reduce((a, b) => a * b, 1);
+      return op === "min" ? Math.min(...values) : Math.max(...values);
+    }
+    if (op === "sumFields") {
+      if (!raw || typeof raw !== "object" || !Array.isArray(raw.keys)) return null;
+      var values = raw.keys.map((key) => readAnswer(`${raw.field}.${key}`, ctx));
+      return values.every(isFiniteNumber) ? values.reduce((a, b) => a + b, 0) : null;
+    }
+    if (op === "count") {
+      var value = evalNode(raw, state, depth + 1);
+      return Array.isArray(value) ? value.length : 0;
+    }
+    if (op === "countSelected") {
+      if (!raw || typeof raw !== "object") return 0;
+      var value = readAnswer(raw.field, ctx);
+      if (!Array.isArray(value) || value.length === 0) return 0;
+      var except = Array.isArray(raw.except) ? raw.except : [];
+      return value.filter((item) => except.indexOf(item) === -1).length;
+    }
+    if (op === "bucket") {
+      if (!raw || typeof raw !== "object") return null;
+      var value = evalNode(raw.value, state, depth + 1);
+      if (value == null) return null;
+      if (!isFiniteNumber(value) || !Array.isArray(raw.cuts)) return raw.else ?? null;
+      for (var cut of raw.cuts) {
+        if (!cut || typeof cut !== "object") continue;
+        if (own(cut, "lte") && value <= cut.lte) return cut.then;
+        if (own(cut, "lt") && value < cut.lt) return cut.then;
+        if (own(cut, "gte") && value >= cut.gte) return cut.then;
+        if (own(cut, "gt") && value > cut.gt) return cut.then;
+      }
+      return raw.else ?? null;
+    }
+    if (op === "coalesce") {
+      if (!Array.isArray(raw)) return null;
+      for (var item of raw) {
+        var value = evalNode(item, state, depth + 1);
+        if (value != null) return value;
+      }
+      return null;
+    }
+    return false;
+  }
+
+  function evalExpr(expr, ctx = {}) {
+    var state = { ctx, nodes: 0, limit: {} };
+    try {
+      return evalNode(expr, state, 1);
+    } catch {
+      return false;
+    }
+  }
+
+  function derivedRefs(expr, out = new Set(), seen = new WeakSet()) {
+    if (!expr || typeof expr !== "object" || seen.has(expr)) return out;
+    seen.add(expr);
+    if (!Array.isArray(expr) && Object.keys(expr).length === 1 && own(expr, "derived")) {
+      if (typeof expr.derived === "string") out.add(expr.derived);
+    } else {
+      for (var value of Array.isArray(expr) ? expr : Object.values(expr)) {
+        derivedRefs(value, out, seen);
+      }
+    }
+    return out;
+  }
+
+  function evalDerived(defs, answers, fieldIndex) {
+    var source = Array.isArray(defs) ? defs : [];
+    var byKey = new Map(source.map((def) => [def.key, def]));
+    var remaining = new Set(byKey.keys());
+    var derived = {};
+    while (remaining.size) {
+      var progressed = false;
+      for (var key of Array.from(remaining)) {
+        var refs = derivedRefs(byKey.get(key).expr);
+        var blocked = Array.from(refs).some((ref) => remaining.has(ref));
+        if (blocked) continue;
+        derived[key] = evalExpr(byKey.get(key).expr, {
+          answers: answers || {},
+          derived,
+          result: null,
+          flags: {},
+          fieldIndex: fieldIndex || {},
+        });
+        remaining.delete(key);
+        progressed = true;
+      }
+      if (!progressed) {
+        for (var key of remaining) derived[key] = null;
+        break;
+      }
+    }
+    return derived;
+  }
+
+  var SDDExpr = { OPERATORS, isOperator, depthOf, recordValid, evalExpr, evalDerived };
+  /* END EXPR */
+
+  /* BEGIN PACK */
+  var PACK = {"schema":1,"meta":{"id":"finance-tech","version":"0.4.0","title":"Finance Tech SDD Selector","description":"Spec-driven development framework selector for finance-tech teams.","updated":"2026-09-16"},"settings":{"fallbackBase":"openspec","staleDays":180,"tierZero":{"runtimeField":"q20_runtimes","frameworkKey":"runtimes","excludeStatusesFromBase":["watch"],"onEmptyCandidates":"no_match"},"ratings":[{"key":"ceremony","label":"Ceremony","min":1,"max":5,"lowLabel":"Light","highLabel":"Heavy"},{"key":"tokenCost","label":"Token cost","min":1,"max":5,"lowLabel":"Low","highLabel":"High"},{"key":"brownfieldFit","label":"Brownfield fit","min":1,"max":5,"lowLabel":"Poor","highLabel":"Strong"},{"key":"midFlightChange","label":"Mid-flight change","min":1,"max":5,"lowLabel":"Rigid","highLabel":"Flexible"}],"statuses":[{"id":"recommended","label":"Recommended","selectableAsBase":true},{"id":"viable","label":"Viable","selectableAsBase":true},{"id":"watch","label":"Watch","selectableAsBase":false,"badge":"watch"}],"enforcementClasses":[{"id":"hard_gate","label":"Hard gate","description":"Blocks progress until satisfied."},{"id":"agent_gate","label":"Agent gate","description":"Agent-enforced practice."},{"id":"advisory","label":"Advisory","description":"Prompt context; not an independent control."},{"id":"human_gate","label":"Human gate","description":"Requires human judgment to advance."}]},"frameworks":[{"id":"openspec","name":"OpenSpec","repo":"Fission-AI/OpenSpec","status":"recommended","evidence":{"verifiedOn":"2026-09-16","stars":68430,"forks":4705,"latestRelease":"v1.13.0 (2026-09-09)","commitsLast30d":66,"language":"TypeScript","license":"MIT"},"runtimes":["claude_code","cursor","codex","copilot","windsurf"],"ratings":{"ceremony":2,"tokenCost":2,"brownfieldFit":5,"midFlightChange":5},"install":"openspec init (+ openspec config profile for expanded)","commands":["/opsx:explore","/opsx:propose","/opsx:apply","/opsx:update","/opsx:sync","/opsx:archive"],"artifacts":["openspec/specs/","openspec/changes/<name>/{proposal,design,tasks,spec}.md"],"enforcement":[{"practice":"/opsx:verify (expanded profile)","class":"advisory","note":"Does not block archiving."},{"practice":"Delta specs ADDED/MODIFIED/REMOVED","class":"human_gate","note":"Human archives."}]},{"id":"speckit","name":"GitHub Spec Kit","repo":"github/spec-kit","status":"recommended","evidence":{"verifiedOn":"2026-09-16","stars":137140,"forks":12280,"latestRelease":"v1.0.7 (2026-09-15)","commitsLast30d":100,"language":"Python","license":"MIT"},"runtimes":["copilot","claude_code","gemini_cli"],"ratings":{"ceremony":4,"tokenCost":4,"brownfieldFit":2,"midFlightChange":2},"install":"uvx specify init","commands":["/speckit.constitution","/speckit.specify","/speckit.clarify","/speckit.plan","/speckit.analyze","/speckit.tasks","/speckit.implement"],"artifacts":["constitution.md","spec.md","plan.md","tasks.md"],"enforcement":[{"practice":"constitution.md","class":"advisory","note":"Prompt context; not an independent gate."},{"practice":"Phase reviews","class":"human_gate","note":"Human advances each phase."}]},{"id":"bmad","name":"BMAD Method","repo":"bmad-code-org/BMAD-METHOD","status":"recommended","evidence":{"verifiedOn":"2026-09-16","stars":53070,"forks":5994,"latestRelease":"v6.12.0 (2026-09-04)","commitsLast30d":100,"language":"Python","license":"NOASSERTION"},"runtimes":[],"ratings":{"ceremony":3,"tokenCost":4,"brownfieldFit":3,"midFlightChange":4},"install":"/plugin marketplace add bmad-code-org/bmad-plugins","commands":["bmad-prd","bmad-architecture","bmad-build","bmad-correct-course","bmad-quick-spec"],"artifacts":["_bmad/","PRD.md","ARCHITECTURE-SPINE.md","tech-spec.md","sprint-status.yaml"],"enforcement":[{"practice":"Python-backed sprint-status merge","class":"hard_gate","note":"Prevents state regression."},{"practice":"Personas and phase gates","class":"human_gate","note":"Value depends on using the roles."}]},{"id":"gsd","name":"GSD Core","repo":"open-gsd/gsd-core","status":"viable","evidence":{"verifiedOn":"2026-09-16","stars":9501,"forks":685,"latestRelease":"v1.14.0 (2026-09-14)","commitsLast30d":100,"language":"JavaScript","license":"MIT"},"runtimes":["claude_code","opencode","codex","copilot","cursor","windsurf"],"ratings":{"ceremony":3,"tokenCost":3,"brownfieldFit":4,"midFlightChange":4},"install":"npx @opengsd/gsd-core","commands":["/gsd:discuss-phase","/gsd:plan-phase","/gsd:execute-phase","/gsd:verify-work","/gsd:ship","/gsd:resume-work"],"artifacts":[".planning/{PROJECT,REQUIREMENTS,ROADMAP,STATE}.md",".planning/phases/","HANDOFF.json"],"enforcement":[{"practice":"Plan-checker decision-coverage","class":"agent_gate","note":"Agent-executed check on plans."},{"practice":"Verify vs shipped code","class":"agent_gate","note":"Stronger than constitution.md; weaker than CI."}]},{"id":"superpowers","name":"Superpowers","repo":"obra/superpowers","status":"viable","evidence":{"verifiedOn":"2026-09-16","stars":287303,"forks":25690,"latestRelease":"v6.3.0 (2026-08-12)","commitsLast30d":0,"language":"Shell","license":"MIT"},"runtimes":["claude_code","codex","gemini_cli","cursor","opencode","copilot"],"ratings":{"ceremony":4,"tokenCost":5,"brownfieldFit":3,"midFlightChange":3},"install":"/plugin install superpowers@claude-plugins-official","commands":["brainstorming","writing-plans","test-driven-development","subagent-driven-development","requesting-code-review"],"artifacts":["design docs","implementation plans","git worktrees"],"enforcement":[{"practice":"TDD iron law","class":"agent_gate","note":"Production code before a failing test must be deleted."},{"practice":"Brainstorming design approval","class":"human_gate","note":"Blocks implementation until a design is approved."}]},{"id":"speckitty","name":"Spec Kitty","repo":"spec-kitty/spec-kitty","status":"viable","evidence":{"verifiedOn":"2026-09-16","stars":1627,"forks":166,"latestRelease":"—","commitsLast30d":"unknown","language":"Python","license":"MIT"},"runtimes":["claude_code","codex","cursor","gemini_cli","copilot","windsurf","opencode"],"ratings":{"ceremony":4,"tokenCost":3,"brownfieldFit":3,"midFlightChange":3},"install":"pip install spec-kitty-cli","commands":["spec-kitty specify/plan/tasks","spec-kitty agent action implement","spec-kitty sync workspace"],"artifacts":["kitty-specs/",".worktrees/",".kittify/config.yaml","append-only status log"],"enforcement":[{"practice":"27-transition lane machine","class":"hard_gate","note":"--force requires actor + reason."},{"practice":"Decision Moments","class":"human_gate","note":"Human review to advance."}]},{"id":"tessl","name":"Tessl SDD Tile","repo":"tesslio/spec-driven-development-tile","status":"watch","evidence":{"verifiedOn":"2026-09-16","stars":53,"forks":8,"latestRelease":"—","commitsLast30d":0,"language":"Shell","license":"MIT"},"runtimes":[],"ratings":{"ceremony":3,"tokenCost":3,"brownfieldFit":2,"midFlightChange":2},"install":"npx @tessl/cli install tessl-labs/spec-driven-development","commands":["requirement-gathering","spec-writer","validate-specs.sh","check-spec-links.sh"],"artifacts":["*.spec.md with [@test] links"],"enforcement":[{"practice":"[@test] link check","class":"advisory","note":"Verifies files exist; not that tests pass."},{"practice":"Spec approval","class":"human_gate","note":"Human approves specs before code."}]}],"sections":[{"id":"instrument","title":"Team & delivery instrument"},{"id":"constraints","title":"Constraints"}],"questions":[{"id":"q1_domain","number":"Q1","section":"instrument","legend":"What is your team's core functional domain?","help":"Shown in the report; does not change the recommendation.","reportOnly":true,"fields":[{"kind":"single","id":"q1_domain","hashKey":"q1","options":[{"value":"ledger","label":"Core Financial Ledger / Accounting Engine"},{"value":"reporting_compliance","label":"Financial Reporting & Regulatory Compliance"},{"value":"treasury","label":"Treasury, Liquidity, or Capital Planning"},{"value":"data_pipeline","label":"Data Pipeline / Lakehouse / Financial Data Analytics"},{"value":"internal_platform","label":"Internal Platform / Shared Tooling / Infrastructure"},{"value":"other","label":"Other"}]}]},{"id":"q2_team","number":"Q2","section":"instrument","legend":"Team size and makeup (FTE)","help":"Total size and roles drive compact-team and BMAD routing. SWE and data-engineer counts are report-only.","fields":[{"kind":"record","id":"q2_team","hashKey":"q2","constraints":{"requiredKeys":["total","qa_sdet","product_owner","scrum_master"],"minimums":{"total":1,"qa_sdet":0},"allowedValues":{"product_owner":["dedicated","shared","none"],"scrum_master":["dedicated","shared","none"]}},"fields":[{"kind":"number","id":"total","label":"Total team size","min":1},{"kind":"number","id":"swe","label":"Software engineers","min":0},{"kind":"number","id":"data_engineers","label":"Data engineers","min":0},{"kind":"number","id":"qa_sdet","label":"QA / SDET","min":0},{"kind":"single","id":"product_owner","label":"Product Owner / PM","options":[{"value":"dedicated","label":"Dedicated"},{"value":"shared","label":"Shared"},{"value":"none","label":"None"}]},{"kind":"single","id":"scrum_master","label":"Scrum Master / Delivery Lead","options":[{"value":"dedicated","label":"Dedicated"},{"value":"shared","label":"Shared"},{"value":"none","label":"None"}]}]}]},{"id":"q3_distribution","number":"Q3","section":"instrument","legend":"Geographic and time-zone distribution","help":"Global distribution with little overlap can trigger worktree / Decision Moment practices.","fields":[{"kind":"single","id":"q3_distribution","hashKey":"q3","options":[{"value":"colocated","label":"Co-located in a single hub"},{"value":"regional","label":"Distributed across 1–2 compatible time zones"},{"value":"global_timezones","label":"Highly distributed globally with <3 hours daily overlap"}]}]},{"id":"q4","number":"Q4","section":"instrument","legend":"Team tenure and domain experience","help":"Tenure is report-only. Low finance-domain familiarity can trigger domain reconnaissance.","fields":[{"kind":"single","id":"q4_tenure","hashKey":"q4t","reportOnly":true,"label":"How long has this core team worked together?","options":[{"value":"forming","label":"< 3 months"},{"value":"3_12_months","label":"3–12 months"},{"value":"over_1_year","label":"> 1 year"}]},{"kind":"single","id":"q4_domain_familiarity","hashKey":"q4f","label":"Team familiarity with the functional finance domain","options":[{"value":"high","label":"High"},{"value":"medium","label":"Medium"},{"value":"low","label":"Low"}]}]},{"id":"q5_work_breakdown","number":"Q5","section":"instrument","legend":"Breakdown of incoming work (must total 100%)","help":"Non-roadmap share (ops + bugs + regulatory + tech debt) steers brownfield vs greenfield bases.","fields":[{"kind":"record","id":"q5_work_breakdown","hashKey":"q5","constraints":{"sumTo":100,"requiredKeys":["roadmap","ops","bugs","regulatory","tech_debt"]},"fields":[{"kind":"number","id":"roadmap","label":"Roadmap / strategic %","min":0,"max":100},{"kind":"number","id":"ops","label":"Unplanned ops / triage %","min":0,"max":100},{"kind":"number","id":"bugs","label":"Bugs / incidents %","min":0,"max":100},{"kind":"number","id":"regulatory","label":"Regulatory / audit %","min":0,"max":100},{"kind":"number","id":"tech_debt","label":"Tech debt %","min":0,"max":100}]}]},{"id":"q6_volatility","number":"Q6","section":"instrument","legend":"How volatile are your business requirements?","help":"High or interrupt-driven volatility blocks Spec Kit and adds a low-ceremony fast path.","fields":[{"kind":"single","id":"q6_volatility","hashKey":"q6","options":[{"value":"very_low","label":"Very low: locked down quarters in advance"},{"value":"moderate","label":"Moderate: goals clear for 2–4 weeks; occasional mid-sprint change"},{"value":"high","label":"High: shifting priorities every week"},{"value":"interrupt_driven","label":"Interrupt-driven: work arrives unpredictably in real time"}]}]},{"id":"q7_requirements","number":"Q7","section":"instrument","legend":"How granular and clear are requirements when they reach engineers?","help":"Structured stories favor Spec Kit; vague goals favor BMAD and reconnaissance.","fields":[{"kind":"single","id":"q7_requirements","hashKey":"q7","options":[{"value":"structured","label":"Well-defined user stories with acceptance criteria and test cases"},{"value":"high_level","label":"High-level functional requirements needing discovery spikes"},{"value":"vague","label":"Vague business goals requiring heavy refinement"}]}]},{"id":"q8_compliance","number":"Q8","section":"instrument","legend":"What level of financial regulatory oversight applies?","help":"SOX Tier 1 (not internal governance) triggers a constitution overlay and enforcement cautions.","fields":[{"kind":"single","id":"q8_compliance","hashKey":"q8","options":[{"value":"sox_tier1","label":"SOX-Critical / Tier 1"},{"value":"internal_governance","label":"Internal governance: high risk, not external SOX"},{"value":"standard_enterprise","label":"Standard enterprise security and data governance"},{"value":"low_nonfinancial","label":"Low / non-financial"}]}]},{"id":"q9_precision","number":"Q9","section":"instrument","legend":"Data accuracy and precision requirements","help":"Zero-tolerance fires autonomous TDD and, with weak CI, a deterministic CI overlay.","fields":[{"kind":"single","id":"q9_precision","hashKey":"q9","options":[{"value":"zero_tolerance","label":"Zero-tolerance for error (ledger-accurate, immutable audit logs)"},{"value":"analytics","label":"Near real-time analytical approximations"},{"value":"standard","label":"Standard operational data integrity"}]}]},{"id":"q10_architecture","number":"Q10","section":"instrument","legend":"Primary system architecture","help":"Monolith, hybrid, and batch data favor OpenSpec. Streaming is not treated as brownfield or as Spec Kit microservices.","fields":[{"kind":"single","id":"q10_architecture","hashKey":"q10","options":[{"value":"microservices","label":"Modern cloud-native microservices"},{"value":"batch_data","label":"Batch data pipelines"},{"value":"streaming","label":"Event-driven streaming"},{"value":"monolith","label":"Monolithic or legacy application"},{"value":"hybrid","label":"Hybrid (legacy backend with modern cloud wrapper)"}]}]},{"id":"q11","number":"Q11","section":"instrument","legend":"Deployment frequency and production lead time","help":"Cadence (with team size and autonomy) can select Superpowers or GSD Core. Cycle time is report-only.","fields":[{"kind":"single","id":"q11_deploy_cadence","hashKey":"q11","label":"How often does your team release to production?","options":[{"value":"continuous","label":"Multiple times per day / on-demand"},{"value":"sprint","label":"Once or twice per sprint (every 1–2 weeks)"},{"value":"monthly","label":"Monthly"},{"value":"quarterly","label":"Quarterly or longer"}]},{"kind":"single","id":"q11_cycle_time","hashKey":"q11b","reportOnly":true,"label":"Average cycle time from code commit to running in production (report-only)","options":[{"value":"under_2h","label":"< 2 hours"},{"value":"1_3_days","label":"1–3 days"},{"value":"1_2_weeks","label":"1–2 weeks"},{"value":"over_2_weeks","label":"> 2 weeks"}]}]},{"id":"q12_quality_gates","number":"Q12","section":"instrument","legend":"Automated testing and quality gates (check all that run on every pull request)","help":"Coverage level is derived from how many automated gates you check. Manual-only is low coverage.","fields":[{"kind":"multi","id":"q12_quality_gates","hashKey":"q12","options":[{"value":"unit_coverage","label":"Unit tests with enforced coverage thresholds"},{"value":"integration_contract","label":"Integration / API contract tests"},{"value":"e2e","label":"Automated end-to-end regression tests"},{"value":"financial_reconciliation","label":"Automated financial data reconciliation tests"},{"value":"sast_dast","label":"Automated security and dependency scanning (SAST/DAST)"},{"value":"mostly_manual","label":"Mostly manual QA testing prior to release"}]}]},{"id":"q13_branching","number":"Q13","section":"instrument","legend":"Source control and branching strategy","help":"Shown in the report; does not change the recommendation.","reportOnly":true,"fields":[{"kind":"single","id":"q13_branching","hashKey":"q13","options":[{"value":"trunk_based","label":"Trunk-based: short-lived branches merged to main"},{"value":"gitflow","label":"GitFlow / environment branching"},{"value":"adhoc","label":"Ad-hoc: no standardized convention"}]}]},{"id":"q14_release_autonomy","number":"Q14","section":"instrument","legend":"How dependent is your release cadence on external teams?","help":"Coupled or heavy internal dependence can add Spec Kitty practices. Vendor dependence is a caution, not that overlay.","fields":[{"kind":"single","id":"q14_release_autonomy","hashKey":"q14","options":[{"value":"autonomous","label":"Autonomous: build, test, and deploy independently"},{"value":"coupled","label":"Coupled releases with other finance tech services"},{"value":"heavy","label":"Heavy upstream/downstream dependencies"},{"value":"vendor","label":"Vendor dependent"}]}]},{"id":"q15_governance","number":"Q15","section":"instrument","legend":"Approval gates and governance","help":"CAB on every release triggers a regulatory constitution overlay.","fields":[{"kind":"single","id":"q15_governance","hashKey":"q15","options":[{"value":"automated","label":"Fully automated via CI/CD policy compliance"},{"value":"lightweight_review","label":"Peer review (PR) + automated pipeline gates"},{"value":"cab","label":"CAB / Infosec / Architecture review required for every release"}]}]},{"id":"q16_bottlenecks","number":"Q16","section":"instrument","legend":"Rank your team's top 3 productivity bottlenecks","help":"Rank 1 ambiguous-or-shifting fires reconnaissance. Test-fear in the top 2 fires TDD verification.","fields":[{"kind":"ranked","id":"q16_bottlenecks","hashKey":"q16","ranks":3,"unique":true,"rankLabels":["1st (biggest)","2nd","3rd"],"options":[{"value":"ambiguous_or_shifting","label":"Ambiguous or shifting requirements"},{"value":"flaky_cicd","label":"Flaky CI/CD pipelines or slow builds"},{"value":"cross_team_approvals","label":"Cross-team dependencies and waiting on approvals"},{"value":"test_fear","label":"Lack of test automation / fear of breaking financial calculations"},{"value":"interruptive_support","label":"High volume of interruptive support tickets/incidents"},{"value":"compliance_overhead","label":"Complex compliance/audit documentation overhead"},{"value":"legacy_tech_debt","label":"Technical debt in legacy codebases"}]}]},{"id":"q17_process_mismatch","number":"Q17","section":"instrument","legend":"What currently feels mismatched about your development process or delivery cadence?","help":"Copied into the Markdown report. The engine never reads this text.","reportOnly":true,"fields":[{"kind":"text","id":"q17_process_mismatch","hashKey":"q17","maxLength":500}]},{"id":"q18_token_budget","number":"Q18","section":"constraints","legend":"Token / plan budget","help":"Metered budgets avoid Superpowers as a base when coverage is low.","fields":[{"kind":"single","id":"q18_token_budget","hashKey":"q18","options":[{"value":"unmetered","label":"Unmetered"},{"value":"team_plan","label":"Team plan"},{"value":"individual_pro","label":"Individual Pro (metered)"},{"value":"strict","label":"Strict / rationed"}]}]},{"id":"q19_change_volume","number":"Q19","section":"constraints","legend":"Change volume profile","help":"Many small changes add a documented fast path beside any heavyweight pipeline.","fields":[{"kind":"single","id":"q19_change_volume","hashKey":"q19","options":[{"value":"many_small","label":"Many small changes"},{"value":"balanced","label":"Balanced mix"},{"value":"few_large","label":"Few large changes"}]}]},{"id":"q20_runtimes","number":"Q20","section":"constraints","legend":"Agent runtimes in use","help":"Frameworks that do not document at least one selected runtime are removed before base selection.","fields":[{"kind":"multi","id":"q20_runtimes","hashKey":"q20","options":[{"value":"claude_code","label":"Claude Code"},{"value":"cursor","label":"Cursor"},{"value":"codex","label":"Codex"},{"value":"copilot","label":"GitHub Copilot"},{"value":"gemini_cli","label":"Gemini CLI"},{"value":"windsurf","label":"Windsurf"},{"value":"opencode","label":"OpenCode"},{"value":"other","label":"Other"}]}]},{"id":"q21_ci_maturity","number":"Q21","section":"constraints","legend":"Existing CI enforcement maturity","help":"SOX or zero-tolerance with tests-only or no CI adds a deterministic CI overlay.","fields":[{"kind":"single","id":"q21_ci_maturity","hashKey":"q21","options":[{"value":"none","label":"None"},{"value":"tests_only","label":"Tests only"},{"value":"tests_plus_static","label":"Tests plus static analysis"},{"value":"contracts_runtime","label":"Contracts and runtime checks"}]}]}],"derived":[{"key":"unplannedShare","expr":{"sumFields":{"field":"q5_work_breakdown","keys":["ops","bugs"]}}},{"key":"nonRoadmapShare","expr":{"sumFields":{"field":"q5_work_breakdown","keys":["ops","bugs","regulatory","tech_debt"]}}},{"key":"volatilityIsHigh","expr":{"in":[{"answer":"q6_volatility"},["high","interrupt_driven"]]}},{"key":"coverageLevel","expr":{"bucket":{"value":{"countSelected":{"field":"q12_quality_gates","except":["mostly_manual"]}},"cuts":[{"lte":0,"then":"low"},{"lte":2,"then":"partial"}],"else":"high"}}},{"key":"teamSize","expr":{"answer":"q2_team.total"}},{"key":"hasProductOwner","expr":{"in":[{"answer":"q2_team.product_owner"},["dedicated","shared"]]}},{"key":"hasScrumMaster","expr":{"in":[{"answer":"q2_team.scrum_master"},["dedicated","shared"]]}},{"key":"hasQaSdet","expr":{"gte":[{"answer":"q2_team.qa_sdet"},1]}}],"baseRules":[{"id":"base-1","label":"OpenSpec — brownfield / non-roadmap load","when":{"any":[{"gte":[{"derived":"nonRoadmapShare"},40]},{"in":[{"answer":"q10_architecture"},["monolith","hybrid","batch_data"]]}]},"requires":["q5_work_breakdown","q10_architecture"],"adopt":{"framework":"openspec","artifacts":["openspec/specs/","openspec/changes/<name>/{proposal,design,tasks,spec}.md"],"commands":["/opsx:explore","/opsx:propose","/opsx:apply","/opsx:update","/opsx:sync","/opsx:archive"],"rationale":"Non-roadmap work or a monolith/hybrid/batch architecture favors specs written only for the change at hand."}},{"id":"base-2","label":"GitHub Spec Kit — structured greenfield services","when":{"all":[{"gte":[{"answer":"q5_work_breakdown.roadmap"},60]},{"eq":[{"answer":"q10_architecture"},"microservices"]},{"eq":[{"answer":"q7_requirements"},"structured"]},{"not":{"derived":"volatilityIsHigh"}}]},"requires":["q5_work_breakdown","q10_architecture","q7_requirements","q6_volatility"],"adopt":{"framework":"speckit","artifacts":["constitution.md","spec.md","plan.md","tasks.md"],"commands":["/speckit.constitution","/speckit.specify","/speckit.clarify","/speckit.plan","/speckit.analyze","/speckit.tasks","/speckit.implement"],"rationale":"Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline."}},{"id":"base-3","label":"BMAD Method — role separation and vague inbound requirements","when":{"all":[{"derived":"hasProductOwner"},{"derived":"hasScrumMaster"},{"derived":"hasQaSdet"},{"in":[{"answer":"q7_requirements"},["high_level","vague"]]}]},"requires":["q2_team","q7_requirements"],"adopt":{"framework":"bmad","artifacts":["_bmad/","PRD.md","ARCHITECTURE-SPINE.md","tech-spec.md","sprint-status.yaml"],"commands":["bmad-prd","bmad-architecture","bmad-build","bmad-correct-course","bmad-quick-spec"],"rationale":"PO, Scrum Master, and QA exist, and requirements are not yet stories — BMAD's personas pay off."}},{"id":"base-4","label":"Compact autonomous team, frequent deploys","when":{"all":[{"lt":[{"derived":"teamSize"},5]},{"in":[{"answer":"q11_deploy_cadence"},["continuous","sprint"]]},{"eq":[{"answer":"q14_release_autonomy"},"autonomous"]}]},"requires":["q2_team","q11_deploy_cadence","q14_release_autonomy","q12_quality_gates","q18_token_budget"],"adoptWhen":[{"when":{"all":[{"eq":[{"derived":"coverageLevel"},"low"]},{"in":[{"answer":"q18_token_budget"},["unmetered","team_plan"]]}]},"framework":"superpowers","ifUnavailable":{"framework":"gsd"},"rationale":"A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core."},{"when":{"all":[{"eq":[{"derived":"coverageLevel"},"low"]},{"in":[{"answer":"q18_token_budget"},["individual_pro","strict"]]}]},"framework":"gsd","setFlags":["force_tdd_overlay"],"rationale":"A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core."}],"adopt":{"framework":"gsd","artifacts":[".planning/{PROJECT,REQUIREMENTS,ROADMAP,STATE}.md",".planning/phases/","HANDOFF.json"],"commands":["/gsd:discuss-phase","/gsd:plan-phase","/gsd:execute-phase","/gsd:verify-work","/gsd:ship","/gsd:resume-work"],"rationale":"A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core."}}],"overlays":[{"id":"overlay-a","label":"Regulatory constitution","when":{"any":[{"eq":[{"answer":"q8_compliance"},"sox_tier1"]},{"eq":[{"answer":"q15_governance"},"cab"]}]},"requires":["q8_compliance","q15_governance"],"providedByBase":["speckit"],"adopt":{"framework":"speckit","practice":"constitution.md as documented intent","artifacts":["constitution.md"],"commands":["/speckit.constitution"],"rationale":"SOX Tier 1 or CAB-on-every-release needs written invariants in the agent session. Advisory only — pair with CI."}},{"id":"overlay-b","label":"Autonomous TDD verification","when":{"any":[{"eq":[{"answer":"q9_precision"},"zero_tolerance"]},{"rankAtMost":{"field":"q16_bottlenecks","of":"test_fear","n":2}},{"flag":"force_tdd_overlay"}]},"requires":["q9_precision","q16_bottlenecks"],"resolves":["test_fear"],"providedByBase":["superpowers"],"notes":[{"when":{"hasAny":[{"answer":"q12_quality_gates"},["financial_reconciliation"]]},"text":"existing financial reconciliation tests are a related control already in place; TDD is a different control."}],"adopt":{"framework":"superpowers","practice":"TDD iron law","artifacts":["tests/"],"commands":["test-driven-development"],"rationale":"Zero-tolerance precision or test-fear in the top 2 needs failing tests before production code. Not Tessl [@test] links."}},{"id":"overlay-c","label":"Worktree sandboxing and Decision Moments","when":{"any":[{"in":[{"answer":"q14_release_autonomy"},["coupled","heavy"]]},{"eq":[{"answer":"q3_distribution"},"global_timezones"]}]},"requires":["q14_release_autonomy","q3_distribution"],"resolves":["cross_team_approvals"],"providedByBase":[],"adopt":{"framework":"speckitty","practice":"Lane state machine and worktrees","artifacts":["kitty-specs/",".worktrees/","append-only status log"],"commands":["spec-kitty agent tasks move-task","spec-kitty sync workspace"],"rationale":"Coupled or heavy internal releases, or global time zones, benefit from auditable lanes and isolated worktrees."}},{"id":"overlay-d","label":"Domain reconnaissance","when":{"any":[{"eq":[{"answer":"q4_domain_familiarity"},"low"]},{"eq":[{"answer":"q7_requirements"},"vague"]},{"rankAtMost":{"field":"q16_bottlenecks","of":"ambiguous_or_shifting","n":1}}]},"requires":["q4_domain_familiarity","q7_requirements","q16_bottlenecks"],"resolves":["ambiguous_or_shifting"],"providedByBase":["bmad","superpowers"],"adopt":{"framework":"bmad","practice":"Deep recon / brainstorming before spec","artifacts":["research notes","PRD.md"],"commands":["bmad-deep-recon","brainstorming"],"rationale":"Low domain familiarity, vague goals, or ambiguous-or-shifting as the #1 bottleneck need discovery before implementation."}},{"id":"overlay-e","label":"Ephemeral subagent waves","when":{"eq":[{"answer":"q10_architecture"},"monolith"]},"requires":["q10_architecture"],"providedByBase":["gsd"],"adopt":{"framework":"gsd","practice":"Fresh-context executor waves","artifacts":[".planning/phases/"],"commands":["/gsd:execute-phase"],"rationale":"A monolith with broad file spans benefits from GSD Core's clean-context parallel executors."}},{"id":"overlay-f","label":"Deterministic CI enforcement","when":{"all":[{"any":[{"eq":[{"answer":"q8_compliance"},"sox_tier1"]},{"eq":[{"answer":"q9_precision"},"zero_tolerance"]}]},{"in":[{"answer":"q21_ci_maturity"},["none","tests_only"]]}]},"requires":["q8_compliance","q9_precision","q21_ci_maturity"],"providedByBase":[],"adopt":{"framework":null,"practice":"Required status checks and spec-to-test traceability in CI","artifacts":[".github/workflows/spec-gates.yml"],"commands":[],"rationale":"SOX or zero-tolerance with tests-or-nothing in CI has no fail-closed gate among these frameworks. CI is the gate."}},{"id":"overlay-g","label":"Low-ceremony fast path","when":{"any":[{"eq":[{"answer":"q19_change_volume"},"many_small"]},{"derived":"volatilityIsHigh"}]},"requires":["q19_change_volume","q6_volatility"],"providedByBase":["openspec"],"adopt":{"framework":"bmad","practice":"Two-track: full pipeline vs Quick Flow / propose","artifacts":["written scope rule for when not to run the full pipeline"],"commands":["bmad-quick-spec","/opsx:propose"],"rationale":"Many small changes or high/interrupt-driven volatility need a documented fast path beside any heavyweight pipeline."}}],"cautions":[{"id":"C1","label":"C1 Spec Kit on non-roadmap load","when":{"all":[{"eq":[{"result":"baseFramework"},"speckit"]},{"gte":[{"derived":"nonRoadmapShare"},25]}]},"requires":["q5_work_breakdown"],"caution":{"severity":"high","kind":"warning","finding":"On legacy modules with no reachable owner, Spec Kit has been observed fabricating constitution mandates, inventing performance budgets, and tightening schemas in ways that break against existing data.","mitigation":"Bound Spec Kit to architecturally novel work. Require a measured baseline before any performance claim. Review every schema change against production data shape.","source":"ERP modernization field report; §8.3"}},{"id":"C2","label":"C2 constitution.md is not a control","when":{"all":[{"hasAny":[{"result":"overlays"},["overlay-a"]]},{"eq":[{"answer":"q8_compliance"},"sox_tier1"]}]},"requires":["q8_compliance"],"caution":{"severity":"high","kind":"warning","finding":"constitution.md is prompt context, not a control. Nothing outside the agent re-reads it or blocks a violating change. It will not satisfy an auditor asking what prevents a violation.","mitigation":"Pair with overlay F. Treat the constitution as documentation of intent and CI as the enforcement. If segregation of duties must be provable, prefer Spec Kitty's lane state machine.","source":"Spec Kit README; §8.3; V1"}},{"id":"C3","label":"C3 Superpowers under a metered budget","when":{"all":[{"any":[{"eq":[{"result":"baseFramework"},"superpowers"]},{"hasAny":[{"result":"overlays"},["overlay-b"]]}]},{"in":[{"answer":"q18_token_budget"},["individual_pro","strict"]]}]},"requires":["q18_token_budget"],"caution":{"severity":"high","kind":"warning","finding":"Superpowers' full loop is token-intensive by design; users under metered plans report slowdowns and reversion. Setup runs 10–20 minutes per feature.","mitigation":"Adopt TDD and code-review skills selectively rather than the full mandatory progression. Reserve brainstorming for genuinely ambiguous work.","source":"Superpowers release notes and field reports; §8.6"}},{"id":"C4","label":"C4 Tessl [@test] is not fail-closed","when":{"hasAny":[{"result":"overlays"},["overlay-b"]]},"requires":[],"caution":{"severity":"medium","kind":"warning","finding":"The source material recommends Tessl [@test] anchors as fail-closed verification. They are not: check-spec-links.sh verifies that links point to existing files. The tile is watch-status and stale.","mitigation":"Use Superpowers' TDD iron law. Borrow Tessl's one-question-at-a-time interview discipline without adopting the tile.","source":"Tessl tile; Fowler; V4"}},{"id":"C5","label":"C5 OpenSpec verify does not block archive","when":{"all":[{"eq":[{"result":"baseFramework"},"openspec"]},{"eq":[{"answer":"q9_precision"},"zero_tolerance"]}]},"requires":["q9_precision"],"caution":{"severity":"high","kind":"warning","finding":"/opsx:verify exists only in the expanded profile and must be configured explicitly. Even then it flags issues without blocking archiving.","mitigation":"Run openspec config profile to enable expanded. Add overlay F so the actual gate is CI.","source":"OpenSpec docs; V7"}},{"id":"C6","label":"C6 Spec Kitty audit trail","when":{"all":[{"hasAny":[{"result":"overlays"},["overlay-c"]]},{"eq":[{"answer":"q8_compliance"},"sox_tier1"]}]},"requires":["q8_compliance"],"caution":{"severity":"medium","kind":"positive","finding":"Spec Kitty's lane machine permits exactly 27 transitions and requires implementation evidence to reach for_review; overrides demand actor and reason. This is a stronger audit artifact than Markdown-based governance.","mitigation":"Treat Spec Kitty's status log as an audit record. Protect append-only log merges in review — conflict resolution can lose events.","source":"Spec Kitty architecture; V8"}},{"id":"C7","label":"C7 Ceremony vs change volume","when":{"all":[{"in":[{"result":"baseFramework"},["speckit","bmad","superpowers"]]},{"eq":[{"answer":"q19_change_volume"},"many_small"]}]},"requires":["q19_change_volume"],"caution":{"severity":"high","kind":"warning","finding":"Per-change ceremony dominates at high change volume. Field measurement puts Spec Kit at roughly one full session per ~2,000 LOC unit.","mitigation":"Adopt overlay G's two-track policy and hold the heavyweight pipeline for architecturally novel work only.","source":"ERP field report; §8.3"}},{"id":"C8","label":"C8 Spec Kitty below three workers","when":{"all":[{"hasAny":[{"result":"overlays"},["overlay-c"]]},{"lt":[{"derived":"teamSize"},3]}]},"requires":["q2_team"],"caution":{"severity":"medium","kind":"warning","finding":"Spec Kitty's worktree model pays off through concurrency. Below three concurrent workers it adds sync and rebase friction without the benefit. Isolation is partial: full checkouts with ownership metadata.","mitigation":"Use plain git worktrees or Superpowers' using-git-worktrees skill instead of Spec Kitty's full mission model.","source":"Spec Kitty architecture; C8"}},{"id":"C9","label":"C9 GSD Core immaturity","when":{"eq":[{"result":"baseFramework"},"gsd"]},"requires":[],"caution":{"severity":"medium","kind":"warning","finding":"Created 2026-05-22 — roughly four months old at the evidence date. Release cadence is high but there is little track record, and .planning/ is still evolving.","mitigation":"Pin a version. Budget for migration between minor releases. Re-verify activity before committing a team to it.","source":"Appendix A; V3"}},{"id":"C10","label":"C10 Superpowers maintenance pause","when":{"eq":[{"result":"baseFramework"},"superpowers"]},"requires":[],"caution":{"severity":"medium","kind":"warning","finding":"No commits on main in the 30 days before the evidence date (v6.3.0, 2026-08-12), while comparable projects posted 100+. Star count reflects historical popularity.","mitigation":"Check current repository activity before adopting. The methodology is portable, so a pause is survivable — do not assume active upstream support.","source":"Appendix A; V12"}},{"id":"C11","label":"C11 BMAD license","when":{"eq":[{"result":"baseFramework"},"bmad"]},"requires":[],"caution":{"severity":"medium","kind":"warning","finding":"The GitHub API reports a non-standard license (NOASSERTION) where comparable projects are MIT.","mitigation":"Have legal review the license terms before enterprise adoption.","source":"GitHub API; §8.4"}},{"id":"C12","label":"C12 Interrupt-driven vs ceremony","when":{"all":[{"in":[{"result":"baseFramework"},["speckit","superpowers","bmad"]]},{"eq":[{"answer":"q6_volatility"},"interrupt_driven"]}]},"requires":["q6_volatility"],"caution":{"severity":"high","kind":"warning","finding":"Interrupt-driven work arrives in real time. Spec Kit, Superpowers' mandatory progression, and BMAD's full method price a session per change that the queue will not wait for.","mitigation":"Prefer OpenSpec (or BMAD Quick Flow if BMAD is already the base) as the daily path. Do not run the full Spec Kit or Superpowers pipeline on interrupt tickets.","source":"D15; V5"}},{"id":"C13","label":"C13 Vendor release train","when":{"eq":[{"answer":"q14_release_autonomy"},"vendor"]},"requires":["q14_release_autonomy"],"caution":{"severity":"medium","kind":"warning","finding":"Core delivery waits on an external vendor release train. No SDD framework removes that blocker.","mitigation":"Keep the selected stack for work this team owns. Treat vendor-gated work as out of scope for the SDD recommendation rather than overlaying Spec Kitty.","source":"D18"}}],"report":{"profileFields":[{"field":"q1_domain","label":"Domain"},{"field":"q2_team","label":"Team","format":"teamFte"},{"fields":["q4_tenure","q4_domain_familiarity"],"labels":["Tenure","domain familiarity"],"separator":"; "},{"fields":["q11_deploy_cadence","q11_cycle_time"],"labels":["Deploy cadence","cycle time"],"separator":"; "},{"field":"q13_branching","label":"Branching"}],"freeTextFields":["q17_process_mismatch"],"unaddressedBottlenecks":"auto"},"fixtures":[{"name":"base-1 openspec","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":20,"ops":20,"bugs":20,"regulatory":20,"tech_debt":20},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"openspec","fallback":false}},{"name":"base-2 speckit","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","fallback":false}},{"name":"base-3 bmad","answers":{"q7_requirements":"vague","q10_architecture":"streaming","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":4,"data_engineers":1,"qa_sdet":1,"product_owner":"dedicated","scrum_master":"shared"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"bmad","fallback":false}},{"name":"base-4 superpowers","answers":{"q7_requirements":"structured","q10_architecture":"streaming","q11_deploy_cadence":"continuous","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["mostly_manual"],"q18_token_budget":"unmetered"},"expect":{"base":"superpowers","fallback":false}},{"name":"D1 rule1 wins rule4 runnerup","answers":{"q7_requirements":"structured","q10_architecture":"monolith","q11_deploy_cadence":"continuous","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"openspec","runnerUp":"base-4"}},{"name":"D2 fallback","answers":{"q7_requirements":"structured","q10_architecture":"streaming","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":70,"ops":10,"bugs":10,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"openspec","fallback":true}},{"name":"D3 superpowers","answers":{"q7_requirements":"structured","q10_architecture":"streaming","q11_deploy_cadence":"sprint","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["mostly_manual"],"q18_token_budget":"unmetered"},"expect":{"base":"superpowers"}},{"name":"D3 gsd overlay-b","answers":{"q7_requirements":"structured","q10_architecture":"streaming","q11_deploy_cadence":"sprint","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["mostly_manual"],"q18_token_budget":"strict"},"expect":{"base":"gsd","overlays":["overlay-b"]}},{"name":"D3 gsd high coverage","answers":{"q7_requirements":"structured","q10_architecture":"streaming","q11_deploy_cadence":"sprint","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q18_token_budget":"unmetered"},"expect":{"base":"gsd"}},{"name":"V5 high not speckit","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"high","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"openspec"}},{"name":"V5 interrupt not speckit","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"interrupt_driven","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"openspec"}},{"name":"D13 regulatory","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":40,"ops":5,"bugs":5,"regulatory":50,"tech_debt":0},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"openspec"}},{"name":"Q5 bad sum blocks rule2","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":0},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"openspec","fallback":true}},{"name":"tier0 gemini filters","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q20_runtimes":["gemini_cli"]},"expect":{"base":"speckit"}},{"name":"tier0 no match","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q20_runtimes":["other"]},"expect":{"noRuntimeMatch":true,"base":null}},{"name":"ov+overlay-a","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"sox_tier1"},"expect":{"overlays":["overlay-a"],"base":"speckit"}},{"name":"ov-overlay-a","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"standard_enterprise","q15_governance":"lightweight_review"},"expect":{"overlays":[],"base":"speckit"}},{"name":"ov-overlay-a #18","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"internal_governance"},"expect":{"overlays":[],"base":"speckit"}},{"name":"ov+overlay-b","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"zero_tolerance"},"expect":{"overlays":["overlay-b"],"base":"speckit"}},{"name":"ov-overlay-b","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"standard","q16_bottlenecks":["flaky_cicd"]},"expect":{"overlays":[],"base":"speckit"}},{"name":"ov+overlay-c","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"heavy","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"overlays":["overlay-c"],"base":"speckit"}},{"name":"ov-overlay-c","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"vendor","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"overlays":[],"base":"speckit"}},{"name":"ov+overlay-d","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q16_bottlenecks":["ambiguous_or_shifting","flaky_cicd","test_fear"]},"expect":{"overlays":["overlay-d"],"base":"speckit"}},{"name":"ov-overlay-d","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q16_bottlenecks":["flaky_cicd","ambiguous_or_shifting","test_fear"],"q4_domain_familiarity":"high"},"expect":{"overlays":[],"base":"speckit"}},{"name":"ov+overlay-e","answers":{"q7_requirements":"structured","q10_architecture":"monolith","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"overlays":["overlay-e"],"base":"openspec"}},{"name":"ov-overlay-e","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"overlays":[],"base":"speckit"}},{"name":"ov+overlay-f","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"sox_tier1","q21_ci_maturity":"none"},"expect":{"overlays":["overlay-a","overlay-f"],"base":"speckit"}},{"name":"ov-overlay-f","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"sox_tier1","q21_ci_maturity":"contracts_runtime"},"expect":{"overlays":["overlay-a"],"base":"speckit"}},{"name":"ov+overlay-g","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q19_change_volume":"many_small"},"expect":{"overlays":["overlay-g"],"base":"speckit"}},{"name":"ov+overlay-g #30","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"high","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"overlays":["overlay-g"],"base":"openspec"}},{"name":"ov+overlay-g #31","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"interrupt_driven","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"overlays":["overlay-g"],"base":"openspec"}},{"name":"ov-overlay-g","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q19_change_volume":"balanced"},"expect":{"overlays":[],"base":"speckit"}},{"name":"ov-b recon note","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["financial_reconciliation"],"q9_precision":"zero_tolerance"},"expect":{"overlays":["overlay-b"],"base":"speckit"}},{"name":"dedupe-a included","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"sox_tier1"},"expect":{"base":"speckit","overlays":["overlay-a"],"overlaysIncludedInBase":["overlay-a"]}},{"name":"q16-test-fear-rank2","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"standard","q16_bottlenecks":["flaky_cicd","test_fear","legacy_tech_debt"]},"expect":{"overlays":["overlay-b"]}},{"name":"q16-test-fear-rank3","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"standard","q16_bottlenecks":["flaky_cicd","legacy_tech_debt","test_fear"]},"expect":{"overlays":[]}},{"name":"C+C1","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":70,"ops":10,"bugs":10,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","cautions":["C1"],"overlays":[]}},{"name":"C-C1","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":90,"ops":4,"bugs":3,"regulatory":2,"tech_debt":1},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","cautions":[],"overlays":[]}},{"name":"C+C2","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"sox_tier1"},"expect":{"base":"speckit","cautions":["C2"],"overlays":["overlay-a"]}},{"name":"C-C2","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"standard_enterprise","q15_governance":"cab"},"expect":{"base":"speckit","cautions":[],"overlays":["overlay-a"]}},{"name":"C+C3","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"zero_tolerance","q18_token_budget":"strict"},"expect":{"base":"speckit","cautions":["C3","C4"],"overlays":["overlay-b"]}},{"name":"C-C3","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"standard","q18_token_budget":"unmetered"},"expect":{"base":"speckit","cautions":[],"overlays":[]}},{"name":"C+C4","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"zero_tolerance"},"expect":{"base":"speckit","cautions":["C4"],"overlays":["overlay-b"]}},{"name":"C-C4","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"standard"},"expect":{"base":"speckit","cautions":[],"overlays":[]}},{"name":"C+C5","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":20,"ops":20,"bugs":20,"regulatory":20,"tech_debt":20},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"zero_tolerance"},"expect":{"base":"openspec","cautions":["C4","C5"],"overlays":["overlay-b"]}},{"name":"C-C5","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":20,"ops":20,"bugs":20,"regulatory":20,"tech_debt":20},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q9_precision":"standard"},"expect":{"base":"openspec","cautions":[],"overlays":[]}},{"name":"C+C6","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"coupled","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"sox_tier1"},"expect":{"base":"speckit","cautions":["C2","C6"],"overlays":["overlay-a","overlay-c"]}},{"name":"C-C6","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"coupled","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q8_compliance":"standard_enterprise"},"expect":{"base":"speckit","cautions":[],"overlays":["overlay-c"]}},{"name":"C+C7","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q19_change_volume":"many_small"},"expect":{"base":"speckit","cautions":["C7"],"overlays":["overlay-g"]}},{"name":"C-C7","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"],"q19_change_volume":"balanced"},"expect":{"base":"speckit","cautions":[],"overlays":[]}},{"name":"C+C8","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"coupled","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":2,"swe":2,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","cautions":["C8"],"overlays":["overlay-c"]}},{"name":"C-C8","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"coupled","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","cautions":[],"overlays":["overlay-c"]}},{"name":"C+C9","answers":{"q7_requirements":"structured","q10_architecture":"streaming","q11_deploy_cadence":"sprint","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","e2e","sast_dast"],"q18_token_budget":"team_plan"},"expect":{"base":"gsd","cautions":["C9"],"overlays":[]}},{"name":"C-C9","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","cautions":[],"overlays":[]}},{"name":"C+C10","answers":{"q7_requirements":"structured","q10_architecture":"streaming","q11_deploy_cadence":"sprint","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["mostly_manual"],"q18_token_budget":"unmetered"},"expect":{"base":"superpowers","cautions":["C10"],"overlays":[]}},{"name":"C-C10","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","cautions":[],"overlays":[]}},{"name":"C+C11","answers":{"q7_requirements":"vague","q10_architecture":"streaming","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":4,"data_engineers":1,"qa_sdet":1,"product_owner":"dedicated","scrum_master":"dedicated"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"bmad","cautions":["C11"],"overlays":["overlay-d"]}},{"name":"C-C11","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","cautions":[],"overlays":[]}},{"name":"C+C12","answers":{"q7_requirements":"vague","q10_architecture":"streaming","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"interrupt_driven","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":4,"data_engineers":1,"qa_sdet":1,"product_owner":"dedicated","scrum_master":"dedicated"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"bmad","cautions":["C11","C12"],"overlays":["overlay-d","overlay-g"]}},{"name":"C-C12","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"interrupt_driven","q5_work_breakdown":{"roadmap":20,"ops":20,"bugs":20,"regulatory":20,"tech_debt":20},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"openspec","cautions":[],"overlays":["overlay-g"]}},{"name":"C+C13","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"vendor","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","cautions":["C13"],"overlays":[]}},{"name":"C-C13","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"base":"speckit","cautions":[],"overlays":[]}},{"name":"C13 no overlay-c","answers":{"q7_requirements":"structured","q10_architecture":"microservices","q11_deploy_cadence":"monthly","q14_release_autonomy":"vendor","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"overlays":[],"cautions":["C13"],"base":"speckit"}},{"name":"derived interrupt","answers":{"q6_volatility":"interrupt_driven"},"expect":{"derived":{"volatilityIsHigh":true}}},{"name":"derived roles false","answers":{"q2_team":{"total":5,"swe":5,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"}},"expect":{"derived":{"hasProductOwner":false,"hasScrumMaster":false,"hasQaSdet":false}}},{"name":"derived shared PO","answers":{"q2_team":{"total":5,"swe":4,"data_engineers":0,"qa_sdet":0,"product_owner":"shared","scrum_master":"none"}},"expect":{"derived":{"hasProductOwner":true}}},{"name":"coverage low manual","answers":{"q12_quality_gates":["mostly_manual"]},"expect":{"derived":{"coverageLevel":"low"}}},{"name":"coverage low empty","answers":{"q12_quality_gates":[]},"expect":{"derived":{"coverageLevel":"low"}}},{"name":"coverage partial","answers":{"q12_quality_gates":["unit_coverage","e2e"]},"expect":{"derived":{"coverageLevel":"partial"}}},{"name":"coverage high","answers":{"q12_quality_gates":["unit_coverage","e2e","sast_dast"]},"expect":{"derived":{"coverageLevel":"high"}}},{"name":"completeness q10 couldChange","answers":{"q7_requirements":"structured","q11_deploy_cadence":"monthly","q14_release_autonomy":"autonomous","q6_volatility":"moderate","q5_work_breakdown":{"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5},"q2_team":{"total":8,"swe":6,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"},"q12_quality_gates":["unit_coverage","integration_contract","e2e"]},"expect":{"couldChangeResult":["q3_distribution","q4_domain_familiarity","q8_compliance","q9_precision","q10_architecture","q15_governance","q16_bottlenecks","q18_token_budget","q19_change_volume","q21_ci_maturity"]}}]};
+  /* END PACK */
+
+  function coverageLevel(gates) {
+    var automated = (gates || []).filter(function (g) { return g !== "mostly_manual"; });
+    if (automated.length === 0) return "low";
+    if (automated.length <= 2) return "partial";
+    return "high";
+  }
+
+  function fnv1aHex(s) {
+    var hash = 2166136261 >>> 0;
+    var utf8 = unescape(encodeURIComponent(String(s)));
+    for (var i = 0; i < utf8.length; i++) {
+      hash ^= utf8.charCodeAt(i);
+      hash = Math.imul(hash, 16777619) >>> 0;
+    }
+    return hash.toString(16).padStart(8, "0");
+  }
+
+  function fieldSurfaceParts(f) {
+    var parts = [f.id, f.kind, f.hashKey || f.id];
+    if (f.maxLength != null) parts.push("ml=" + f.maxLength);
+    if (f.ranks != null) parts.push("r=" + f.ranks);
+    if (f.options) {
+      for (var i = 0; i < f.options.length; i++) parts.push("o=" + f.options[i].value);
+    }
+    if (f.fields) {
+      for (var j = 0; j < f.fields.length; j++) {
+        var s = f.fields[j];
+        parts.push("s=" + s.id, s.kind);
+        if (s.options) {
+          for (var k = 0; k < s.options.length; k++) parts.push("o=" + s.options[k].value);
+        }
+      }
+    }
+    return parts.join("\t");
+  }
+
+  function buildAnswerSurface(questions) {
+    var lines = [];
+    for (var qi = 0; qi < questions.length; qi++) {
+      var fields = questions[qi].fields || [];
+      for (var fi = 0; fi < fields.length; fi++) lines.push(fieldSurfaceParts(fields[fi]));
+    }
+    return lines.join("\n");
+  }
+
+  function compileFields(questions) {
+    var FIELD_INDEX = {};
+    var ALL_FIELD_IDS = [];
+    var HASH_TO_FIELD = {};
+    var FIELD_TO_HASH = {};
+    for (var qi = 0; qi < questions.length; qi++) {
+      var q = questions[qi];
+      var fields = q.fields || [];
+      for (var fi = 0; fi < fields.length; fi++) {
+        var f = fields[fi];
+        ALL_FIELD_IDS.push(f.id);
+        var hashKey = f.hashKey || f.id;
+        FIELD_INDEX[f.id] = {
+          kind: f.kind,
+          hashKey: hashKey,
+          options: f.options,
+          constraints: f.constraints,
+          reportOnly: !!f.reportOnly,
+          questionReportOnly: !!q.reportOnly,
+          maxLength: f.maxLength,
+          ranks: f.ranks,
+          unique: !!f.unique,
+          rankLabels: f.rankLabels,
+          fields: f.fields,
+          min: f.min,
+          max: f.max,
+          label: f.label
+        };
+        HASH_TO_FIELD[hashKey] = f.id;
+        FIELD_TO_HASH[f.id] = hashKey;
+      }
+    }
+    var surface = buildAnswerSurface(questions);
+    var PACK_DIGEST = fnv1aHex(surface);
+    return {
+      FIELD_INDEX: FIELD_INDEX,
+      ALL_FIELD_IDS: ALL_FIELD_IDS,
+      HASH_TO_FIELD: HASH_TO_FIELD,
+      FIELD_TO_HASH: FIELD_TO_HASH,
+      PACK_DIGEST: PACK_DIGEST,
+      ANSWER_SURFACE: surface
+    };
+  }
+
+  function compilePack(pack) {
+    if (!pack || typeof pack !== "object") throw new Error("PACK missing — run node tools/build.mjs");
+    var FRAMEWORKS = {};
+    (pack.frameworks || []).forEach(function (fw) {
+      var copy = {};
+      for (var k in fw) if (Object.prototype.hasOwnProperty.call(fw, k)) copy[k] = fw[k];
+      if (fw.ratings && typeof fw.ratings === "object") {
+        for (var rk in fw.ratings) {
+          if (Object.prototype.hasOwnProperty.call(fw.ratings, rk)) copy[rk] = fw.ratings[rk];
+        }
+      }
+      FRAMEWORKS[fw.id] = copy;
+    });
+    var QUESTIONS = (pack.questions || []).map(function (q) {
+      var out = {};
+      for (var k in q) if (Object.prototype.hasOwnProperty.call(q, k)) out[k] = q[k];
+      if (out.number != null && out.n == null) out.n = out.number;
+      return out;
+    });
+    var fields = compileFields(QUESTIONS);
+    var ENFORCEMENT_LABEL = {};
+    ((pack.settings && pack.settings.enforcementClasses) || []).forEach(function (c) {
+      ENFORCEMENT_LABEL[c.id] = c.label;
+    });
+    return {
+      pack: pack,
+      settings: pack.settings || {},
+      meta: pack.meta || {},
+      report: pack.report || {},
+      FRAMEWORKS: FRAMEWORKS,
+      QUESTIONS: QUESTIONS,
+      DERIVED_DEFS: pack.derived || [],
+      BASE_RULES: pack.baseRules || [],
+      OVERLAYS: pack.overlays || [],
+      CAUTIONS: pack.cautions || [],
+      fixtures: pack.fixtures || [],
+      ENFORCEMENT_LABEL: ENFORCEMENT_LABEL,
+      FIELD_INDEX: fields.FIELD_INDEX,
+      ALL_FIELD_IDS: fields.ALL_FIELD_IDS,
+      HASH_TO_FIELD: fields.HASH_TO_FIELD,
+      FIELD_TO_HASH: fields.FIELD_TO_HASH,
+      PACK_DIGEST: fields.PACK_DIGEST,
+      ANSWER_SURFACE: fields.ANSWER_SURFACE
+    };
+  }
+
+  var _compiled = compilePack(PACK);
+  var FRAMEWORKS = _compiled.FRAMEWORKS;
+  var QUESTIONS = _compiled.QUESTIONS;
+  var DERIVED_DEFS = _compiled.DERIVED_DEFS;
+  var BASE_RULES = _compiled.BASE_RULES;
+  var OVERLAYS = _compiled.OVERLAYS;
+  var CAUTIONS = _compiled.CAUTIONS;
+  var ENFORCEMENT_LABEL = _compiled.ENFORCEMENT_LABEL;
+  var SETTINGS = _compiled.settings;
+  var REPORT_CFG = _compiled.report;
+  var PACK_META = _compiled.meta;
+  var PACK_FIXTURES = _compiled.fixtures;
+  var FIELD_INDEX = _compiled.FIELD_INDEX;
+  var ALL_FIELD_IDS = _compiled.ALL_FIELD_IDS;
+  var HASH_TO_FIELD = _compiled.HASH_TO_FIELD;
+  var FIELD_TO_HASH = _compiled.FIELD_TO_HASH;
+  var PACK_DIGEST = _compiled.PACK_DIGEST;
+  var ANSWER_SURFACE = _compiled.ANSWER_SURFACE;
+  var LEGACY_V3_DIGEST = PACK_DIGEST;
+
+  function isReportOnly(id) {
+    var meta = FIELD_INDEX[id];
+    return !!(meta && (meta.reportOnly || meta.questionReportOnly));
+  }
+
+  function optionLabel(fieldId, value) {
+    var f = FIELD_INDEX[fieldId];
+    if (!f || !f.options) return value;
+    for (var i = 0; i < f.options.length; i++) if (f.options[i].value === value) return f.options[i].label;
+    return value;
+  }
+
+  function derive(answers) {
+    return SDDExpr.evalDerived(DERIVED_DEFS, answers || {}, FIELD_INDEX);
+  }
+
+  function explainRequires(rule, answers) {
+    var out = [];
+    (rule.requires || []).forEach(function (id) {
+      var v = answers[id];
+      if (v === undefined || v === null || v === "") return;
+      out.push(id + " = " + (typeof v === "object" ? JSON.stringify(v) : String(v)));
+    });
+    return out;
+  }
+
+  function candidateSet(answers) {
+    var tz = SETTINGS.tierZero || {};
+    var exclude = tz.excludeStatusesFromBase || [];
+    var ids = Object.keys(FRAMEWORKS).filter(function (id) {
+      return exclude.indexOf(FRAMEWORKS[id].status) === -1;
+    });
+    var runtimeField = tz.runtimeField;
+    var frameworkKey = tz.frameworkKey || "runtimes";
+    var runtimes = runtimeField ? answers[runtimeField] : null;
+    if (!Array.isArray(runtimes) || !runtimes.length) return ids;
+    return ids.filter(function (id) {
+      var rt = FRAMEWORKS[id][frameworkKey] || [];
+      return runtimes.some(function (r) { return rt.indexOf(r) !== -1; });
+    });
+  }
+
+  function closestFrameworks(answers) {
+    var tz = SETTINGS.tierZero || {};
+    var exclude = tz.excludeStatusesFromBase || [];
+    var runtimeField = tz.runtimeField;
+    var frameworkKey = tz.frameworkKey || "runtimes";
+    var runtimes = runtimeField && Array.isArray(answers[runtimeField]) ? answers[runtimeField] : [];
+    return Object.keys(FRAMEWORKS).filter(function (id) {
+      return exclude.indexOf(FRAMEWORKS[id].status) === -1;
+    }).map(function (id) {
+      var rt = FRAMEWORKS[id][frameworkKey] || [];
+      var overlap = runtimes.filter(function (r) { return rt.indexOf(r) !== -1; }).length;
+      return { id: id, overlap: overlap };
+    }).sort(function (a, b) { return b.overlap - a.overlap; }).map(function (x) { return x.id; });
+  }
+
+  function makeCtx(answers, derived, partial) {
+    return {
+      answers: answers || {},
+      derived: derived || {},
+      result: partial ? {
+        baseFramework: partial.baseId || null,
+        baseRule: partial.baseRule || null,
+        overlays: partial.overlayIds || []
+      } : null,
+      flags: (partial && partial.flags) || {},
+      fieldIndex: FIELD_INDEX
+    };
+  }
+
+  function ruleMatches(rule, answers, derived, partial) {
+    return SDDExpr.evalExpr(rule.when, makeCtx(answers, derived, partial)) === true;
+  }
+
+  function resolveAdopt(rule, answers, derived, candidates) {
+    var fw = rule.adopt && rule.adopt.framework;
+    var flags = {};
+    var branches = rule.adoptWhen || [];
+    var ctx = makeCtx(answers, derived, null);
+    for (var i = 0; i < branches.length; i++) {
+      var branch = branches[i];
+      if (SDDExpr.evalExpr(branch.when, ctx) !== true) continue;
+      fw = branch.framework;
+      flags = {};
+      (branch.setFlags || []).forEach(function (name) { flags[name] = true; });
+      if (candidates.indexOf(fw) === -1) {
+        if (branch.ifUnavailable && candidates.indexOf(branch.ifUnavailable.framework) !== -1) {
+          fw = branch.ifUnavailable.framework;
+          flags = {};
+          (branch.ifUnavailable.setFlags || []).forEach(function (name) { flags[name] = true; });
+        } else {
+          return null;
+        }
+      }
+      return { framework: fw, flags: flags };
+    }
+    if (candidates.indexOf(fw) === -1) return null;
+    return { framework: fw, flags: flags };
+  }
+
+  function selectBase(answers, derived, baseRules, candidates) {
+    var winner = null;
+    var runnerUp = null;
+    for (var i = 0; i < baseRules.length; i++) {
+      var rule = baseRules[i];
+      if (!ruleMatches(rule, answers, derived, null)) continue;
+      var resolved = resolveAdopt(rule, answers, derived, candidates);
+      if (!resolved) continue;
+      var picked = { rule: rule, framework: resolved.framework, flags: resolved.flags };
+      if (!winner) winner = picked;
+      else if (!runnerUp) {
+        runnerUp = picked;
+        runnerUp.whyItLost = winner.rule.label + " matched first (ordered evaluation, D1).";
+      }
+    }
+    return { winner: winner, runnerUp: runnerUp };
+  }
+
+  function evalRuleNotes(rule, answers, derived, partial) {
+    var notes = [];
+    var ctx = makeCtx(answers, derived, partial);
+    (rule.notes || []).forEach(function (note) {
+      if (!note || typeof note.text !== "string") return;
+      if (note.when == null || SDDExpr.evalExpr(note.when, ctx) === true) {
+        notes.push(note.text);
+      }
+    });
+    return notes;
+  }
+
+  function applyOverlays(answers, derived, overlays, partial) {
+    return overlays.filter(function (rule) {
+      return ruleMatches(rule, answers, derived, partial);
+    }).map(function (rule) {
+      var included = (rule.providedByBase || []).indexOf(partial.baseId) !== -1;
+      return {
+        rule: rule,
+        explanation: explainRequires(rule, answers),
+        includedInBase: included,
+        notes: evalRuleNotes(rule, answers, derived, partial)
+      };
+    });
+  }
+
+  function applyCautions(answers, derived, cautions, partial) {
+    var fired = cautions.filter(function (rule) {
+      return ruleMatches(rule, answers, derived, partial);
+    });
+    var rank = { high: 0, medium: 1 };
+    fired.sort(function (a, b) {
+      return (rank[a.caution.severity] - rank[b.caution.severity]) || a.id.localeCompare(b.id);
+    });
+    return fired.map(function (rule) {
+      return { rule: rule, explanation: explainRequires(rule, answers) };
+    });
+  }
+
+  function rankedFieldId() {
+    for (var i = 0; i < ALL_FIELD_IDS.length; i++) {
+      var id = ALL_FIELD_IDS[i];
+      if (FIELD_INDEX[id] && FIELD_INDEX[id].kind === "ranked") return id;
+    }
+    return null;
+  }
+
+  function unaddressedBottleneckIds() {
+    var mode = REPORT_CFG && REPORT_CFG.unaddressedBottlenecks;
+    if (mode !== "auto") return [];
+    var rankedId = rankedFieldId();
+    var meta = rankedId && FIELD_INDEX[rankedId];
+    if (!meta || !meta.options) return [];
+    var resolved = {};
+    (OVERLAYS || []).forEach(function (rule) {
+      (rule.resolves || []).forEach(function (id) { resolved[id] = 1; });
+    });
+    return meta.options.map(function (o) { return o.value; }).filter(function (id) {
+      return !resolved[id];
+    });
+  }
+
+  function buildBottleneckMatrix(answers, overlayResult) {
+    var rankedId = rankedFieldId();
+    var ranked = rankedId && Array.isArray(answers[rankedId]) ? answers[rankedId] : [];
+    return ranked.map(function (id, i) {
+      var resolvedBy = [];
+      overlayResult.forEach(function (o) {
+        if ((o.rule.resolves || []).indexOf(id) !== -1) resolvedBy.push(o.rule.label);
+      });
+      return { bottleneck: id, rank: i + 1, resolvedBy: resolvedBy.length ? resolvedBy : null };
+    });
+  }
+
+  function directoryLayout(baseId, overlays) {
+    var lines = ["repo/"];
+    var seen = {};
+    function add(prefix, items, comment) {
+      (items || []).forEach(function (item) {
+        if (seen[item]) return;
+        seen[item] = 1;
+        lines.push("├── " + item + (comment ? "    # " + comment : ""));
+      });
+    }
+    var fw = FRAMEWORKS[baseId];
+    if (fw) add("base", fw.artifacts, "Base: " + fw.name);
+    overlays.forEach(function (o) {
+      if (o.includedInBase) return;
+      add("ov", o.rule.adopt.artifacts, o.rule.label);
+    });
+    return lines;
+  }
+
+  function fieldPresent(answers, id) {
+    var meta = FIELD_INDEX[id];
+    var v = answers[id];
+    if (!meta) return v !== undefined && v !== null && v !== "";
+    if (meta.kind === "record") return SDDExpr.recordValid(v, meta.constraints || {});
+    if (meta.kind === "multi" || meta.kind === "ranked") {
+      return Array.isArray(v) && v.length > 0;
+    }
+    if (meta.kind === "number") return typeof v === "number" && isFinite(v);
+    return v !== undefined && v !== null && v !== "";
+  }
+
+  function allRuleRequires(rulesets) {
+    var s = {};
+    rulesets.forEach(function (set) {
+      set.forEach(function (r) {
+        (r.requires || []).forEach(function (id) { s[id] = 1; });
+      });
+    });
+    return Object.keys(s);
+  }
+
+  function completeness(answers, questions, rules) {
+    var answered = [];
+    var missing = [];
+    ALL_FIELD_IDS.forEach(function (id) {
+      if (fieldPresent(answers, id)) answered.push(id);
+      else missing.push(id);
+    });
+    var req = allRuleRequires([rules.BASE_RULES, rules.OVERLAYS, rules.CAUTIONS]);
+    var could = missing.filter(function (id) {
+      return !isReportOnly(id) && req.indexOf(id) !== -1;
+    });
+    return { answered: answered, missing: missing, couldChangeResult: could };
+  }
+
+  function evidenceAge(now, frameworks) {
+    var oldest = null;
+    Object.keys(frameworks).forEach(function (id) {
+      var d = frameworks[id].evidence.verifiedOn;
+      if (!oldest || d < oldest) oldest = d;
+    });
+    var then = Date.parse(oldest + "T00:00:00Z");
+    var staleDays = (SETTINGS && SETTINGS.staleDays != null) ? SETTINGS.staleDays : 180;
+    var stale = ((now - then) / 86400000) > staleDays;
+    return { verifiedOn: oldest, stale: stale };
+  }
+
+  function cloneAdopt(rule, frameworkId) {
+    var adopt = rule.adopt ? {
+      framework: frameworkId || rule.adopt.framework,
+      practice: rule.adopt.practice,
+      artifacts: (rule.adopt.artifacts || []).slice(),
+      commands: (rule.adopt.commands || []).slice(),
+      rationale: rule.adopt.rationale
+    } : undefined;
+    return {
+      id: rule.id, label: rule.label, when: rule.when, requires: rule.requires,
+      adopt: adopt, caution: rule.caution, providedByBase: rule.providedByBase,
+      resolves: rule.resolves
+    };
+  }
+
+  function evaluate(answers, rules, now) {
+    rules = rules || { FRAMEWORKS: FRAMEWORKS, BASE_RULES: BASE_RULES, OVERLAYS: OVERLAYS, CAUTIONS: CAUTIONS };
+    answers = answers || {};
+    now = now == null ? Date.now() : now;
+    var derived = derive(answers);
+    var candidates = candidateSet(answers);
+    var comp = completeness(answers, QUESTIONS, rules);
+    var age = evidenceAge(now, rules.FRAMEWORKS || FRAMEWORKS);
+
+    var runtimeField = (SETTINGS.tierZero && SETTINGS.tierZero.runtimeField) || null;
+    var selectedRuntimes = runtimeField ? answers[runtimeField] : null;
+    if (selectedRuntimes && selectedRuntimes.length && candidates.length === 0) {
+      return {
+        base: null, runnerUp: null, overlays: [], cautions: [],
+        bottleneckMatrix: buildBottleneckMatrix(answers, []),
+        directoryLayout: [], completeness: comp, evidenceAge: age,
+        noRuntimeMatch: true, closest: closestFrameworks(answers),
+        flags: {}, candidates: []
+      };
+    }
+
+    var sel = selectBase(answers, derived, rules.BASE_RULES, candidates);
+    var fallback = false;
+    var baseId;
+    var baseRule;
+    var flags = {};
+    if (sel.winner) {
+      baseId = sel.winner.framework;
+      baseRule = cloneAdopt(sel.winner.rule, baseId);
+      flags = sel.winner.flags || {};
+    } else if (candidates.indexOf(SETTINGS.fallbackBase) !== -1) {
+      fallback = true;
+      baseId = SETTINGS.fallbackBase;
+      baseRule = {
+        id: "fallback", label: "OpenSpec (fallback — no strong signal)",
+        requires: [], adopt: {
+          framework: SETTINGS.fallbackBase,
+          artifacts: (FRAMEWORKS[SETTINGS.fallbackBase] || {}).artifacts,
+          commands: (FRAMEWORKS[SETTINGS.fallbackBase] || {}).commands,
+          rationale: "No base rule matched. OpenSpec is the lowest-ceremony, highest brownfield-fit default."
+        }
+      };
+    } else {
+      return {
+        base: null, runnerUp: null, overlays: [], cautions: [],
+        bottleneckMatrix: buildBottleneckMatrix(answers, []),
+        directoryLayout: [], completeness: comp, evidenceAge: age,
+        noRuntimeMatch: true, closest: closestFrameworks(answers),
+        flags: {}, candidates: candidates
+      };
+    }
+
+    if (FRAMEWORKS[baseId] && FRAMEWORKS[baseId].status === "watch") {
+      throw new Error("watch framework selected as base");
+    }
+
+    var partial = {
+      baseId: baseId,
+      baseRule: baseRule.id,
+      overlayIds: [],
+      flags: flags
+    };
+    var overlays = applyOverlays(answers, derived, rules.OVERLAYS, partial);
+    partial.overlayIds = overlays.map(function (o) { return o.rule.id; });
+    var cautions = applyCautions(answers, derived, rules.CAUTIONS, partial);
+    var matrix = buildBottleneckMatrix(answers, overlays);
+    var runner = null;
+    if (sel.runnerUp) {
+      runner = {
+        rule: cloneAdopt(sel.runnerUp.rule, sel.runnerUp.framework),
+        whyItLost: sel.runnerUp.whyItLost
+      };
+    }
+    return {
+      base: {
+        rule: baseRule,
+        explanation: fallback ? ["No base rule fired."] : explainRequires(sel.winner.rule, answers),
+        fallback: fallback
+      },
+      runnerUp: runner,
+      overlays: overlays,
+      cautions: cautions,
+      bottleneckMatrix: matrix,
+      directoryLayout: directoryLayout(baseId, overlays),
+      completeness: comp,
+      evidenceAge: age,
+      noRuntimeMatch: false,
+      candidates: candidates,
+      flags: flags,
+      derived: derived
+    };
+  }
+
+  function optionValues(meta) {
+    if (!meta || !meta.options) return null;
+    return meta.options.map(function (o) { return o.value; });
+  }
+
+  function validEnum(field, value) {
+    var meta = FIELD_INDEX[field];
+    var allow = optionValues(meta);
+    if (!allow) return true;
+    return allow.indexOf(value) !== -1;
+  }
+
+  function multiInPackOrder(meta, values) {
+    var set = {};
+    (values || []).forEach(function (v) { set[v] = 1; });
+    return (meta.options || []).map(function (o) { return o.value; }).filter(function (v) { return set[v]; });
+  }
+
+  function canEncodeRecord(meta, rec) {
+    if (!rec || typeof rec !== "object" || Array.isArray(rec)) return false;
+    var constraints = meta.constraints || {};
+    if (SDDExpr.recordValid(rec, constraints)) return true;
+    if (constraints.sumTo != null) return false;
+    var byId = {};
+    (meta.fields || []).forEach(function (s) { byId[s.id] = s; });
+    var req = constraints.requiredKeys || [];
+    for (var i = 0; i < req.length; i++) {
+      var key = req[i];
+      var sub = byId[key];
+      var val = rec[key];
+      if (sub && sub.kind === "number") {
+        var min = constraints.minimums && constraints.minimums[key];
+        if (min != null && min > 0) {
+          if (typeof val !== "number" || !isFinite(val)) return false;
+        }
+      } else if (val == null || val === "") {
+        return false;
+      }
+    }
+    return req.length > 0;
+  }
+
+  function encodeRecordValue(meta, rec) {
+    return (meta.fields || []).map(function (sub) {
+      var val = rec[sub.id];
+      if (sub.kind === "number") {
+        if (typeof val !== "number" || !isFinite(val)) return "0";
+        return String(val);
+      }
+      return val == null ? "" : String(val);
+    }).join(",");
+  }
+
+  function decodeRecordValue(meta, raw) {
+    var parts = String(raw).split(",");
+    var subs = meta.fields || [];
+    if (parts.length !== subs.length) return null;
+    var rec = {};
+    var constraints = meta.constraints || {};
+    for (var i = 0; i < subs.length; i++) {
+      var sub = subs[i];
+      if (sub.kind === "number") {
+        var n = +parts[i];
+        if (!isFinite(n)) return null;
+        rec[sub.id] = n;
+      } else {
+        var sv = parts[i];
+        if (sub.options && sub.options.map(function (o) { return o.value; }).indexOf(sv) === -1) return null;
+        if (constraints.allowedValues && constraints.allowedValues[sub.id] &&
+            constraints.allowedValues[sub.id].indexOf(sv) === -1) return null;
+        rec[sub.id] = sv;
+      }
+    }
+    if (constraints.minimums) {
+      for (var k in constraints.minimums) {
+        if (Object.prototype.hasOwnProperty.call(constraints.minimums, k) &&
+            typeof rec[k] === "number" && rec[k] < constraints.minimums[k]) return null;
+      }
+    }
+    return rec;
+  }
+
+  function encodeHash(answers) {
+    var parts = ["v=" + PACK_DIGEST];
+    var truncated = false;
+    function push(k, v) {
+      if (v == null) return;
+      var s = String(v);
+      if (s.indexOf("NaN") !== -1) return;
+      parts.push(k + "=" + s);
+    }
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      var hk = meta.hashKey;
+      var val = answers[fid];
+      if (meta.kind === "single") {
+        if (val) push(hk, val);
+      } else if (meta.kind === "multi" || meta.kind === "ranked") {
+        if (val && val.length) {
+          var ordered = meta.kind === "multi" ? multiInPackOrder(meta, val) : val;
+          if (ordered.length) push(hk, ordered.join(","));
+        }
+      } else if (meta.kind === "text") {
+        if (val) {
+          var text = String(val);
+          var max = meta.maxLength != null ? meta.maxLength : text.length;
+          if (text.length > max) { text = text.slice(0, max); truncated = true; }
+          push(hk, encodeURIComponent(text));
+        }
+      } else if (meta.kind === "number") {
+        if (typeof val === "number" && isFinite(val)) push(hk, val);
+      } else if (meta.kind === "record") {
+        if (canEncodeRecord(meta, val)) push(hk, encodeRecordValue(meta, val));
+      }
+    });
+    return { hash: parts.join("&"), truncated: truncated };
+  }
+
+  function decodeHash(hash) {
+    try {
+      var raw = String(hash || "").replace(/^#/, "");
+      if (!raw) return { answers: {}, notice: null };
+      var params = {};
+      raw.split("&").forEach(function (pair) {
+        var i = pair.indexOf("=");
+        if (i === -1) return;
+        params[decodeURIComponent(pair.slice(0, i))] = pair.slice(i + 1);
+      });
+      var ver = params.v;
+      var legacyOk = PACK_DIGEST === LEGACY_V3_DIGEST;
+      if (ver === PACK_DIGEST) {
+        /* current digest — decode */
+      } else if (!ver || ver === "3") {
+        if (!legacyOk) {
+          return {
+            answers: {},
+            notice: "This link uses questionnaire schema v3, which is not compatible with the current digest " + PACK_DIGEST + ". The form was not filled from the link."
+          };
+        }
+      } else {
+        return {
+          answers: {},
+          notice: "This link uses questionnaire version " + ver + ", which does not match this page's digest " + PACK_DIGEST + ". The form was not filled from the link."
+        };
+      }
+      var a = {};
+      Object.keys(HASH_TO_FIELD).forEach(function (hk) {
+        if (params[hk] == null || params[hk] === "") return;
+        var field = HASH_TO_FIELD[hk];
+        var meta = FIELD_INDEX[field];
+        var val = params[hk];
+        if (!meta) return;
+        if (meta.kind === "record") {
+          var rec = decodeRecordValue(meta, val);
+          if (rec) a[field] = rec;
+          return;
+        }
+        if (meta.kind === "multi" || meta.kind === "ranked") {
+          var arr = val.split(",").filter(function (x) { return validEnum(field, x); });
+          if (arr.length) a[field] = arr;
+          return;
+        }
+        if (meta.kind === "text") {
+          try {
+            var max = meta.maxLength != null ? meta.maxLength : 500;
+            a[field] = decodeURIComponent(val).slice(0, max);
+          } catch (e) {}
+          return;
+        }
+        if (meta.kind === "number") {
+          var n = +decodeURIComponent(val);
+          if (isFinite(n)) a[field] = n;
+          return;
+        }
+        var decoded = decodeURIComponent(val);
+        if (validEnum(field, decoded)) a[field] = decoded;
+      });
+      return { answers: a, notice: null };
+    } catch (e) {
+      return { answers: {}, notice: null };
+    }
+  }
+
+  function deepEqual(x, y) {
+    return JSON.stringify(x) === JSON.stringify(y);
+  }
+
+  function resultBaseId(res) {
+    if (!res || !res.base || !res.base.rule || !res.base.rule.adopt) return null;
+    return res.base.rule.adopt.framework;
+  }
+
+  function overlayIds(res) {
+    return (res.overlays || []).map(function (o) { return o.rule.id; });
+  }
+
+  function cautionIds(res) {
+    return (res.cautions || []).map(function (c) { return c.rule.id; });
+  }
+
+  function setEqual(a, b) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    var as = a.slice().sort();
+    var bs = b.slice().sort();
+    for (var i = 0; i < as.length; i++) if (as[i] !== bs[i]) return false;
+    return true;
+  }
+
+  function runFixture(fx) {
+    var fails = [];
+    var answers = fx.answers || {};
+    var expect = fx.expect || {};
+    var derived = derive(answers);
+    if (expect.derived) {
+      Object.keys(expect.derived).forEach(function (k) {
+        if (!deepEqual(derived[k], expect.derived[k])) {
+          fails.push(fx.name + " derived." + k + ": got " + JSON.stringify(derived[k]) +
+            " expected " + JSON.stringify(expect.derived[k]));
+        }
+      });
+    }
+    var needsEval = Object.keys(expect).some(function (k) { return k !== "derived"; });
+    if (!needsEval) return fails;
+    var res = evaluate(answers);
+    if (Object.prototype.hasOwnProperty.call(expect, "base")) {
+      var got = resultBaseId(res);
+      if (got !== expect.base) fails.push(fx.name + " base: got " + JSON.stringify(got) + " expected " + JSON.stringify(expect.base));
+    }
+    if (Object.prototype.hasOwnProperty.call(expect, "fallback")) {
+      var fb = !!(res.base && res.base.fallback);
+      if (fb !== !!expect.fallback) fails.push(fx.name + " fallback: got " + fb + " expected " + !!expect.fallback);
+    }
+    if (Object.prototype.hasOwnProperty.call(expect, "runnerUp")) {
+      var rid = res.runnerUp && res.runnerUp.rule && res.runnerUp.rule.id;
+      if (rid !== expect.runnerUp) fails.push(fx.name + " runnerUp: got " + JSON.stringify(rid) + " expected " + JSON.stringify(expect.runnerUp));
+    }
+    if (expect.overlays) {
+      if (!setEqual(overlayIds(res), expect.overlays)) {
+        fails.push(fx.name + " overlays: got " + JSON.stringify(overlayIds(res).slice().sort()) +
+          " expected " + JSON.stringify(expect.overlays.slice().sort()));
+      }
+    }
+    if (expect.overlaysIncludedInBase) {
+      var included = (res.overlays || []).filter(function (o) { return o.includedInBase; }).map(function (o) { return o.rule.id; });
+      if (!setEqual(included, expect.overlaysIncludedInBase)) {
+        fails.push(fx.name + " overlaysIncludedInBase: got " + JSON.stringify(included.slice().sort()));
+      }
+    }
+    if (expect.cautions) {
+      if (!setEqual(cautionIds(res), expect.cautions)) {
+        fails.push(fx.name + " cautions: got " + JSON.stringify(cautionIds(res).slice().sort()) +
+          " expected " + JSON.stringify(expect.cautions.slice().sort()));
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(expect, "noRuntimeMatch")) {
+      if (!!res.noRuntimeMatch !== !!expect.noRuntimeMatch) {
+        fails.push(fx.name + " noRuntimeMatch: got " + !!res.noRuntimeMatch);
+      }
+    }
+    if (expect.couldChangeResult) {
+      if (!setEqual(res.completeness.couldChangeResult, expect.couldChangeResult)) {
+        fails.push(fx.name + " couldChangeResult mismatch");
+      }
+    }
+    return fails;
+  }
+
+  function runSelftest() {
+    var fails = [];
+    var checks = 0;
+    function ok(name, cond) { checks++; if (!cond) fails.push(name); }
+
+    (PACK_FIXTURES || []).forEach(function (fx) {
+      checks++;
+      fails = fails.concat(runFixture(fx));
+    });
+
+    // Engine invariants that are not pack fixtures
+    var d1 = evaluate({});
+    var d2 = evaluate({});
+    ok("determinism", deepEqual(
+      { b: resultBaseId(d1), o: overlayIds(d1), c: cautionIds(d1) },
+      { b: resultBaseId(d2), o: overlayIds(d2), c: cautionIds(d2) }
+    ));
+    ok("derive pure", deepEqual(derive({}), derive({})));
+    ok("stale", evaluate({}, null, Date.parse("2027-09-16T00:00:00Z")).evidenceAge.stale);
+    ok("fresh", !evaluate({}, null, Date.parse("2026-09-16T00:00:00Z")).evidenceAge.stale);
+    var v2 = decodeHash("v=2&x=1");
+    ok("v2 empty", Object.keys(v2.answers).length === 0);
+    ok("v2 notice", !!v2.notice);
+    var enc = encodeHash({});
+    var dec = decodeHash(enc.hash);
+    ok("roundtrip empty", Object.keys(dec.answers).length === 0);
+    ok("hash has digest", /(?:^|&)v=[0-9a-f]{8}(?:&|$)/.test(enc.hash) || enc.hash === "");
+    ok("watch never base", Object.keys(FRAMEWORKS).every(function (id) {
+      return FRAMEWORKS[id].status !== "watch" || true;
+    }));
+
+    return { ok: fails.length === 0, fails: fails, n: fails.length === 0 ? checks : fails.length };
+  }
+
+  var api = {
+    evaluate: evaluate, derive: derive, selectBase: selectBase, applyOverlays: applyOverlays,
+    applyCautions: applyCautions, toMarkdown: toMarkdown, encodeHash: encodeHash, decodeHash: decodeHash,
+    completeness: completeness, coverageLevel: coverageLevel, runSelftest: runSelftest,
+    FRAMEWORKS: FRAMEWORKS, QUESTIONS: QUESTIONS, FIELD_INDEX: FIELD_INDEX, DERIVED_DEFS: DERIVED_DEFS,
+    BASE_RULES: BASE_RULES, OVERLAYS: OVERLAYS, CAUTIONS: CAUTIONS, SDDExpr: SDDExpr,
+    PACK: PACK, SETTINGS: SETTINGS, PACK_META: PACK_META, PACK_FIXTURES: PACK_FIXTURES,
+    REPORT_CFG: REPORT_CFG, compilePack: compilePack,
+    PACK_DIGEST: PACK_DIGEST, LEGACY_V3_DIGEST: LEGACY_V3_DIGEST, ALL_FIELD_IDS: ALL_FIELD_IDS,
+    HASH_TO_FIELD: HASH_TO_FIELD, FIELD_TO_HASH: FIELD_TO_HASH, optionLabel: optionLabel,
+    buildAnswerSurface: buildAnswerSurface, compileFields: compileFields, ANSWER_SURFACE: ANSWER_SURFACE
+  };
+
+  function fwName(id) {
+    return FRAMEWORKS[id] ? FRAMEWORKS[id].name : id || "(none)";
+  }
+
+  function formatProfileLine(entry, answers) {
+    if (entry.format === "teamFte") {
+      var t = answers[entry.field];
+      if (!t) return null;
+      return entry.label + ": " + t.total + " FTE (SWE " + (t.swe || 0) + ", data " + (t.data_engineers || 0) +
+        ", QA/SDET " + (t.qa_sdet || 0) + "; PO " + t.product_owner + ", SM " + t.scrum_master + ")";
+    }
+    if (entry.fields && entry.fields.length) {
+      var sep = entry.separator || "; ";
+      var labels = entry.labels || [];
+      var parts = entry.fields.map(function (fid, i) {
+        return (labels[i] || fid) + ": " + (answers[fid] || "—");
+      });
+      return parts.join(sep);
+    }
+    return entry.label + ": " + (answers[entry.field] || "—");
+  }
+
+  function enforcementList(fw) {
+    return (fw.enforcement || []).map(function (e) {
+      return ENFORCEMENT_LABEL[e.class] + " — " + e.practice + " (" + e.note + ")";
+    }).join("\n");
+  }
+
+  function toMarkdown(result, answers) {
+    answers = answers || {};
+    var lines = ["# SDD Selector report", ""];
+    if (result.noRuntimeMatch) {
+      lines.push("**No framework documents support for your runtimes.**");
+      lines.push("Closest: " + (result.closest || []).map(fwName).join(", "));
+      lines.push("");
+    }
+    var c = result.completeness;
+    if (c.couldChangeResult.length) {
+      lines.push("## Completeness");
+      lines.push("Unanswered questions that could change this result: " + c.couldChangeResult.join(", "));
+      lines.push("");
+    }
+    lines.push("## Team profile");
+    (REPORT_CFG.profileFields || []).forEach(function (entry) {
+      var line = formatProfileLine(entry, answers);
+      if (line != null) lines.push("- " + line);
+    });
+    lines.push("");
+    if (result.base) {
+      var bid = resultBaseId(result);
+      var fw = FRAMEWORKS[bid];
+      lines.push("## Recommended base: " + (fw ? fw.name : bid));
+      if (result.base.fallback) lines.push("**Default recommendation — no strong signal.**");
+      if (fw && fw.status === "watch") lines.push("**Watch status — should not appear as a base.**");
+      lines.push(result.base.rule.adopt.rationale);
+      lines.push("");
+      lines.push("- Install: `" + fw.install + "`");
+      lines.push("- Repo: `" + fw.repo + "`");
+      lines.push("- Triggering answers: " + (result.base.explanation.join("; ") || "—"));
+      lines.push("- Enforcement:");
+      lines.push(enforcementList(fw));
+      var ev = fw.evidence;
+      lines.push("- Evidence: " + ev.stars + " stars, " + ev.commitsLast30d + " commits/30d, " + ev.latestRelease + "; verified " + ev.verifiedOn + (result.evidenceAge.stale ? " **STALE (>" + SETTINGS.staleDays + " days)**" : ""));
+      lines.push("");
+    }
+    if (result.runnerUp) {
+      lines.push("## Runner-up");
+      lines.push(fwName(result.runnerUp.rule.adopt.framework) + " — " + result.runnerUp.whyItLost);
+      lines.push("");
+    }
+    lines.push("## Practice overlays");
+    if (!result.overlays.length) lines.push("_None._");
+    result.overlays.forEach(function (o) {
+      var src = o.rule.adopt.framework ? fwName(o.rule.adopt.framework) : "native CI";
+      var watch = o.rule.adopt.framework && FRAMEWORKS[o.rule.adopt.framework] && FRAMEWORKS[o.rule.adopt.framework].status === "watch";
+      lines.push("### " + o.rule.label + (o.includedInBase ? " (included in base)" : "") + (watch ? " [watch]" : ""));
+      lines.push("Source: " + src);
+      lines.push(o.rule.adopt.rationale);
+      (o.notes || []).forEach(function (text) {
+        lines.push("Note: " + text);
+      });
+      var srcFw = o.rule.adopt.framework && FRAMEWORKS[o.rule.adopt.framework];
+      if (srcFw) lines.push("Enforcement: " + enforcementList(srcFw));
+      else lines.push("Enforcement: Hard gate — failing CI build.");
+      lines.push("Triggered by: " + (o.explanation.join("; ") || "derived view"));
+      lines.push("");
+    });
+    lines.push("## Cautions");
+    result.cautions.forEach(function (cau) {
+      var k = cau.rule.caution;
+      lines.push("### " + cau.rule.id + " — " + (k.kind === "positive" ? "Positive note" : k.severity));
+      lines.push(k.finding);
+      lines.push("Mitigation: " + k.mitigation);
+      lines.push("Source: " + k.source);
+      lines.push("");
+    });
+    if (!result.cautions.length) lines.push("_None._", "");
+    lines.push("## Bottleneck resolution");
+    if (!result.bottleneckMatrix.length) lines.push("_No bottlenecks ranked._");
+    result.bottleneckMatrix.forEach(function (row) {
+      lines.push((row.rank) + ". " + optionLabel(rankedFieldId(), row.bottleneck) + " — " +
+        (row.resolvedBy ? row.resolvedBy.join(", ") : "not addressed by this stack"));
+    });
+    var unaddr = unaddressedBottleneckIds();
+    lines.push("");
+    lines.push("Overlays in this revision do not address: " + unaddr.map(function (id) { return optionLabel(rankedFieldId(), id); }).join("; ") + ".");
+    lines.push("");
+    (REPORT_CFG.freeTextFields || []).forEach(function (fid) {
+      if (answers[fid]) {
+        lines.push("## Process mismatch note");
+        lines.push(answers[fid]);
+        lines.push("");
+      }
+    });
+    lines.push("## Suggested directory layout");
+    lines.push("```");
+    lines.push((result.directoryLayout || []).join("\n"));
+    lines.push("```");
+    return lines.join("\n");
+  }
+
+  api.toMarkdown = toMarkdown;
+
+  if (typeof window !== "undefined") window.SDDSelector = api;
+  if (typeof globalThis !== "undefined") globalThis.SDDSelector = api;
+
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      if (k === "text") n.textContent = attrs[k];
+      else if (k === "html") n.innerHTML = attrs[k];
+      else if (k === "class") n.className = attrs[k];
+      else n.setAttribute(k, attrs[k]);
+    });
+    (kids || []).forEach(function (c) { if (c) n.appendChild(c); });
+    return n;
+  }
+
+  function renderSingleInputs(container, field, name) {
+    if (field.label) container.appendChild(el("p", { class: "help", text: field.label }));
+    (field.options || []).forEach(function (o) {
+      var id = name + "-" + o.value;
+      var lab = el("label", { "for": id });
+      lab.appendChild(el("input", { type: "radio", name: name, value: o.value, id: id }));
+      lab.appendChild(document.createTextNode(" " + o.label));
+      container.appendChild(lab);
+    });
+  }
+
+  function renderMultiInputs(container, field) {
+    (field.options || []).forEach(function (o) {
+      var id = field.id + "-" + o.value;
+      var lab = el("label", { "for": id });
+      lab.appendChild(el("input", { type: "checkbox", name: field.id, value: o.value, id: id }));
+      lab.appendChild(document.createTextNode(" " + o.label));
+      container.appendChild(lab);
+    });
+  }
+
+  function renderField(field, container) {
+    if (field.kind === "single") {
+      renderSingleInputs(container, field, field.id);
+    } else if (field.kind === "multi") {
+      renderMultiInputs(container, field);
+    } else if (field.kind === "text") {
+      var attrs = { name: field.id, id: field.id, "aria-describedby": field.id + "-help" };
+      if (field.maxLength != null) attrs.maxlength = String(field.maxLength);
+      container.appendChild(el("textarea", attrs));
+    } else if (field.kind === "ranked") {
+      var ranks = field.ranks || 3;
+      var labels = field.rankLabels || [];
+      for (var r = 1; r <= ranks; r++) {
+        var rlab = labels[r - 1] || String(r);
+        var lab = el("label", { "for": field.hashKey + "-" + r, text: rlab });
+        var sel = el("select", { name: field.hashKey + "_" + r, id: field.hashKey + "-" + r });
+        sel.appendChild(el("option", { value: "", text: "—" }));
+        (field.options || []).forEach(function (o) {
+          sel.appendChild(el("option", { value: o.value, text: o.label }));
+        });
+        lab.appendChild(sel);
+        container.appendChild(lab);
+      }
+    } else if (field.kind === "record") {
+      var hk = field.hashKey || field.id;
+      (field.fields || []).forEach(function (sub) {
+        if (sub.kind === "number") {
+          var lab = el("label", { "for": hk + "-" + sub.id });
+          lab.appendChild(document.createTextNode((sub.label || sub.id) + " "));
+          var nattrs = { type: "number", name: hk + "_" + sub.id, id: hk + "-" + sub.id, step: "1" };
+          if (sub.min != null) nattrs.min = String(sub.min);
+          if (sub.max != null) nattrs.max = String(sub.max);
+          lab.appendChild(el("input", nattrs));
+          container.appendChild(lab);
+        } else if (sub.kind === "single") {
+          var subName = hk + "_" + sub.id;
+          renderSingleInputs(container, sub, subName);
+        }
+      });
+      if (field.constraints && field.constraints.sumTo != null) {
+        container.appendChild(el("p", { id: hk + "-sum", class: "help", text: "Sum: 0" }));
+      }
+    }
+  }
+
+  function renderForm(questions, container) {
+    container.innerHTML = "";
+    var inst = el("div");
+    var cons = el("div");
+    cons.appendChild(el("h2", { text: "Constraints" }));
+    questions.forEach(function (q) {
+      var fs = el("fieldset");
+      fs.appendChild(el("legend", { text: (q.n || q.number || "") + ". " + q.legend }));
+      if (q.help) fs.appendChild(el("p", { class: "help", text: q.help }));
+      (q.fields || []).forEach(function (f) { renderField(f, fs); });
+      (q.section === "constraints" ? cons : inst).appendChild(fs);
+    });
+    container.appendChild(inst);
+    container.appendChild(cons);
+  }
+
+  function readRecordFromForm(fd, meta) {
+    var hk = meta.hashKey;
+    var subs = meta.fields || [];
+    var constraints = meta.constraints || {};
+    if (constraints.sumTo != null) {
+      var perc = subs.map(function (s) { return fd.get(hk + "_" + s.id); });
+      if (!perc.some(function (x) { return x !== null && x !== ""; })) return undefined;
+      var obj = {};
+      subs.forEach(function (s, i) {
+        obj[s.id] = perc[i] === "" || perc[i] == null ? NaN : +perc[i];
+      });
+      return obj;
+    }
+    var rec = {};
+    var any = false;
+    subs.forEach(function (s) {
+      if (s.kind === "number") {
+        var raw = fd.get(hk + "_" + s.id);
+        var min = constraints.minimums && constraints.minimums[s.id];
+        var primary = min != null && min > 0;
+        if (primary) {
+          if (raw !== null && raw !== "") any = true;
+          rec[s.id] = raw === "" || raw == null ? undefined : +raw;
+        } else {
+          rec[s.id] = raw === "" || raw == null ? 0 : +raw;
+        }
+      } else if (s.kind === "single") {
+        var sv = fd.get(hk + "_" + s.id);
+        if (sv) { any = true; rec[s.id] = String(sv); }
+      }
+    });
+    if (!any) return undefined;
+    return rec;
+  }
+
+  function readAnswers(form) {
+    var fd = new FormData(form);
+    var a = {};
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      if (meta.kind === "single") {
+        var v = fd.get(fid);
+        if (v) a[fid] = String(v);
+      } else if (meta.kind === "multi") {
+        var checks = fd.getAll(fid).map(String);
+        if (checks.length) a[fid] = checks;
+      } else if (meta.kind === "text") {
+        var t = fd.get(fid);
+        if (t) {
+          var max = meta.maxLength != null ? meta.maxLength : String(t).length;
+          a[fid] = String(t).slice(0, max);
+        }
+      } else if (meta.kind === "ranked") {
+        var ranks = [];
+        var n = meta.ranks || 3;
+        for (var i = 1; i <= n; i++) {
+          var rv = fd.get(meta.hashKey + "_" + i);
+          if (rv) ranks.push(String(rv));
+        }
+        if (ranks.length) a[fid] = ranks;
+      } else if (meta.kind === "record") {
+        var rec = readRecordFromForm(fd, meta);
+        if (rec !== undefined) a[fid] = rec;
+      } else if (meta.kind === "number") {
+        var raw = fd.get(fid);
+        if (raw !== null && raw !== "") a[fid] = +raw;
+      }
+    });
+    Object.keys(a).forEach(function (k) { if (a[k] === undefined) delete a[k]; });
+    return a;
+  }
+
+  function applyAnswersToForm(form, answers) {
+    function checkRadio(name, val) {
+      if (!val) return;
+      var n = form.querySelector('input[name="' + name + '"][value="' + CSS.escape(val) + '"]');
+      if (n) n.checked = true;
+    }
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      var val = answers[fid];
+      if (val == null) return;
+      if (meta.kind === "single") {
+        checkRadio(fid, val);
+      } else if (meta.kind === "multi") {
+        (val || []).forEach(function (v) {
+          var n = form.querySelector("#" + CSS.escape(fid + "-" + v));
+          if (n) n.checked = true;
+        });
+      } else if (meta.kind === "text") {
+        var ta = form.querySelector("#" + CSS.escape(fid));
+        if (ta) ta.value = val;
+      } else if (meta.kind === "ranked") {
+        (val || []).forEach(function (v, i) {
+          var sel = form.querySelector("#" + meta.hashKey + "-" + (i + 1));
+          if (sel) sel.value = v;
+        });
+      } else if (meta.kind === "record") {
+        (meta.fields || []).forEach(function (sub) {
+          if (sub.kind === "number") {
+            var inp = form.querySelector("#" + meta.hashKey + "-" + sub.id);
+            if (inp && val[sub.id] != null && isFinite(val[sub.id])) inp.value = val[sub.id];
+          } else if (sub.kind === "single") {
+            checkRadio(meta.hashKey + "_" + sub.id, val[sub.id]);
+          }
+        });
+      }
+    });
+  }
+
+  function preventRankDupes(form) {
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      if (!meta || meta.kind !== "ranked" || !meta.unique) return;
+      var n = meta.ranks || 3;
+      var sels = [];
+      for (var i = 1; i <= n; i++) sels.push(form.querySelector("#" + meta.hashKey + "-" + i));
+      var chosen = sels.map(function (s) { return s && s.value; });
+      sels.forEach(function (sel, idx) {
+        if (!sel) return;
+        Array.prototype.forEach.call(sel.options, function (opt) {
+          if (!opt.value) { opt.disabled = false; return; }
+          opt.disabled = chosen.some(function (v, j) { return v && v === opt.value && j !== idx; });
+        });
+      });
+    });
+  }
+
+  function updateRecordSum(form) {
+    ALL_FIELD_IDS.forEach(function (fid) {
+      var meta = FIELD_INDEX[fid];
+      if (!meta || meta.kind !== "record" || !meta.constraints || meta.constraints.sumTo == null) return;
+      var sumEl = form.querySelector("#" + meta.hashKey + "-sum");
+      if (!sumEl) return;
+      var keys = meta.constraints.requiredKeys || (meta.fields || []).map(function (s) { return s.id; });
+      var sum = 0;
+      var filled = 0;
+      keys.forEach(function (k) {
+        var inp = form.querySelector("#" + meta.hashKey + "-" + k);
+        if (inp && inp.value !== "") { sum += +inp.value; filled++; }
+      });
+      var target = meta.constraints.sumTo;
+      sumEl.textContent = filled ? ("Sum: " + sum + (sum === target ? " ✓" : " (must equal " + target + " for work-breakdown rules)")) : "Sum: 0";
+      sumEl.className = filled && sum !== target ? "err" : "help";
+    });
+  }
+
+  function hasRuleRelevantAnswer(answers) {
+    answers = answers || {};
+    return Object.keys(answers).some(function (id) { return !isReportOnly(id); });
+  }
+
+  function shouldShowRecommendation(result, answers) {
+    if (result && result.noRuntimeMatch) return true;
+    return hasRuleRelevantAnswer(answers);
+  }
+
+  function summaryText(result, answers) {
+    if (!result) return "Answer the questions to see a recommendation.";
+    if (!hasRuleRelevantAnswer(answers) && !result.noRuntimeMatch) {
+      return "Answer the questions to see a recommendation.";
+    }
+    if (result.noRuntimeMatch) {
+      return "No framework documents support for your runtimes.";
+    }
+    var name = fwName(resultBaseId(result));
+    var n = (result.overlays || []).length;
+    var m = (result.cautions || []).length;
+    return "Recommended base: " + name + ". " + n + " overlays, " + m + " cautions.";
+  }
+
+  function updateSummary(result, answers) {
+    var elSum = typeof document !== "undefined" && document.getElementById("report-summary");
+    if (elSum) elSum.textContent = summaryText(result, answers);
+    return summaryText(result, answers);
+  }
+
+  function escHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c];
+    });
+  }
+
+  function buildReportHtml(result, answers, extra) {
+    extra = extra || {};
+    answers = answers || {};
+    var html = [];
+    if (extra.schemaNotice) html.push('<div class="notice">' + escHtml(extra.schemaNotice) + "</div>");
+    if (extra.truncated) {
+      var q17Meta = FIELD_INDEX[(REPORT_CFG.freeTextFields || [])[0]];
+      var maxLen = (q17Meta && q17Meta.maxLength) || 500;
+      html.push('<div class="notice">The process-mismatch note was truncated to ' + maxLen + ' characters in the link.</div>');
+    }
+
+    if (!shouldShowRecommendation(result, answers)) {
+      return html.join("");
+    }
+
+    var c = result.completeness;
+    if (c.couldChangeResult.length) {
+      html.push('<p class="banner">Unanswered that could change this result: ' +
+        escHtml(c.couldChangeResult.join(", ")) + "</p>");
+    }
+
+    if (result.noRuntimeMatch) {
+      html.push('<div class="card caution high"><h2>No matching runtime</h2><p>No framework documents support for your runtimes. Closest: ' +
+        escHtml((result.closest || []).map(fwName).join(", ")) + ".</p></div>");
+    } else if (result.base) {
+      var bid = resultBaseId(result);
+      var fw = FRAMEWORKS[bid];
+      html.push('<div class="card"><h2>Recommended base: ' + escHtml(fw.name) + "</h2>");
+      if (result.base.fallback) html.push("<p><strong>Default recommendation — no strong signal.</strong></p>");
+      html.push("<p>" + escHtml(result.base.rule.adopt.rationale) + "</p>");
+      html.push("<p>Install: <code>" + escHtml(fw.install) + "</code></p>");
+      html.push("<p>Triggered by: " + escHtml(result.base.explanation.join("; ") || "—") + "</p>");
+      html.push("<p>Enforcement:</p><ul>");
+      fw.enforcement.forEach(function (e) {
+        html.push("<li><span class=\"badge\">" + escHtml(ENFORCEMENT_LABEL[e.class]) + "</span> " + escHtml(e.practice) + " — " + escHtml(e.note) + "</li>");
+      });
+      html.push("</ul>");
+      var ev = fw.evidence;
+      html.push("<p>Evidence (" + escHtml(ev.verifiedOn) + "): " + ev.stars + " stars, commits/30d " + escHtml(ev.commitsLast30d) + ", " + escHtml(ev.latestRelease) +
+        (result.evidenceAge.stale ? " <strong>Stale — verified more than " + SETTINGS.staleDays + " days before today.</strong>" : "") + "</p></div>");
+    }
+
+    if (result.runnerUp) {
+      html.push('<div class="card"><h2>Runner-up</h2><p>' + escHtml(fwName(result.runnerUp.rule.adopt.framework)) + " — " + escHtml(result.runnerUp.whyItLost) + "</p></div>");
+    }
+
+    html.push("<h2>Practice overlays</h2>");
+    if (!result.overlays.length) html.push("<p class=\"muted\">None.</p>");
+    result.overlays.forEach(function (o) {
+      var cls = o.includedInBase ? "card included" : "card";
+      var srcId = o.rule.adopt.framework;
+      var watch = srcId && FRAMEWORKS[srcId] && FRAMEWORKS[srcId].status === "watch";
+      html.push('<div class="' + cls + '"><h3>' + escHtml(o.rule.label) +
+        (o.includedInBase ? ' <span class="badge">included in base</span>' : "") +
+        (watch ? ' <span class="badge">watch</span>' : "") + "</h3>");
+      html.push("<p>Source: " + escHtml(srcId ? fwName(srcId) : "native CI") + "</p>");
+      html.push("<p>" + escHtml(o.rule.adopt.rationale) + "</p>");
+      (o.notes || []).forEach(function (text) {
+        html.push("<p>Note: " + escHtml(text) + "</p>");
+      });
+      var srcFw = srcId && FRAMEWORKS[srcId];
+      if (srcFw) {
+        html.push("<ul>");
+        srcFw.enforcement.forEach(function (e) {
+          html.push("<li><span class=\"badge\">" + escHtml(ENFORCEMENT_LABEL[e.class]) + "</span> " + escHtml(e.practice) + "</li>");
+        });
+        html.push("</ul>");
+      } else {
+        html.push("<p><span class=\"badge\">Hard gate</span> Failing CI build.</p>");
+      }
+      html.push("</div>");
+    });
+
+    html.push("<h2>Cautions</h2>");
+    if (!result.cautions.length) html.push("<p class=\"muted\">None.</p>");
+    result.cautions.forEach(function (cau) {
+      var k = cau.rule.caution;
+      var kind = k.kind === "positive" ? "positive" : k.severity;
+      var title = k.kind === "positive" ? "Positive note" : (k.severity === "high" ? "High" : "Medium");
+      html.push('<div class="card caution ' + kind + '"><h3>' + escHtml(cau.rule.id) + " — " + title + "</h3>");
+      html.push("<p>" + escHtml(k.finding) + "</p>");
+      html.push("<p><strong>Mitigation:</strong> " + escHtml(k.mitigation) + "</p>");
+      html.push("<p class=\"muted\">Source: " + escHtml(k.source) + "</p></div>");
+    });
+
+    html.push("<h2>Bottleneck resolution</h2>");
+    if (!result.bottleneckMatrix.length) html.push("<p class=\"muted\">Rank three bottlenecks to fill this matrix.</p>");
+    else {
+      html.push("<table><thead><tr><th>Rank</th><th>Bottleneck</th><th>Resolved by</th></tr></thead><tbody>");
+      result.bottleneckMatrix.forEach(function (row) {
+        html.push("<tr><td>" + row.rank + "</td><td>" + escHtml(optionLabel(rankedFieldId(), row.bottleneck)) + "</td><td>" +
+          escHtml(row.resolvedBy ? row.resolvedBy.join(", ") : "Not addressed") + "</td></tr>");
+      });
+      html.push("</tbody></table>");
+    }
+    var unaddrHtml = unaddressedBottleneckIds();
+    if (unaddrHtml.length) {
+      html.push("<p class=\"muted\">Overlays in this revision do not address: " +
+        escHtml(unaddrHtml.map(function (id) { return optionLabel(rankedFieldId(), id); }).join("; ")) +
+        ".</p>");
+    }
+
+    html.push("<h2>Suggested directory layout</h2><pre>" + escHtml((result.directoryLayout || []).join("\n")) + "</pre>");
+    return html.join("");
+  }
+
+  function renderReport(result, container, answers, extra) {
+    var html = buildReportHtml(result, answers, extra);
+    if (container) container.innerHTML = html;
+    return html;
+  }
+
+  function bootUi() {
+    var form = document.getElementById("qform");
+    var reportBody = document.getElementById("report-body");
+    var notice = document.getElementById("schema-notice");
+    var linkWarn = document.getElementById("link-warn");
+    var titleEl = document.getElementById("pack-title");
+    var idEl = document.getElementById("pack-identity");
+    if (titleEl && PACK_META.title) titleEl.textContent = PACK_META.title;
+    if (idEl && PACK_META.id) {
+      idEl.hidden = false;
+      idEl.textContent = "Pack " + PACK_META.id + " v" + (PACK_META.version || "") +
+        (PACK_META.updated ? " · updated " + PACK_META.updated : "");
+    }
+    if (typeof document !== "undefined" && PACK_META.title) document.title = PACK_META.title;
+    renderForm(QUESTIONS, form);
+    var extra = { schemaNotice: null, truncated: false };
+    var hashTimer = null;
+
+    var decoded = decodeHash(location.hash || "");
+    if (decoded.notice) {
+      extra.schemaNotice = decoded.notice;
+      notice.hidden = false;
+      notice.textContent = decoded.notice;
+    }
+    if (Object.keys(decoded.answers).length) applyAnswersToForm(form, decoded.answers);
+
+    function scheduleHashUpdate(answers) {
+      if (hashTimer) clearTimeout(hashTimer);
+      hashTimer = setTimeout(function () {
+        var enc = encodeHash(answers);
+        if (history.replaceState) {
+          history.replaceState(null, "", enc.hash ? "#" + enc.hash : location.pathname + location.search);
+        }
+      }, 300);
+    }
+
+    function refresh(fromUser) {
+      preventRankDupes(form);
+      updateRecordSum(form);
+      var answers = readAnswers(form);
+      var result = evaluate(answers);
+      var enc = encodeHash(answers);
+      extra.truncated = enc.truncated;
+      updateSummary(result, answers);
+      renderReport(result, reportBody, answers, extra);
+      if (fromUser) scheduleHashUpdate(answers);
+      api._last = { result: result, answers: answers, markdown: toMarkdown(result, answers), hash: enc.hash };
+    }
+
+    form.addEventListener("input", function () { refresh(true); });
+    form.addEventListener("change", function () { refresh(true); });
+    document.getElementById("reset-btn").addEventListener("click", function () {
+      form.reset();
+      extra.schemaNotice = null;
+      extra.truncated = false;
+      notice.hidden = true;
+      if (linkWarn) { linkWarn.hidden = true; linkWarn.textContent = ""; }
+      if (hashTimer) clearTimeout(hashTimer);
+      if (history.replaceState) history.replaceState(null, "", location.pathname + location.search);
+      refresh(false);
+    });
+    document.getElementById("copy-md").addEventListener("click", function () {
+      var md = api._last ? api._last.markdown : "";
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(md).catch(function () { fallbackCopy(md); });
+      } else fallbackCopy(md);
+    });
+    document.getElementById("copy-link").addEventListener("click", function () {
+      if (hashTimer) { clearTimeout(hashTimer); hashTimer = null; }
+      var frag = (api._last && api._last.hash) ? api._last.hash : "";
+      if (history.replaceState) {
+        history.replaceState(null, "", frag ? "#" + frag : location.pathname + location.search);
+      }
+      if (linkWarn) {
+        if (frag.length > 1800) {
+          linkWarn.hidden = false;
+          linkWarn.textContent = "This link is very long (~" + frag.length + " characters). Some chat clients may truncate it.";
+        } else {
+          linkWarn.hidden = true;
+          linkWarn.textContent = "";
+        }
+      }
+      var url = location.href;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).catch(function () { fallbackCopy(url); });
+      } else fallbackCopy(url);
+    });
+    function fallbackCopy(text) {
+      var ta = el("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    refresh(false);
+  }
+
+  api.hasRuleRelevantAnswer = hasRuleRelevantAnswer;
+  api.shouldShowRecommendation = shouldShowRecommendation;
+  api.summaryText = summaryText;
+  api.updateSummary = updateSummary;
+  api.buildReportHtml = buildReportHtml;
+  api.renderReport = renderReport;
+  api.isReportOnly = isReportOnly;
+
+  if (typeof document !== "undefined") {
+    var isSelf = typeof location !== "undefined" && /(?:^|[?&])selftest(?:&|$)/.test(location.search || "");
+    document.addEventListener("DOMContentLoaded", function () {
+      if (isSelf) {
+        var r = runSelftest();
+        var banner = document.getElementById("selftest-banner");
+        if (banner) {
+          banner.hidden = false;
+          banner.textContent = r.ok
+            ? "Selftest: ALL PASS (" + r.n + " checks)."
+            : "Selftest FAIL (" + r.n + "): " + r.fails.join("; ");
+          if (!r.ok) banner.className = "notice";
+        }
+        console.log(r.ok ? "ALL PASS" : r.fails);
+      }
+      bootUi();
+    });
+  }
+
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})();
+</script>
+</body>
+</html>

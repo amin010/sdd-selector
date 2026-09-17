@@ -1,5 +1,5 @@
 /**
- * G-PARITY — identical recommendation projection vs frozen v0.3.0 page.
+ * G-PARITY — identical recommendation projection vs frozen v0.4.0 finance-tech page.
  *
  * Usage:
  *   node tools/parity.mjs              # current vs golden
@@ -10,12 +10,12 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   loadCurrent,
   loadGolden,
   loadPage,
-  GOLDEN_V030,
-  CURRENT_PAGE,
+  GOLDEN_V040,
 } from "./load-page.mjs";
 import {
   PINNED_NOW,
@@ -150,12 +150,8 @@ export function runParity({
     const L = safeEval(leftApi, answers);
     const R = safeEval(rightApi, answers);
     if (!L.ok || !R.ok) {
-      // Malformed answers: the frozen v0.3.0 page still throws on some bad
-      // types. After P1 the current engine must be total. Accept:
-      //   - both ok (compared below — unreachable here)
-      //   - both throw (ignore message drift)
-      //   - golden throws, current succeeds (hardening)
-      // Fail only when current throws and golden does not.
+      // Malformed answers: both throw is fine; current throw while golden
+      // succeeds is a regression. Golden throw + current ok is hardening.
       if (!L.ok && R.ok) {
         failures.push({
           name,
@@ -202,16 +198,16 @@ function printFailures(report) {
 }
 
 function breakDemo() {
-  // Scratch copy with one threshold flipped: nonRoadmapShare >= 40 → >= 41
-  const html = fs.readFileSync(GOLDEN_V030, "utf8");
-  const broken = html.replace(
-    "d.nonRoadmapShare != null && d.nonRoadmapShare >= 40",
-    "d.nonRoadmapShare != null && d.nonRoadmapShare >= 41",
-  );
-  if (broken === html) {
-    console.error("break-demo: threshold string not found");
+  // Scratch copy with one pack expression threshold flipped:
+  // nonRoadmapShare >= 40 → >= 41 (JSON-inlined pack, not a JS closure).
+  const html = fs.readFileSync(GOLDEN_V040, "utf8");
+  const needle = '{"gte":[{"derived":"nonRoadmapShare"},40]}';
+  const replacement = '{"gte":[{"derived":"nonRoadmapShare"},41]}';
+  if (!html.includes(needle)) {
+    console.error("break-demo: expression threshold not found in golden pack");
     process.exit(2);
   }
+  const broken = html.replace(needle, replacement);
   const tmp = path.join(os.tmpdir(), `sdd-break-${process.pid}.html`);
   fs.writeFileSync(tmp, broken);
   try {
@@ -298,6 +294,5 @@ function main() {
 }
 
 const isMain = process.argv[1] &&
-  path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname);
-
+  path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
 if (isMain) main();

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { validatePack } from "../tools/validate.mjs";
+import { coverageReport, validatePack } from "../tools/validate.mjs";
 
 function validPack() {
   return {
@@ -68,7 +68,12 @@ function validPack() {
     baseRules: [{
       id: "base-1",
       label: "Base",
-      when: { derived: "isMonolith" },
+      when: {
+        any: [
+          { derived: "isMonolith" },
+          { rankAtMost: { field: "bottlenecks", of: "test_fear", n: 1 } },
+        ],
+      },
       adopt: { framework: "openspec", rationale: "Small." },
     }],
     overlays: [],
@@ -231,4 +236,49 @@ test("fuzzed packs never throw and always return diagnostics", () => {
     assert.ok(Array.isArray(result));
     assert.ok(result.length > 0);
   }
+});
+
+test("W-FIELD-103 when a non-reportOnly field is unread", () => {
+  const pack = clone();
+  pack.questions.push({
+    id: "q3",
+    section: "main",
+    legend: "Unused",
+    fields: [{
+      id: "unused_field",
+      kind: "single",
+      hashKey: "u",
+      options: [{ value: "a", label: "A" }],
+    }],
+  });
+  const diagnostics = validatePack(pack);
+  assert.ok(diagnostics.some((d) => d.code === "W-FIELD-103" && d.path.includes("unused_field")));
+});
+
+test("W-FW-104 when a framework is never selected", () => {
+  const pack = clone();
+  pack.frameworks.push({
+    id: "orphan",
+    name: "Orphan",
+    repo: "org/orphan",
+    status: "recommended",
+    evidence: { verifiedOn: "2026-09-16" },
+    runtimes: [],
+    ratings: {},
+    install: "npx orphan",
+    commands: [],
+    artifacts: [],
+    enforcement: [{ practice: "None", class: "advisory", note: "n/a" }],
+  });
+  const diagnostics = validatePack(pack);
+  assert.ok(diagnostics.some((d) => d.code === "W-FW-104" && d.message.includes("orphan")));
+});
+
+test("coverageReport lists unread fields and unselected frameworks", () => {
+  const pack = clone();
+  pack.questions[0].fields[0].options.push({ value: "legacy", label: "Legacy" });
+  const cov = coverageReport(pack);
+  assert.ok(cov.fieldsRead.includes("architecture"));
+  assert.ok(cov.frameworksSelected.includes("openspec"));
+  assert.ok(cov.unreadOptions.some((item) => item.includes("legacy")));
 });

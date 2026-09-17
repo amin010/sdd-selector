@@ -531,6 +531,167 @@ function checkReport(pack, fields, diagnostics) {
   });
 }
 
+/**
+ * Coverage used by --report and W-FIELD-103 / W-FW-104.
+ * A field is "read" if a rule expression closes over it, or if settings.tierZero
+ * names it as the runtime filter field. reportOnly fields are omitted from the
+ * unread list (they are intentionally unused by rules).
+ */
+export function coverageReport(pack) {
+  const diagnostics = [];
+  const fields = collectFields(pack, diagnostics);
+  const derivedExprs = new Map();
+  array(pack.derived).forEach((def) => {
+    if (object(def) && typeof def.key === "string") derivedExprs.set(def.key, def.expr);
+  });
+
+  const fieldsRead = new Set();
+  const frameworksSelected = new Set();
+  const optionsMentioned = new Set();
+
+  function walkOptions(expr) {
+    if (expr == null || typeof expr !== "object") return;
+    if (Array.isArray(expr)) {
+      expr.forEach(walkOptions);
+      return;
+    }
+    const keys = Object.keys(expr);
+    if (keys.length === 1 && OPERATORS.has(keys[0])) {
+      const op = keys[0];
+      const raw = expr[op];
+      if (op === "eq" || op === "ne" || op === "in") {
+        const vals = Array.isArray(raw) ? raw.slice(1) : [];
+        for (const v of vals) {
+          if (typeof v === "string") optionsMentioned.add(v);
+          else if (Array.isArray(v)) v.forEach((item) => {
+            if (typeof item === "string") optionsMentioned.add(item);
+          });
+        }
+      }
+      if (op === "hasAny" || op === "hasAll" || op === "hasNone") {
+        const list = Array.isArray(raw) && Array.isArray(raw[1]) ? raw[1] : [];
+        list.forEach((item) => {
+          if (typeof item === "string") optionsMentioned.add(item);
+        });
+      }
+      if (op === "rankAtMost" && object(raw) && typeof raw.of === "string") {
+        optionsMentioned.add(raw.of);
+      }
+      if (op === "countSelected" && object(raw)) {
+        array(raw.except).forEach((item) => {
+          if (typeof item === "string") optionsMentioned.add(item);
+        });
+      }
+      if (op === "sumFields" && object(raw)) {
+        array(raw.keys).forEach((item) => {
+          if (typeof item === "string") optionsMentioned.add(item);
+        });
+      }
+      if (Array.isArray(raw)) raw.forEach(walkOptions);
+      else walkOptions(raw);
+      return;
+    }
+    Object.values(expr).forEach(walkOptions);
+  }
+
+  function noteFramework(id) {
+    if (typeof id === "string" && id) frameworksSelected.add(id);
+  }
+
+  for (const familyKey of ["baseRules", "overlays", "cautions"]) {
+    array(pack[familyKey]).forEach((rule) => {
+      if (!object(rule)) return;
+      collectFieldClosure(rule.when, fields, derivedExprs, fieldsRead);
+      walkOptions(rule.when);
+      array(rule.adoptWhen).forEach((branch) => {
+        if (!object(branch)) return;
+        collectFieldClosure(branch.when, fields, derivedExprs, fieldsRead);
+        walkOptions(branch.when);
+        noteFramework(branch.framework);
+        if (object(branch.ifUnavailable)) noteFramework(branch.ifUnavailable.framework);
+      });
+      array(rule.notes).forEach((note) => {
+        if (object(note) && note.when != null) {
+          collectFieldClosure(note.when, fields, derivedExprs, fieldsRead);
+          walkOptions(note.when);
+        }
+      });
+      if (object(rule.adopt)) noteFramework(rule.adopt.framework);
+      array(rule.providedByBase).forEach(noteFramework);
+    });
+  }
+
+  for (const expr of derivedExprs.values()) walkOptions(expr);
+
+  const tierRuntime = pack.settings && pack.settings.tierZero &&
+    pack.settings.tierZero.runtimeField;
+  if (typeof tierRuntime === "string" && fields.has(tierRuntime)) {
+    fieldsRead.add(tierRuntime);
+  }
+  noteFramework(pack.settings && pack.settings.fallbackBase);
+
+  const unreadFields = [];
+  for (const [id, field] of fields) {
+    const question = array(pack.questions).find((q) =>
+      array(q && q.fields).some((f) => f && f.id === id));
+    const reportOnly = !!(question && question.reportOnly) || !!field.reportOnly;
+    if (!fieldsRead.has(id) && !reportOnly) unreadFields.push(id);
+  }
+
+  const statuses = new Map(array(pack.settings && pack.settings.statuses)
+    .map((status) => [status && status.id, status]));
+  const unselectedFrameworks = array(pack.frameworks)
+    .map((fw) => fw && fw.id)
+    .filter((id) => {
+      if (typeof id !== "string" || frameworksSelected.has(id)) return false;
+      const fw = array(pack.frameworks).find((item) => item && item.id === id);
+      const status = fw && statuses.get(fw.status);
+      // Watch / non-selectable frameworks are intentionally out of base selection.
+      if (status && status.selectableAsBase === false) return false;
+      return true;
+    });
+
+  const unreadOptions = [];
+  for (const field of fields.values()) {
+    array(field.options).forEach((opt) => {
+      if (opt && typeof opt.value === "string" && !optionsMentioned.has(opt.value)) {
+        unreadOptions.push(`${field.id}:${opt.value}`);
+      }
+    });
+  }
+
+  return {
+    fieldsRead: [...fieldsRead].sort(),
+    unreadFields: unreadFields.sort(),
+    frameworksSelected: [...frameworksSelected].sort(),
+    unselectedFrameworks: unselectedFrameworks.sort(),
+    optionsMentioned: [...optionsMentioned].sort(),
+    unreadOptions: unreadOptions.sort(),
+  };
+}
+
+function emitCoverageWarnings(pack, diagnostics) {
+  const report = coverageReport(pack);
+  for (const id of report.unreadFields) {
+    diagnostics.push(diagnostic(
+      "W-FIELD-103",
+      `fields.${id}`,
+      `Field "${id}" is read by no rule — likely reportOnly was forgotten.`,
+      "warning",
+      "Mark the question reportOnly: true, or wire a rule that reads it.",
+    ));
+  }
+  for (const id of report.unselectedFrameworks) {
+    diagnostics.push(diagnostic(
+      "W-FW-104",
+      `frameworks.${id}`,
+      `Framework "${id}" is referenced by no rule.`,
+      "warning",
+      "Add a base or overlay adopt that selects it, or remove it from the pack.",
+    ));
+  }
+}
+
 function checkFixtures(pack, fields, fwData, diagnostics) {
   if (!Object.hasOwn(pack, "fixtures")) return;
   if (!Array.isArray(pack.fixtures)) {
@@ -609,6 +770,7 @@ export function validatePack(input) {
     const derived = checkDerived(pack, fields, diagnostics);
     const fwData = checkFrameworks(pack, diagnostics);
     checkRules(pack, fields, derived, fwData, diagnostics);
+    emitCoverageWarnings(pack, diagnostics);
     checkReport(pack, fields, diagnostics);
     checkFixtures(pack, fields, fwData, diagnostics);
     return diagnostics;
@@ -622,10 +784,41 @@ export function validatePack(input) {
   }
 }
 
+function parseArgs(argv) {
+  let report = false;
+  let filename = null;
+  for (const arg of argv) {
+    if (arg === "--report") report = true;
+    else if (arg === "--help" || arg === "-h") {
+      console.log("usage: node tools/validate.mjs [--report] <pack.json>");
+      process.exit(0);
+    } else if (!arg.startsWith("-")) {
+      filename = arg;
+    }
+  }
+  return { report, filename };
+}
+
+function printCoverage(pack) {
+  const cov = coverageReport(pack);
+  console.log("\n--- coverage report ---");
+  console.log(`fields read by rules (${cov.fieldsRead.length}): ${cov.fieldsRead.join(", ") || "(none)"}`);
+  console.log(`fields no rule reads (${cov.unreadFields.length}): ${cov.unreadFields.join(", ") || "(none)"}`);
+  console.log(`frameworks selectable (${cov.frameworksSelected.length}): ${cov.frameworksSelected.join(", ") || "(none)"}`);
+  console.log(`frameworks no rule can select (${cov.unselectedFrameworks.length}): ${cov.unselectedFrameworks.join(", ") || "(none)"}`);
+  if (cov.unreadOptions.length) {
+    console.log(`option values never appearing in a predicate (${cov.unreadOptions.length}):`);
+    for (const item of cov.unreadOptions) console.log(`  ${item}`);
+  } else {
+    console.log("option values never appearing in a predicate: (none)");
+  }
+  console.log("--- end coverage ---\n");
+}
+
 function main() {
-  const filename = process.argv[2];
+  const { report, filename } = parseArgs(process.argv.slice(2));
   if (!filename) {
-    console.error("usage: node tools/validate.mjs <pack.json>");
+    console.error("usage: node tools/validate.mjs [--report] <pack.json>");
     process.exit(2);
   }
   let source;
@@ -635,10 +828,18 @@ function main() {
     console.error(`E-PACK-002 $ ${error.message}`);
     process.exit(1);
   }
-  const diagnostics = validatePack(source);
+  let pack;
+  try {
+    pack = JSON.parse(source);
+  } catch (error) {
+    console.error(`E-PACK-002 $ Malformed JSON: ${error.message}`);
+    process.exit(1);
+  }
+  const diagnostics = validatePack(pack);
   for (const item of diagnostics) {
     console.log(`${item.severity} ${item.code} ${item.path}: ${item.message}`);
   }
+  if (report) printCoverage(pack);
   if (!diagnostics.some((item) => item.severity === "error")) console.log("ok");
   process.exit(diagnostics.some((item) => item.severity === "error") ? 1 : 0);
 }

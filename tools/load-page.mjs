@@ -10,7 +10,10 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(__dirname, "..");
-export const GOLDEN_V030 = path.join(ROOT, "tests/golden/index-v030.html");
+/** Frozen P5 finance-tech page — G-PARITY baseline for v0.4.0. */
+export const GOLDEN_V040 = path.join(ROOT, "tests/golden/index-v040.html");
+/** @deprecated alias kept for a few call sites during P6 cutover */
+export const GOLDEN_PAGE = GOLDEN_V040;
 export const CURRENT_PAGE = path.join(ROOT, "index.html");
 
 export function extractScript(html) {
@@ -86,7 +89,7 @@ export function loadPage(htmlPath, { now } = {}) {
 }
 
 export function loadGolden(opts) {
-  return loadPage(GOLDEN_V030, opts);
+  return loadPage(GOLDEN_V040, opts);
 }
 
 export function loadCurrent(opts) {

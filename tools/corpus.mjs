@@ -343,7 +343,7 @@ function maybe(rng, p = 0.15) {
 }
 
 /**
- * Enum vocabulary drawn from the golden page QUESTIONS / allowedValues.
+ * Enum vocabulary drawn from the golden page FIELD_INDEX / QUESTIONS.
  * Cached after first load.
  */
 let _enums = null;
@@ -358,16 +358,39 @@ export function fieldEnums(api) {
     "q19_change_volume", "q21_ci_maturity",
     "q4_tenure", "q4_domain_familiarity", "q11_deploy_cadence", "q11_cycle_time",
   ];
-  for (const q of engine.QUESTIONS) {
-    if (q.options) enums[q.id] = q.options.map((o) => o.value);
+
+  function optionsFor(fieldId) {
+    const meta = engine.FIELD_INDEX && engine.FIELD_INDEX[fieldId];
+    if (meta && Array.isArray(meta.options)) {
+      return meta.options.map((o) => o.value);
+    }
+    for (const q of engine.QUESTIONS || []) {
+      if (q.options && q.id === fieldId) return q.options.map((o) => o.value);
+      for (const f of q.fields || []) {
+        if (f.id === fieldId && Array.isArray(f.options)) {
+          return f.options.map((o) => o.value);
+        }
+        for (const sub of f.fields || []) {
+          if (sub.id === fieldId && Array.isArray(sub.options)) {
+            return sub.options.map((o) => o.value);
+          }
+        }
+      }
+    }
+    return null;
   }
-  enums.q4_tenure = ["forming", "3_12_months", "over_1_year"];
-  enums.q4_domain_familiarity = ["high", "medium", "low"];
-  enums.q11_deploy_cadence = ["continuous", "sprint", "monthly", "quarterly"];
-  enums.q11_cycle_time = ["under_2h", "1_3_days", "1_2_weeks", "over_2_weeks"];
-  enums.q12_quality_gates = engine.QUESTIONS.find((q) => q.id === "q12_quality_gates").options.map((o) => o.value);
-  enums.q16_bottlenecks = engine.QUESTIONS.find((q) => q.id === "q16_bottlenecks").options.map((o) => o.value);
-  enums.q20_runtimes = engine.QUESTIONS.find((q) => q.id === "q20_runtimes").options.map((o) => o.value);
+
+  for (const id of radioLike) {
+    const opts = optionsFor(id);
+    if (opts) enums[id] = opts;
+  }
+  enums.q4_tenure = enums.q4_tenure || ["forming", "3_12_months", "over_1_year"];
+  enums.q4_domain_familiarity = enums.q4_domain_familiarity || ["high", "medium", "low"];
+  enums.q11_deploy_cadence = enums.q11_deploy_cadence || ["continuous", "sprint", "monthly", "quarterly"];
+  enums.q11_cycle_time = enums.q11_cycle_time || ["under_2h", "1_3_days", "1_2_weeks", "over_2_weeks"];
+  enums.q12_quality_gates = optionsFor("q12_quality_gates") || [];
+  enums.q16_bottlenecks = optionsFor("q16_bottlenecks") || [];
+  enums.q20_runtimes = optionsFor("q20_runtimes") || [];
   enums.po = ["dedicated", "shared", "none"];
   enums.sm = ["dedicated", "shared", "none"];
   _enums = { enums, radioLike };
