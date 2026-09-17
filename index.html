@@ -34,6 +34,12 @@
       .layout { grid-template-columns: 1fr 1fr; align-items: start; }
       #report { position: sticky; top: .75rem; max-height: calc(100vh - 1.5rem); overflow: auto; }
     }
+    #report-summary {
+      position: sticky; top: 0; z-index: 1; background: var(--bg);
+      padding: .55rem 0 .45rem; margin: 0 0 .65rem; font-weight: 650;
+      border-bottom: 1px solid var(--line);
+    }
+    .link-warn { color: var(--warn); font-size: .9rem; margin: .35rem 0 0; flex-basis: 100%; }
     fieldset {
       border: 1px solid var(--line); background: var(--card); border-radius: 8px;
       margin: 0 0 .85rem; padding: .75rem 1rem 1rem;
@@ -85,15 +91,20 @@
       <h1>SDD Selector</h1>
       <p>Answer the Finance Tech diagnostic. A base framework, overlays, and cautions update as you type. Nothing leaves this page.</p>
     </header>
+    <div id="selftest-banner" hidden class="notice" role="status"></div>
     <div id="schema-notice" hidden class="notice" role="status"></div>
     <div class="actions">
       <button type="button" id="reset-btn">Reset</button>
       <button type="button" class="primary" id="copy-md">Copy as Markdown</button>
       <button type="button" id="copy-link">Copy link</button>
+      <p id="link-warn" class="link-warn" hidden></p>
     </div>
     <div class="layout">
       <form id="qform"></form>
-      <div id="report" aria-live="polite"></div>
+      <div id="report">
+        <div id="report-summary" class="report-summary" aria-live="polite"></div>
+        <div id="report-body"></div>
+      </div>
     </div>
   </div>
 <script>
@@ -2283,62 +2294,82 @@
     });
   }
 
-  function renderReport(result, container, answers, extra) {
-    extra = extra || {};
-    var html = [];
-    function esc(s) {
-      return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
-        return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c];
-      });
-    }
-    if (extra.schemaNotice) html.push('<div class="notice">' + esc(extra.schemaNotice) + "</div>");
-    if (extra.truncated) html.push('<div class="notice">The process-mismatch note was truncated to 500 characters in the link.</div>');
-    var c = result.completeness;
-    html.push('<div class="banner"><h2>Completeness</h2>');
-    if (c.couldChangeResult.length) {
-      html.push("<p>Unanswered questions that could change this result: <strong>" + esc(c.couldChangeResult.join(", ")) + "</strong></p>");
-    } else {
-      html.push("<p>No unanswered rule-relevant questions.</p>");
-    }
-    var optionalMissing = c.missing.filter(function (id) { return isReportOnly(id); });
-    if (optionalMissing.length) {
-      html.push('<p class="muted">Optional / report-only unanswered: ' + esc(optionalMissing.join(", ")) + "</p>");
-    }
-    html.push("</div>");
+  function hasRuleRelevantAnswer(answers) {
+    answers = answers || {};
+    return Object.keys(answers).some(function (id) { return !isReportOnly(id); });
+  }
 
-    html.push('<div class="card"><h2>Team profile</h2><ul>');
-    html.push("<li>Domain: " + esc(answers.q1_domain || "—") + "</li>");
-    if (answers.q2_team) {
-      var t = answers.q2_team;
-      html.push("<li>Team: " + esc(t.total) + " FTE (SWE " + esc(t.swe) + ", data " + esc(t.data_engineers) + ", QA/SDET " + esc(t.qa_sdet) + "; PO " + esc(t.product_owner) + ", SM " + esc(t.scrum_master) + ")</li>");
-    } else html.push("<li>Team: —</li>");
-    html.push("<li>Tenure: " + esc(answers.q4_tenure || "—") + "; familiarity: " + esc(answers.q4_domain_familiarity || "—") + "</li>");
-    html.push("<li>Cadence: " + esc(answers.q11_deploy_cadence || "—") + "; cycle time: " + esc(answers.q11_cycle_time || "—") + "</li>");
-    html.push("<li>Branching: " + esc(answers.q13_branching || "—") + "</li></ul></div>");
+  function shouldShowRecommendation(result, answers) {
+    if (result && result.noRuntimeMatch) return true;
+    return hasRuleRelevantAnswer(answers);
+  }
+
+  function summaryText(result, answers) {
+    if (!result) return "Answer the questions to see a recommendation.";
+    if (!hasRuleRelevantAnswer(answers) && !result.noRuntimeMatch) {
+      return "Answer the questions to see a recommendation.";
+    }
+    if (result.noRuntimeMatch) {
+      return "No framework documents support for your runtimes.";
+    }
+    var name = fwName(resultBaseId(result));
+    var n = (result.overlays || []).length;
+    var m = (result.cautions || []).length;
+    return "Recommended base: " + name + ". " + n + " overlays, " + m + " cautions.";
+  }
+
+  function updateSummary(result, answers) {
+    var elSum = typeof document !== "undefined" && document.getElementById("report-summary");
+    if (elSum) elSum.textContent = summaryText(result, answers);
+    return summaryText(result, answers);
+  }
+
+  function escHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c];
+    });
+  }
+
+  function buildReportHtml(result, answers, extra) {
+    extra = extra || {};
+    answers = answers || {};
+    var html = [];
+    if (extra.schemaNotice) html.push('<div class="notice">' + escHtml(extra.schemaNotice) + "</div>");
+    if (extra.truncated) html.push('<div class="notice">The process-mismatch note was truncated to 500 characters in the link.</div>');
+
+    if (!shouldShowRecommendation(result, answers)) {
+      return html.join("");
+    }
+
+    var c = result.completeness;
+    if (c.couldChangeResult.length) {
+      html.push('<p class="banner">Unanswered that could change this result: ' +
+        escHtml(c.couldChangeResult.join(", ")) + "</p>");
+    }
 
     if (result.noRuntimeMatch) {
       html.push('<div class="card caution high"><h2>No matching runtime</h2><p>No framework documents support for your runtimes. Closest: ' +
-        esc((result.closest || []).map(fwName).join(", ")) + ".</p></div>");
+        escHtml((result.closest || []).map(fwName).join(", ")) + ".</p></div>");
     } else if (result.base) {
       var bid = resultBaseId(result);
       var fw = FRAMEWORKS[bid];
-      html.push('<div class="card"><h2>Recommended base: ' + esc(fw.name) + "</h2>");
+      html.push('<div class="card"><h2>Recommended base: ' + escHtml(fw.name) + "</h2>");
       if (result.base.fallback) html.push("<p><strong>Default recommendation — no strong signal.</strong></p>");
-      html.push("<p>" + esc(result.base.rule.adopt.rationale) + "</p>");
-      html.push("<p>Install: <code>" + esc(fw.install) + "</code></p>");
-      html.push("<p>Triggered by: " + esc(result.base.explanation.join("; ") || "—") + "</p>");
+      html.push("<p>" + escHtml(result.base.rule.adopt.rationale) + "</p>");
+      html.push("<p>Install: <code>" + escHtml(fw.install) + "</code></p>");
+      html.push("<p>Triggered by: " + escHtml(result.base.explanation.join("; ") || "—") + "</p>");
       html.push("<p>Enforcement:</p><ul>");
       fw.enforcement.forEach(function (e) {
-        html.push("<li><span class=\"badge\">" + esc(ENFORCEMENT_LABEL[e.class]) + "</span> " + esc(e.practice) + " — " + esc(e.note) + "</li>");
+        html.push("<li><span class=\"badge\">" + escHtml(ENFORCEMENT_LABEL[e.class]) + "</span> " + escHtml(e.practice) + " — " + escHtml(e.note) + "</li>");
       });
       html.push("</ul>");
       var ev = fw.evidence;
-      html.push("<p>Evidence (" + esc(ev.verifiedOn) + "): " + ev.stars + " stars, commits/30d " + esc(ev.commitsLast30d) + ", " + esc(ev.latestRelease) +
+      html.push("<p>Evidence (" + escHtml(ev.verifiedOn) + "): " + ev.stars + " stars, commits/30d " + escHtml(ev.commitsLast30d) + ", " + escHtml(ev.latestRelease) +
         (result.evidenceAge.stale ? " <strong>Stale — verified more than 180 days before today.</strong>" : "") + "</p></div>");
     }
 
     if (result.runnerUp) {
-      html.push('<div class="card"><h2>Runner-up</h2><p>' + esc(fwName(result.runnerUp.rule.adopt.framework)) + " — " + esc(result.runnerUp.whyItLost) + "</p></div>");
+      html.push('<div class="card"><h2>Runner-up</h2><p>' + escHtml(fwName(result.runnerUp.rule.adopt.framework)) + " — " + escHtml(result.runnerUp.whyItLost) + "</p></div>");
     }
 
     html.push("<h2>Practice overlays</h2>");
@@ -2347,11 +2378,11 @@
       var cls = o.includedInBase ? "card included" : "card";
       var srcId = o.rule.adopt.framework;
       var watch = srcId && FRAMEWORKS[srcId] && FRAMEWORKS[srcId].status === "watch";
-      html.push('<div class="' + cls + '"><h3>' + esc(o.rule.label) +
+      html.push('<div class="' + cls + '"><h3>' + escHtml(o.rule.label) +
         (o.includedInBase ? ' <span class="badge">included in base</span>' : "") +
         (watch ? ' <span class="badge">watch</span>' : "") + "</h3>");
-      html.push("<p>Source: " + esc(srcId ? fwName(srcId) : "native CI") + "</p>");
-      html.push("<p>" + esc(o.rule.adopt.rationale) + "</p>");
+      html.push("<p>Source: " + escHtml(srcId ? fwName(srcId) : "native CI") + "</p>");
+      html.push("<p>" + escHtml(o.rule.adopt.rationale) + "</p>");
       if (o.reconciliationNote) {
         html.push("<p>Note: existing financial reconciliation tests are a related control already in place; TDD is a different control.</p>");
       }
@@ -2359,7 +2390,7 @@
       if (srcFw) {
         html.push("<ul>");
         srcFw.enforcement.forEach(function (e) {
-          html.push("<li><span class=\"badge\">" + esc(ENFORCEMENT_LABEL[e.class]) + "</span> " + esc(e.practice) + "</li>");
+          html.push("<li><span class=\"badge\">" + escHtml(ENFORCEMENT_LABEL[e.class]) + "</span> " + escHtml(e.practice) + "</li>");
         });
         html.push("</ul>");
       } else {
@@ -2374,10 +2405,10 @@
       var k = cau.rule.caution;
       var kind = k.kind === "positive" ? "positive" : k.severity;
       var title = k.kind === "positive" ? "Positive note" : (k.severity === "high" ? "High" : "Medium");
-      html.push('<div class="card caution ' + kind + '"><h3>' + esc(cau.rule.id) + " — " + title + "</h3>");
-      html.push("<p>" + esc(k.finding) + "</p>");
-      html.push("<p><strong>Mitigation:</strong> " + esc(k.mitigation) + "</p>");
-      html.push("<p class=\"muted\">Source: " + esc(k.source) + "</p></div>");
+      html.push('<div class="card caution ' + kind + '"><h3>' + escHtml(cau.rule.id) + " — " + title + "</h3>");
+      html.push("<p>" + escHtml(k.finding) + "</p>");
+      html.push("<p><strong>Mitigation:</strong> " + escHtml(k.mitigation) + "</p>");
+      html.push("<p class=\"muted\">Source: " + escHtml(k.source) + "</p></div>");
     });
 
     html.push("<h2>Bottleneck resolution</h2>");
@@ -2385,26 +2416,31 @@
     else {
       html.push("<table><thead><tr><th>Rank</th><th>Bottleneck</th><th>Resolved by</th></tr></thead><tbody>");
       result.bottleneckMatrix.forEach(function (row) {
-        html.push("<tr><td>" + row.rank + "</td><td>" + esc(optionLabel("q16_bottlenecks", row.bottleneck)) + "</td><td>" +
-          esc(row.resolvedBy ? row.resolvedBy.join(", ") : "Not addressed") + "</td></tr>");
+        html.push("<tr><td>" + row.rank + "</td><td>" + escHtml(optionLabel("q16_bottlenecks", row.bottleneck)) + "</td><td>" +
+          escHtml(row.resolvedBy ? row.resolvedBy.join(", ") : "Not addressed") + "</td></tr>");
       });
       html.push("</tbody></table>");
     }
     html.push("<p class=\"muted\">This revision has no overlay for interruptive support, compliance overhead, or legacy tech debt.</p>");
 
-    if (answers.q17_process_mismatch) {
-      html.push("<h2>Process mismatch note</h2><p>" + esc(answers.q17_process_mismatch) + "</p>");
-    }
-    html.push("<h2>Suggested directory layout</h2><pre>" + esc((result.directoryLayout || []).join("\n")) + "</pre>");
-    container.innerHTML = html.join("");
+    html.push("<h2>Suggested directory layout</h2><pre>" + escHtml((result.directoryLayout || []).join("\n")) + "</pre>");
+    return html.join("");
+  }
+
+  function renderReport(result, container, answers, extra) {
+    var html = buildReportHtml(result, answers, extra);
+    if (container) container.innerHTML = html;
+    return html;
   }
 
   function bootUi() {
     var form = document.getElementById("qform");
-    var report = document.getElementById("report");
+    var reportBody = document.getElementById("report-body");
     var notice = document.getElementById("schema-notice");
+    var linkWarn = document.getElementById("link-warn");
     renderForm(QUESTIONS, form);
     var extra = { schemaNotice: null, truncated: false };
+    var hashTimer = null;
 
     var decoded = decodeHash(location.hash || "");
     if (decoded.notice) {
@@ -2414,6 +2450,16 @@
     }
     if (Object.keys(decoded.answers).length) applyAnswersToForm(form, decoded.answers);
 
+    function scheduleHashUpdate(answers) {
+      if (hashTimer) clearTimeout(hashTimer);
+      hashTimer = setTimeout(function () {
+        var enc = encodeHash(answers);
+        if (history.replaceState) {
+          history.replaceState(null, "", enc.hash ? "#" + enc.hash : location.pathname + location.search);
+        }
+      }, 300);
+    }
+
     function refresh(fromUser) {
       preventRankDupes(form);
       updateRecordSum(form);
@@ -2421,11 +2467,10 @@
       var result = evaluate(answers);
       var enc = encodeHash(answers);
       extra.truncated = enc.truncated;
-      renderReport(result, report, answers, extra);
-      if (fromUser && history.replaceState) {
-        history.replaceState(null, "", enc.hash ? "#" + enc.hash : location.pathname + location.search);
-      }
-      api._last = { result: result, answers: answers, markdown: toMarkdown(result, answers) };
+      updateSummary(result, answers);
+      renderReport(result, reportBody, answers, extra);
+      if (fromUser) scheduleHashUpdate(answers);
+      api._last = { result: result, answers: answers, markdown: toMarkdown(result, answers), hash: enc.hash };
     }
 
     form.addEventListener("input", function () { refresh(true); });
@@ -2435,6 +2480,8 @@
       extra.schemaNotice = null;
       extra.truncated = false;
       notice.hidden = true;
+      if (linkWarn) { linkWarn.hidden = true; linkWarn.textContent = ""; }
+      if (hashTimer) clearTimeout(hashTimer);
       if (history.replaceState) history.replaceState(null, "", location.pathname + location.search);
       refresh(false);
     });
@@ -2445,6 +2492,20 @@
       } else fallbackCopy(md);
     });
     document.getElementById("copy-link").addEventListener("click", function () {
+      if (hashTimer) { clearTimeout(hashTimer); hashTimer = null; }
+      var frag = (api._last && api._last.hash) ? api._last.hash : "";
+      if (history.replaceState) {
+        history.replaceState(null, "", frag ? "#" + frag : location.pathname + location.search);
+      }
+      if (linkWarn) {
+        if (frag.length > 1800) {
+          linkWarn.hidden = false;
+          linkWarn.textContent = "This link is very long (~" + frag.length + " characters). Some chat clients may truncate it.";
+        } else {
+          linkWarn.hidden = true;
+          linkWarn.textContent = "";
+        }
+      }
       var url = location.href;
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).catch(function () { fallbackCopy(url); });
@@ -2461,17 +2522,31 @@
     refresh(false);
   }
 
+  api.hasRuleRelevantAnswer = hasRuleRelevantAnswer;
+  api.shouldShowRecommendation = shouldShowRecommendation;
+  api.summaryText = summaryText;
+  api.updateSummary = updateSummary;
+  api.buildReportHtml = buildReportHtml;
+  api.renderReport = renderReport;
+  api.isReportOnly = isReportOnly;
+
   if (typeof document !== "undefined") {
     var isSelf = typeof location !== "undefined" && /(?:^|[?&])selftest(?:&|$)/.test(location.search || "");
-    if (isSelf) {
-      document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
+      if (isSelf) {
         var r = runSelftest();
-        document.body.innerHTML = "<pre>" + (r.ok ? "ALL PASS" : "FAIL\n" + r.fails.join("\n")) + "</pre>";
+        var banner = document.getElementById("selftest-banner");
+        if (banner) {
+          banner.hidden = false;
+          banner.textContent = r.ok
+            ? "Selftest: ALL PASS (" + r.n + " checks)."
+            : "Selftest FAIL (" + r.n + "): " + r.fails.join("; ");
+          if (!r.ok) banner.className = "notice";
+        }
         console.log(r.ok ? "ALL PASS" : r.fails);
-      });
-    } else {
-      document.addEventListener("DOMContentLoaded", bootUi);
-    }
+      }
+      bootUi();
+    });
   }
 
   if (typeof module !== "undefined" && module.exports) module.exports = api;
