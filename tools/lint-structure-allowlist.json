@@ -1,11 +1,5 @@
 {
-  "notes": "P4 allowlist: only remaining special cases cleared in P5 (H6–H9 / H21). Pack JSON is excluded via BEGIN/END PACK markers.",
-  "fields": [
-    "q12_quality_gates",
-    "q18_token_budget"
-  ],
-  "frameworks": [
-    "gsd",
-    "superpowers"
-  ]
+  "notes": "P5: special cases cleared (H6–H9 / H21). Allowlist empty — CG1 holds for finance-tech.",
+  "fields": [],
+  "frameworks": []
 }

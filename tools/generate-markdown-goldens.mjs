@@ -4,7 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadGolden } from "./load-page.mjs";
+import { loadCurrent } from "./load-page.mjs";
 import { documentedFixtures, PINNED_NOW } from "./corpus.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -12,7 +12,7 @@ const OUT = path.resolve(__dirname, "../tests/markdown");
 
 function main() {
   fs.mkdirSync(OUT, { recursive: true });
-  const api = loadGolden({ now: PINNED_NOW });
+  const api = loadCurrent({ now: PINNED_NOW });
   const fixtures = documentedFixtures();
   const index = [];
   for (const { name, answers } of fixtures) {

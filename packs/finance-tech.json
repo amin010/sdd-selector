@@ -1617,6 +1617,68 @@
         "q12_quality_gates",
         "q18_token_budget"
       ],
+      "adoptWhen": [
+        {
+          "when": {
+            "all": [
+              {
+                "eq": [
+                  {
+                    "derived": "coverageLevel"
+                  },
+                  "low"
+                ]
+              },
+              {
+                "in": [
+                  {
+                    "answer": "q18_token_budget"
+                  },
+                  [
+                    "unmetered",
+                    "team_plan"
+                  ]
+                ]
+              }
+            ]
+          },
+          "framework": "superpowers",
+          "ifUnavailable": {
+            "framework": "gsd"
+          },
+          "rationale": "A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core."
+        },
+        {
+          "when": {
+            "all": [
+              {
+                "eq": [
+                  {
+                    "derived": "coverageLevel"
+                  },
+                  "low"
+                ]
+              },
+              {
+                "in": [
+                  {
+                    "answer": "q18_token_budget"
+                  },
+                  [
+                    "individual_pro",
+                    "strict"
+                  ]
+                ]
+              }
+            ]
+          },
+          "framework": "gsd",
+          "setFlags": [
+            "force_tdd_overlay"
+          ],
+          "rationale": "A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core."
+        }
+      ],
       "adopt": {
         "framework": "gsd",
         "artifacts": [
@@ -1713,6 +1775,21 @@
       ],
       "providedByBase": [
         "superpowers"
+      ],
+      "notes": [
+        {
+          "when": {
+            "hasAny": [
+              {
+                "answer": "q12_quality_gates"
+              },
+              [
+                "financial_reconciliation"
+              ]
+            ]
+          },
+          "text": "existing financial reconciliation tests are a related control already in place; TDD is a different control."
+        }
       ],
       "adopt": {
         "framework": "superpowers",
@@ -2402,7 +2479,8 @@
     ],
     "freeTextFields": [
       "q17_process_mismatch"
-    ]
+    ],
+    "unaddressedBottlenecks": "auto"
   },
   "fixtures": [
     {

@@ -40,7 +40,7 @@ Source: Tessl tile; Fowler; V4
 2. Lack of test automation / fear of breaking financial calculations — Autonomous TDD verification
 3. Technical debt in legacy codebases — not addressed by this stack
 
-Overlays in this revision do not address: High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
 
 ## Suggested directory layout
 ```

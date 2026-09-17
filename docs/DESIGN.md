@@ -682,7 +682,7 @@ Rendered into an `aria-live="polite"` region. Sections in order:
 4. **Runner-up** (F13): one line naming the framework and why it lost.
 5. **Practice overlays**: one card each, with enforcement class; "included in base" variants de-emphasized but still labeled.
 6. **Cautions** (F12): equal weight, severity-ordered, each with finding, mitigation, and source.
-7. **Bottleneck Resolution Matrix**: rank / bottleneck / resolving practice, explicitly naming unaddressed bottlenecks (`interruptive_support`, `compliance_overhead`, and `legacy_tech_debt` have no overlay in this revision).
+7. **Bottleneck Resolution Matrix**: rank / bottleneck / resolving practice, explicitly naming unaddressed bottlenecks (`flaky_cicd`, `interruptive_support`, `compliance_overhead`, and `legacy_tech_debt` have no overlay in this revision).
 8. **Process mismatch note**: Q17 verbatim when present; omitted when empty.
 9. **Suggested directory layout**: `<pre>` tree union of selected tools' artifacts.
 10. **Actions**: "Copy as Markdown", "Copy link".

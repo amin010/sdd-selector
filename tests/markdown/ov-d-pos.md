@@ -37,7 +37,7 @@ _None._
 2. Flaky CI/CD pipelines or slow builds — not addressed by this stack
 3. Lack of test automation / fear of breaking financial calculations — not addressed by this stack
 
-Overlays in this revision do not address: High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
 
 ## Suggested directory layout
 ```

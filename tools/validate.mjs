@@ -204,6 +204,7 @@ function validateExpr(expr, path, context, diagnostics, depth = 1) {
   }
   if (op === "flag") {
     if (typeof raw !== "string" || !raw) wrong("flag requires a non-empty name.");
+    if (context.flagReads && typeof raw === "string" && raw) context.flagReads.add(raw);
     return;
   }
   if (op === "rank" || op === "rankAtMost") {
@@ -331,11 +332,63 @@ function checkFrameworks(pack, diagnostics) {
   return { frameworks, statuses };
 }
 
+function collectFieldClosure(expr, fields, derivedExprs, out, seenDerived = new Set()) {
+  if (expr == null || typeof expr !== "object") return;
+  if (Array.isArray(expr)) {
+    expr.forEach((item) => collectFieldClosure(item, fields, derivedExprs, out, seenDerived));
+    return;
+  }
+  const keys = Object.keys(expr);
+  if (keys.length !== 1 || !OPERATORS.has(keys[0])) {
+    for (const value of Object.values(expr)) {
+      collectFieldClosure(value, fields, derivedExprs, out, seenDerived);
+    }
+    return;
+  }
+  const op = keys[0];
+  const raw = expr[op];
+  if (op === "answer" && typeof raw === "string") {
+    const root = raw.split(".")[0];
+    if (fields.has(root)) out.add(root);
+    return;
+  }
+  if (op === "derived" && typeof raw === "string") {
+    if (seenDerived.has(raw)) return;
+    seenDerived.add(raw);
+    const nested = derivedExprs.get(raw);
+    if (nested) collectFieldClosure(nested, fields, derivedExprs, out, seenDerived);
+    return;
+  }
+  if (op === "rank" || op === "rankAtMost") {
+    if (object(raw) && typeof raw.field === "string" && fields.has(raw.field)) out.add(raw.field);
+    return;
+  }
+  if (op === "sumFields" || op === "countSelected") {
+    if (object(raw) && typeof raw.field === "string" && fields.has(raw.field)) out.add(raw.field);
+    if (op === "sumFields") return;
+  }
+  if (op === "bucket" && object(raw)) {
+    collectFieldClosure(raw.value, fields, derivedExprs, out, seenDerived);
+    return;
+  }
+  if (Array.isArray(raw)) {
+    raw.forEach((item) => collectFieldClosure(item, fields, derivedExprs, out, seenDerived));
+    return;
+  }
+  collectFieldClosure(raw, fields, derivedExprs, out, seenDerived);
+}
+
 function checkRules(pack, fields, derived, fwData, diagnostics) {
   const rankedValues = new Set();
   for (const field of fields.values()) {
     if (field.kind === "ranked") for (const option of array(field.options)) rankedValues.add(option && option.value);
   }
+  const derivedExprs = new Map();
+  array(pack.derived).forEach((def) => {
+    if (object(def) && typeof def.key === "string") derivedExprs.set(def.key, def.expr);
+  });
+  const flagSets = new Set();
+  const flagReads = new Set();
   const allRules = [];
   for (const [familyKey, family] of [["baseRules", "base"], ["overlays", "overlay"], ["cautions", "caution"]]) {
     array(pack[familyKey]).forEach((rule, index) => {
@@ -349,7 +402,52 @@ function checkRules(pack, fields, derived, fwData, diagnostics) {
           (family !== "caution" && !object(rule.adopt))) {
         diagnostics.push(diagnostic("E-RULE-061", path, "Rule is missing its caution or adopt block."));
       }
-      validateExpr(rule.when, `${path}.when`, { fields, derived, family }, diagnostics);
+      const exprCtx = { fields, derived, family, flagReads };
+      validateExpr(rule.when, `${path}.when`, exprCtx, diagnostics);
+      const computed = new Set();
+      collectFieldClosure(rule.when, fields, derivedExprs, computed);
+      array(rule.adoptWhen).forEach((branch, bi) => {
+        const bPath = `${path}.adoptWhen[${bi}]`;
+        if (!object(branch)) {
+          diagnostics.push(diagnostic("E-RULE-061", bPath, "adoptWhen branch must be an object."));
+          return;
+        }
+        validateExpr(branch.when, `${bPath}.when`, exprCtx, diagnostics);
+        collectFieldClosure(branch.when, fields, derivedExprs, computed);
+        array(branch.setFlags).forEach((name) => {
+          if (typeof name === "string" && name) flagSets.add(name);
+        });
+        if (branch.framework != null) {
+          const framework = fwData.frameworks.get(branch.framework);
+          if (!framework) {
+            diagnostics.push(diagnostic("E-FW-050", `${bPath}.framework`, "Rule adopts an unknown framework."));
+          } else if (family === "base" &&
+                     fwData.statuses.get(framework.status)?.selectableAsBase !== true) {
+            diagnostics.push(diagnostic("E-FW-051", `${bPath}.framework`, "Base rule adopts a non-selectable framework."));
+          }
+        }
+        if (object(branch.ifUnavailable)) {
+          array(branch.ifUnavailable.setFlags).forEach((name) => {
+            if (typeof name === "string" && name) flagSets.add(name);
+          });
+          if (branch.ifUnavailable.framework != null &&
+              !fwData.frameworks.has(branch.ifUnavailable.framework)) {
+            diagnostics.push(diagnostic(
+              "E-FW-050",
+              `${bPath}.ifUnavailable.framework`,
+              "Rule adopts an unknown framework.",
+            ));
+          }
+        }
+      });
+      array(rule.notes).forEach((note, ni) => {
+        const nPath = `${path}.notes[${ni}]`;
+        if (!object(note) || typeof note.text !== "string") {
+          diagnostics.push(diagnostic("E-RULE-061", nPath, "notes entries need when and text."));
+          return;
+        }
+        if (note.when != null) validateExpr(note.when, `${nPath}.when`, exprCtx, diagnostics);
+      });
       if (family !== "caution" && object(rule.adopt) && rule.adopt.framework != null) {
         const framework = fwData.frameworks.get(rule.adopt.framework);
         if (!framework) {
@@ -364,7 +462,39 @@ function checkRules(pack, fields, derived, fwData, diagnostics) {
           diagnostics.push(diagnostic("E-RULE-062", `${path}.resolves[${ri}]`, "Unknown ranked option."));
         }
       });
+      if (Object.hasOwn(rule, "requires")) {
+        const declared = array(rule.requires).filter((id) => typeof id === "string").slice().sort();
+        const computedList = [...computed].sort();
+        if (declared.join("\0") !== computedList.join("\0")) {
+          diagnostics.push(diagnostic(
+            "W-RULE-102",
+            `${path}.requires`,
+            `Declared requires [${declared.join(", ")}] differs from computed closure [${computedList.join(", ")}].`,
+            "warning",
+          ));
+        }
+      }
     });
+  }
+  for (const name of flagSets) {
+    if (!flagReads.has(name)) {
+      diagnostics.push(diagnostic(
+        "W-FLAG-101",
+        "flags",
+        `Flag "${name}" is set but never read.`,
+        "warning",
+      ));
+    }
+  }
+  for (const name of flagReads) {
+    if (!flagSets.has(name)) {
+      diagnostics.push(diagnostic(
+        "W-FLAG-101",
+        "flags",
+        `Flag "${name}" is read but never set.`,
+        "warning",
+      ));
+    }
   }
   addDuplicateChecks(allRules.map((item) => item.rule), "id", "E-RULE-060", "rules", diagnostics);
 }

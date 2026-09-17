@@ -50,7 +50,7 @@ Source: GitHub API; §8.4
 ## Bottleneck resolution
 _No bottlenecks ranked._
 
-Overlays in this revision do not address: High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
 
 ## Suggested directory layout
 ```

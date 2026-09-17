@@ -31,11 +31,15 @@ function byId(items) {
 
 function partialResult(result) {
   const base = result && result.base && result.base.rule;
+  const flags = (result && result.flags) ||
+    (result && result.forceOverlayB ? { force_tdd_overlay: true } : {});
   return {
     baseId: base && base.adopt ? base.adopt.framework : null,
     baseRule: base ? base.id : null,
     overlayIds: (result && result.overlays || []).map((item) => item.rule.id),
-    forceOverlayB: !!(result && result.forceOverlayB),
+    flags,
+    // Golden v0.3.0 closures still read forceOverlayB on the partial.
+    forceOverlayB: !!(flags && flags.force_tdd_overlay),
   };
 }
 
@@ -48,7 +52,7 @@ function expressionContext(answers, derived, partial) {
       baseRule: partial.baseRule,
       overlays: partial.overlayIds,
     } : null,
-    flags: partial && partial.forceOverlayB ? { force_tdd_overlay: true } : {},
+    flags: (partial && partial.flags) || {},
     fieldIndex: current.FIELD_INDEX,
   };
 }

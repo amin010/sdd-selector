@@ -321,7 +321,7 @@ This needs a decision, not a silent regeneration of the golden file:
 - **Either** overlay F (deterministic CI enforcement) should declare `resolves: ["flaky_cicd"]` — arguable, since required status checks and spec-to-test traceability do address flaky CI/CD, but overlay F only fires for SOX or zero-tolerance teams with weak CI, so a team whose top bottleneck is flaky pipelines would often not get it;
 - **Or** the list is right to grow to four, and DESIGN.md §12.3 is corrected alongside it.
 
-Default if the owner has not decided when P5 starts: the second option. F6 exists to name what the stack does not address; overlay F is not a general CI-reliability overlay. Record the decision in this document before regenerating the golden Markdown.
+**Decision (taken for P5):** grow the unaddressed list to four. Include `flaky_cicd` when computing from rules' `resolves`. Overlay F does **not** get `resolves: ["flaky_cicd"]` — F6 exists to name what the stack does not address; overlay F is not a general CI-reliability overlay. DESIGN.md §12.3 item 7 lists four bottlenecks. Golden Markdown under `tests/markdown/` is regenerated for this authorized §9.1 diff only.
 
 ---
 
@@ -353,9 +353,9 @@ Three inconsistencies in the current implementation, surfaced while writing the 
 
 | ID | Finding | Phase | Disposition |
 |---|---|---|---|
-| **A1** | In `selectBase`, the Tier 0 fallback path ORs in `rule4ForceB(...)`, which can only be true when the budget is metered — the exact condition under which that branch is unreachable. Dead code. | P5 | Disappears naturally: the `adoptWhen` encoding has nowhere to express it. Confirm via G-PARITY that nothing changes. (Unavailable Superpowers with an unmetered budget already falls through to GSD *without* overlay B; keep that.) |
-| **A2** | `BOTTLENECK_LABEL` and the Q16 option labels are two hand-synced copies of the same seven strings, with no drift detection. | P2 | Deleted; options own their labels. |
-| **A3** | The hard-coded unaddressed-bottleneck list omits `flaky_cicd`, disagreeing with the rules' `resolves` declarations. DESIGN.md §12.3 has the same omission. | P5 | Owner decision (§9.1) before the golden Markdown is regenerated. Default: grow the list to four. |
+| **A1** | In `selectBase`, the Tier 0 fallback path ORs in `rule4ForceB(...)`, which can only be true when the budget is metered — the exact condition under which that branch is unreachable. Dead code. | P5 | **Closed.** Disappeared with `adoptWhen` / `ifUnavailable` (no place to express the dead OR). G-PARITY confirms unchanged behaviour. Unavailable Superpowers with an unmetered budget falls through to GSD *without* overlay B. |
+| **A2** | `BOTTLENECK_LABEL` and the Q16 option labels are two hand-synced copies of the same seven strings, with no drift detection. | P2 | **Closed.** Deleted; options own their labels. |
+| **A3** | The hard-coded unaddressed-bottleneck list omits `flaky_cicd`, disagreeing with the rules' `resolves` declarations. DESIGN.md §12.3 has the same omission. | P5 | **Closed.** Decision §9.1: grow to four (`flaky_cicd` included); overlay F does not declare `resolves: ["flaky_cicd"]`. DESIGN.md §12.3 and Markdown goldens updated. |
 | **A4** | `countSelected` on an unanswered multi-select vs current `coverageLevel(undefined) === "low"`. If §8.4 makes `countSelected(null)` return `null`, `bucket` yields `null` and rule 4's Superpowers arm does not fire; today it does, because coverage of "no answer" is treated as `low`. | P1 | Dual-run will catch it. Fix: define `countSelected` on an absent/empty multi as 0, and record that in EXT-CONFIG §8.3 as a spec correction, not a silent interpreter quirk. |
 
 ---
