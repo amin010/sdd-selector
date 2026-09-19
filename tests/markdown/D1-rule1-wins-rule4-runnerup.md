@@ -1,5 +1,7 @@
 # SDD Selector report
 
+Confidence: medium · score 9 · margin 1
+
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
 
@@ -10,22 +12,22 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: continuous; cycle time: —
 - Branching: —
 
-## Recommended base: OpenSpec
-Non-roadmap work favors specs written only for the change at hand.
+## Recommended base: GSD Core
+A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core.
 
-- Install: `openspec init (+ openspec config profile for expanded)`
-- Repo: `Fission-AI/OpenSpec`
-- Triggering answers: q5_work_breakdown = {"roadmap":20,"ops":20,"bugs":20,"regulatory":20,"tech_debt":20}
+- Install: `npx @opengsd/gsd-core`
+- Repo: `open-gsd/gsd-core`
+- Triggering answers: q2_team = {"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"}; q11_deploy_cadence = continuous; q14_release_autonomy = autonomous; q12_quality_gates = ["unit_coverage","integration_contract","e2e"]
 - Enforcement:
-Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
-Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
-- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
+Agent gate — Plan-checker decision-coverage (Agent-executed check on plans.)
+Agent gate — Verify vs shipped code (Stronger than constitution.md; weaker than CI.)
+- Evidence: 9501 stars, 100 commits/30d, v1.14.0 (2026-09-14); verified 2026-09-16
 
 ## Runner-up
-GSD Core — OpenSpec — brownfield / non-roadmap load matched first (ordered evaluation, D1).
+OpenSpec — Scored 8 vs 9 for Compact autonomous team, frequent deploys.
 
 ## Practice overlays
-### Ephemeral subagent waves
+### Ephemeral subagent waves (included in base)
 Source: GSD Core
 A monolith with broad file spans benefits from GSD Core's clean-context parallel executors.
 Enforcement: Agent gate — Plan-checker decision-coverage (Agent-executed check on plans.)
@@ -33,17 +35,29 @@ Agent gate — Verify vs shipped code (Stronger than constitution.md; weaker tha
 Triggered by: q10_architecture = monolith
 
 ## Cautions
-_None._
+### C9 — medium
+Created 2026-05-22 — roughly four months old at the evidence date. Release cadence is high but there is little track record, and .planning/ is still evolving.
+Mitigation: Pin a version. Budget for migration between minor releases. Re-verify activity before committing a team to it.
+Source: Appendix A; V3
 
 ## Bottleneck resolution
 _No bottlenecks ranked._
 
 Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
 
+## Framework catalog
+- **OpenSpec** (`openspec`, recommended) — base candidate
+- **GitHub Spec Kit** (`speckit`, recommended) — base candidate
+- **BMAD Method** (`bmad`, recommended) — base candidate
+- **GSD Core** (`gsd`, viable) — base candidate
+- **Superpowers** (`superpowers`, viable) — base candidate
+- **Spec Kitty** (`speckitty`, viable) — base candidate
+- **Tessl SDD Tile** (`tessl`, watch) — watch — selected only with a warning
+
 ## Suggested directory layout
 ```
 repo/
-├── openspec/specs/    # Base: OpenSpec
-├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
-├── .planning/phases/    # Ephemeral subagent waves
+├── .planning/{PROJECT,REQUIREMENTS,ROADMAP,STATE}.md    # Base: GSD Core
+├── .planning/phases/    # Base: GSD Core
+├── HANDOFF.json    # Base: GSD Core
 ```

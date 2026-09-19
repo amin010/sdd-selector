@@ -38,9 +38,10 @@
  * After repair, the answers are run through evaluateAnswers() as a
  * validation gate; if that still throws (should not happen given the repair
  * above, but the engine is treated as a black box here), we retry the whole
- * LLM call once with `noCache: true`, and if it throws again we fall back to
- * a known-good baseline answer set (corpus.mjs-style "selftestBase") so one
- * bad respondent never aborts the whole run.
+ * LLM call once with `noCache: true`, and if it throws again we write a
+ * `{ failed: true }` record with `answers: null`. analyze.mjs excludes
+ * failed records rather than treating a fabricated baseline as a real
+ * respondent fill.
  *
  * Usage:
  *   node tools/qc/respond.mjs
@@ -252,23 +253,6 @@ function repairAnswers(raw, allFields) {
   return out;
 }
 
-/** Deterministic, known-good fallback answer set (mirrors corpus.mjs's selftestBase). */
-function fallbackAnswers() {
-  return {
-    q7_requirements: "structured",
-    q10_architecture: "microservices",
-    q11_deploy_cadence: "monthly",
-    q14_release_autonomy: "autonomous",
-    q6_volatility: "moderate",
-    q5_work_breakdown: { roadmap: 80, ops: 5, bugs: 5, regulatory: 5, tech_debt: 5 },
-    q2_team: {
-      total: 8, swe: 6, data_engineers: 0, qa_sdet: 0,
-      product_owner: "none", scrum_master: "none",
-    },
-    q12_quality_gates: ["unit_coverage", "integration_contract", "e2e"],
-  };
-}
-
 async function respondOnce(client, api, { vignette, respondentIndex, instrumentText, allFields, mockSchema, onCallComplete }) {
   const system =
     "You are one of three independent respondents filling out a team " +
@@ -291,7 +275,7 @@ async function respondOnce(client, api, { vignette, respondentIndex, instrumentT
     system,
     messages: [{ role: "user", content: user }],
     temperature: 0.6,
-    maxTokens: 1200,
+    maxTokens: 4096,
     mockSchema,
   });
   if (onCallComplete) onCallComplete(response);
@@ -310,7 +294,7 @@ async function respondOnce(client, api, { vignette, respondentIndex, instrumentT
         system,
         messages: [{ role: "user", content: user }],
         temperature: 0.6,
-        maxTokens: 1200,
+        maxTokens: 4096,
         mockSchema,
         noCache: true,
       });
@@ -319,13 +303,20 @@ async function respondOnce(client, api, { vignette, respondentIndex, instrumentT
       evaluateAnswers(api, answers);
     } catch (err2) {
       console.error(
-        `respond: ${vignette.id} respondent ${respondentIndex} failed twice (${err2.message}); falling back to baseline answers`,
+        `respond: ${vignette.id} respondent ${respondentIndex} failed twice (${err2.message}); recording a failed respondent, not a baseline fill`,
       );
-      answers = fallbackAnswers();
+      return {
+        vignetteId: vignette.id,
+        respondentIndex,
+        model: response.model,
+        answers: null,
+        failed: true,
+        failReason: err2.message,
+      };
     }
   }
 
-  return { vignetteId: vignette.id, respondentIndex, model: response.model, answers };
+  return { vignetteId: vignette.id, respondentIndex, model: response.model, answers, failed: false };
 }
 
 async function main() {
@@ -345,8 +336,7 @@ async function main() {
   console.log(`${vignettes.length} vignettes x ${RESPONDENTS_PER_VIGNETTE} respondents = ${totalCalls} calls`);
 
   const out = [];
-  let repaired = 0;
-  let fellBack = 0;
+  let failed = 0;
   let done = 0;
   for (const vignette of vignettes) {
     for (let respondentIndex = 0; respondentIndex < RESPONDENTS_PER_VIGNETTE; respondentIndex++) {
@@ -361,6 +351,7 @@ async function main() {
           reportProgress("responding", done, totalCalls, client.provider, response.cached);
         },
       });
+      if (rec.failed) failed++;
       out.push(rec);
     }
   }
@@ -370,7 +361,7 @@ async function main() {
   fs.writeFileSync(path.join(DATA_DIR, "answers.json.tmp"), JSON.stringify(out, null, 2));
   fs.renameSync(path.join(DATA_DIR, "answers.json.tmp"), OUT_PATH);
 
-  console.log(`wrote ${out.length} respondent answer records to ${path.relative(process.cwd(), OUT_PATH)}`);
+  console.log(`wrote ${out.length} respondent answer records (${failed} failed) to ${path.relative(process.cwd(), OUT_PATH)}`);
 }
 
 const isMain =

@@ -36,6 +36,9 @@ export function projectRec(result) {
       completeness: { answered: [], missing: [], couldChangeResult: [] },
       evidenceAge: { verifiedOn: "", stale: false },
       noRuntimeMatch: false,
+      insufficientSignal: false,
+      confidence: null,
+      margin: 0,
     };
   }
   const baseId = result.base && result.base.rule && result.base.rule.adopt
@@ -78,6 +81,9 @@ export function projectRec(result) {
       stale: !!(result.evidenceAge && result.evidenceAge.stale),
     },
     noRuntimeMatch: !!result.noRuntimeMatch,
+    insufficientSignal: !!result.insufficientSignal,
+    confidence: result.confidence || null,
+    margin: result.margin != null ? result.margin : 0,
   };
   if (result.closest) out.closest = [...result.closest];
   return out;
@@ -207,7 +213,7 @@ function breakDemo() {
     console.error("break-demo: expression threshold not found in golden pack");
     process.exit(2);
   }
-  const broken = html.replace(needle, replacement);
+  const broken = html.split(needle).join(replacement);
   const tmp = path.join(os.tmpdir(), `sdd-break-${process.pid}.html`);
   fs.writeFileSync(tmp, broken);
   try {
@@ -218,12 +224,12 @@ function breakDemo() {
         name: "share-40",
         answers: {
           q7_requirements: "structured",
-          q10_architecture: "microservices",
+          q10_architecture: "streaming",
           q11_deploy_cadence: "monthly",
           q14_release_autonomy: "autonomous",
           q6_volatility: "moderate",
           q5_work_breakdown: {
-            roadmap: 60, ops: 40, bugs: 0, regulatory: 0, tech_debt: 0,
+            roadmap: 60, ops: 20, bugs: 20, regulatory: 0, tech_debt: 0,
           },
           q2_team: {
             total: 8, swe: 6, data_engineers: 0, qa_sdet: 0,

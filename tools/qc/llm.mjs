@@ -37,6 +37,13 @@
  *   - QC_RESPOND_MODEL  -> used when role === "respond" (tools/qc/respond.mjs)
  *   - QC_JUDGE_MODEL    -> used when role === "judge"   (tools/qc/judge.mjs)
  *
+ * Per-judge overrides (role === "judge" and `judgeIndex` is 0/1/2):
+ *   - QC_JUDGE_0_MODEL / QC_JUDGE_1_MODEL / QC_JUDGE_2_MODEL
+ *   - QC_JUDGE_0_PROVIDER / QC_JUDGE_1_PROVIDER / QC_JUDGE_2_PROVIDER
+ * Judge-index env vars beat the flat QC_JUDGE_MODEL. If no per-judge
+ * provider is set, judge 2 defaults to Anthropic when ANTHROPIC_API_KEY
+ * is present so the panel is not a single vendor.
+ *
  * Per-role defaults are currently only defined for the "openai" provider (see
  * ROLE_DEFAULT_MODELS below); "anthropic" and "mock" continue to use their
  * single flat DEFAULT_MODELS entry for every role, since no per-role
@@ -562,9 +569,30 @@ async function callOpenAI({ model, system, messages, temperature, maxTokens }) {
  * @param {"persona"|"respond"|"judge"} [opts.role] - pipeline role, if any
  * @returns {string} the resolved model id
  */
-function resolveModel({ resolvedProvider, model, role }) {
+function judgeIndexEnv(judgeIndex, suffix) {
+  if (judgeIndex == null || judgeIndex === "") return undefined;
+  const n = Number(judgeIndex);
+  if (!Number.isInteger(n) || n < 0) return undefined;
+  return process.env[`QC_JUDGE_${n}_${suffix}`];
+}
+
+function resolveJudgeProvider({ provider, judgeIndex }) {
+  const indexed = judgeIndexEnv(judgeIndex, "PROVIDER");
+  if (indexed === "anthropic" || indexed === "openai" || indexed === "mock") return indexed;
+  if (provider) return provider;
+  // Default: last judge is the independent (Anthropic) seat when a key exists.
+  if (Number(judgeIndex) === 2 && process.env.ANTHROPIC_API_KEY) return "anthropic";
+  return detectProvider();
+}
+
+function resolveModel({ resolvedProvider, model, role, judgeIndex }) {
   // 1. Explicit `model` param always wins.
   if (model) return model;
+
+  if (role === "judge") {
+    const indexed = judgeIndexEnv(judgeIndex, "MODEL");
+    if (indexed) return indexed;
+  }
 
   if (role) {
     // 2. Role-specific env var override (e.g. QC_JUDGE_MODEL).
@@ -590,6 +618,8 @@ function resolveModel({ resolvedProvider, model, role }) {
  * @param {"persona"|"respond"|"judge"} [opts.role] - pipeline role used for per-role
  *   model resolution (env var override, then per-role default); omit for callers that
  *   don't care about role-specific models (falls back to the flat DEFAULT_MODELS)
+ * @param {number} [opts.judgeIndex] - 0/1/2 when role is judge; selects
+ *   QC_JUDGE_N_MODEL / QC_JUDGE_N_PROVIDER and defaults judge 2 to Anthropic
  * @param {string} [opts.cacheDir] - defaults to tools/qc/cache/
  * @returns {{
  *   provider: string,
@@ -606,9 +636,11 @@ function resolveModel({ resolvedProvider, model, role }) {
  *   }) => Promise<{ text: string, model: string, provider: string, cached: boolean }>,
  * }}
  */
-export function createClient({ provider, model, role, cacheDir } = {}) {
-  const resolvedProvider = provider || detectProvider();
-  const resolvedModel = resolveModel({ resolvedProvider, model, role });
+export function createClient({ provider, model, role, judgeIndex, cacheDir } = {}) {
+  const resolvedProvider = role === "judge"
+    ? resolveJudgeProvider({ provider, judgeIndex })
+    : (provider || detectProvider());
+  const resolvedModel = resolveModel({ resolvedProvider, model, role, judgeIndex });
   const resolvedCacheDir = cacheDir || DEFAULT_CACHE_DIR;
 
   async function complete(req = {}) {

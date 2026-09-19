@@ -274,6 +274,21 @@ test("W-FW-104 when a framework is never selected", () => {
   assert.ok(diagnostics.some((d) => d.code === "W-FW-104" && d.message.includes("orphan")));
 });
 
+test("E-PACK-002 rejects unknown settings.selection", () => {
+  const pack = clone();
+  pack.settings.selection = "ranked-list";
+  const diagnostics = validatePack(pack);
+  assert.ok(diagnostics.some((d) => d.code === "E-PACK-002" && d.path === "settings.selection"));
+});
+
+test("E-RULE-061 rejects a signal without a finite weight", () => {
+  const pack = clone();
+  pack.settings.selection = "weighted";
+  pack.baseRules[0].signals = [{ when: { derived: "isMonolith" } }];
+  const diagnostics = validatePack(pack);
+  assert.ok(diagnostics.some((d) => d.code === "E-RULE-061" && String(d.path).includes("signals")));
+});
+
 test("coverageReport lists unread fields and unselected frameworks", () => {
   const pack = clone();
   pack.questions[0].fields[0].options.push({ value: "legacy", label: "Legacy" });

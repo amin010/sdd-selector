@@ -49,7 +49,7 @@ export function projectOutcome(result) {
 
 /**
  * The 7 canonical outcome labels used across the whole QC experiment:
- * the 5 reachable bases, then the fallback-to-openspec state, then the
+ * reachable bases, then the fallback-to-openspec state, then the
  * explicit no-runtime-match state. Fixed order matters for histograms/tables.
  */
 export const REACHABLE_OUTCOMES = [
@@ -58,8 +58,11 @@ export const REACHABLE_OUTCOMES = [
   "bmad",
   "superpowers",
   "gsd",
+  "speckitty",
+  "tessl",
   "fallback_openspec",
   "no_runtime_match",
+  "insufficient_signal",
 ];
 
 /**
@@ -70,6 +73,7 @@ export function outcomeLabel(projection) {
   if (!projection) return null;
   if (projection.noRuntimeMatch) return "no_runtime_match";
   if (projection.fallback) return "fallback_openspec";
+  if (projection.insufficientSignal && !projection.baseId) return "insufficient_signal";
   return projection.baseId;
 }
 

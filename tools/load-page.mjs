@@ -11,8 +11,9 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(__dirname, "..");
 /** Frozen finance-tech page — G-PARITY baseline.
- *  Filename kept as index-v040.html; contents refreshed for pack 0.4.1
- *  (empty `runtimes` = unrestricted at Tier 0; base-1 is nonRoadmapShare-only).
+ *  Filename kept as index-v040.html; contents refreshed for pack 0.5.1
+ *  (weighted selection with live `when` gates; Spec Kitty as base-6;
+ *  empty `runtimes` is not a scoring exemption).
  */
 export const GOLDEN_V040 = path.join(ROOT, "tests/golden/index-v040.html");
 /** @deprecated alias kept for a few call sites during P6 cutover */

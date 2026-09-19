@@ -406,6 +406,28 @@ function checkRules(pack, fields, derived, fwData, diagnostics) {
       validateExpr(rule.when, `${path}.when`, exprCtx, diagnostics);
       const computed = new Set();
       collectFieldClosure(rule.when, fields, derivedExprs, computed);
+      if (family === "base" && rule.signals != null) {
+        if (!Array.isArray(rule.signals)) {
+          diagnostics.push(diagnostic("E-RULE-061", `${path}.signals`, "signals must be an array."));
+        } else {
+          rule.signals.forEach((sig, si) => {
+            const sPath = `${path}.signals[${si}]`;
+            if (!object(sig)) {
+              diagnostics.push(diagnostic("E-RULE-061", sPath, "Each signal must be an object."));
+              return;
+            }
+            if (typeof sig.weight !== "number" || !Number.isFinite(sig.weight)) {
+              diagnostics.push(diagnostic("E-RULE-061", `${sPath}.weight`, "Signal weight must be a finite number."));
+            }
+            if (sig.when == null) {
+              diagnostics.push(diagnostic("E-RULE-061", `${sPath}.when`, "Signal needs a when expression."));
+            } else {
+              validateExpr(sig.when, `${sPath}.when`, exprCtx, diagnostics);
+              collectFieldClosure(sig.when, fields, derivedExprs, computed);
+            }
+          });
+        }
+      }
       array(rule.adoptWhen).forEach((branch, bi) => {
         const bPath = `${path}.adoptWhen[${bi}]`;
         if (!object(branch)) {
@@ -603,6 +625,11 @@ export function coverageReport(pack) {
       if (!object(rule)) return;
       collectFieldClosure(rule.when, fields, derivedExprs, fieldsRead);
       walkOptions(rule.when);
+      array(rule.signals).forEach((sig) => {
+        if (!object(sig)) return;
+        collectFieldClosure(sig.when, fields, derivedExprs, fieldsRead);
+        walkOptions(sig.when);
+      });
       array(rule.adoptWhen).forEach((branch) => {
         if (!object(branch)) return;
         collectFieldClosure(branch.when, fields, derivedExprs, fieldsRead);
@@ -628,6 +655,8 @@ export function coverageReport(pack) {
   if (typeof tierRuntime === "string" && fields.has(tierRuntime)) {
     fieldsRead.add(tierRuntime);
   }
+  array(pack.settings && pack.settings.tierZero && pack.settings.tierZero.unsureValues)
+    .forEach((value) => { if (typeof value === "string") optionsMentioned.add(value); });
   noteFramework(pack.settings && pack.settings.fallbackBase);
 
   const unreadFields = [];
@@ -761,6 +790,14 @@ export function validatePack(input) {
     }
     if (Object.hasOwn(pack, "settings") && !object(pack.settings)) {
       diagnostics.push(diagnostic("E-PACK-002", "settings", "Top-level \"settings\" must be an object."));
+    }
+    if (object(pack.settings) && pack.settings.selection != null &&
+        pack.settings.selection !== "first-match" && pack.settings.selection !== "weighted") {
+      diagnostics.push(diagnostic("E-PACK-002", "settings.selection", "settings.selection must be \"first-match\" or \"weighted\"."));
+    }
+    if (object(pack.settings) && object(pack.settings.tierZero) && pack.settings.tierZero.mode != null &&
+        pack.settings.tierZero.mode !== "hard" && pack.settings.tierZero.mode !== "soft") {
+      diagnostics.push(diagnostic("E-PACK-002", "settings.tierZero.mode", "tierZero.mode must be \"hard\" or \"soft\"."));
     }
     if (!object(pack.meta) || !slug(pack.meta.id) || !semver(pack.meta.version)) {
       diagnostics.push(diagnostic("E-META-004", "meta", "meta.id must be a slug and meta.version must be semver."));

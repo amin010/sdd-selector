@@ -7,7 +7,7 @@ Open `index.html` in a browser — no server, no runtime dependencies. Answers s
 ## What it does
 
 1. You answer the Finance Tech diagnostic (team shape, architecture, compliance, quality gates, bottlenecks, and related constraints).
-2. The engine picks a **base** (OpenSpec, Spec Kit, BMAD, Superpowers, or GSD Core) using ordered rules.
+2. The engine ranks **base** candidates (OpenSpec, Spec Kit, BMAD, Spec Kitty, Superpowers, or GSD Core) with weighted signals, and says so when the signal is too weak to call.
 3. It layers **overlays** when specific triggers fire (for example SOX constitution practices, TDD, or a low-ceremony fast path).
 4. It surfaces **cautions** where the recommended stack is weak for this profile — especially enforcement gaps that matter for regulated teams.
 5. You can copy a Markdown report or a link that restores the same answers.
@@ -74,7 +74,7 @@ node tools/validate.mjs --report packs/finance-tech.json
 | `docs/archive/` | Completed v0.4.0 design extensions, implementation plan, source research |
 | `docs/AUTHORING.md` | How to edit packs |
 | `tests/` | Automated tests and golden Markdown snapshots |
-| `tests/golden/index-v040.html` | Frozen v0.4.0 finance-tech baseline for parity |
+| `tests/golden/index-v040.html` | Frozen finance-tech baseline for parity (filename historical; contents track 0.5.1) |
 | `tools/` | Build, validate, parity harness, corpus, lint, page loader |
 | `src/` | Source modules inlined into the page (`expr.mjs`) |
 
@@ -100,4 +100,4 @@ See [docs/AUTHORING.md](docs/AUTHORING.md) for the full loop, cookbook pointers,
 
 ## License / status
 
-Private / draft. Version **0.4.0** — pack-based configuration, generic UI, second-pack format proof, and snapshot regression gates.
+Private / draft. Version **0.5.1** — weighted base selection with eligibility gates, Spec Kitty as a selectable base, and snapshot regression gates.

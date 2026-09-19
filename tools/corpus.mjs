@@ -65,6 +65,13 @@ export function documentedFixtures() {
       q18_token_budget: "unmetered",
       q12_quality_gates: ["mostly_manual"],
     }) },
+    { name: "base-6-speckitty", answers: A({
+      q10_architecture: "hybrid",
+      q9_precision: "zero_tolerance",
+      q8_compliance: "sox_tier1",
+      q14_release_autonomy: "coupled",
+      q5_work_breakdown: { roadmap: 40, ops: 15, bugs: 15, regulatory: 15, tech_debt: 15 },
+    }) },
     { name: "D1-rule1-wins-rule4-runnerup", answers: A({
       q10_architecture: "monolith",
       q5_work_breakdown: { roadmap: 20, ops: 20, bugs: 20, regulatory: 20, tech_debt: 20 },
@@ -111,8 +118,14 @@ export function documentedFixtures() {
       q12_quality_gates: ["unit_coverage", "integration_contract", "e2e"],
       q18_token_budget: "unmetered",
     }) },
-    { name: "V5-high-volatility", answers: A({ q6_volatility: "high" }) },
-    { name: "V5-interrupt", answers: A({ q6_volatility: "interrupt_driven" }) },
+    { name: "V5-high-volatility", answers: A({
+      q6_volatility: "high",
+      q5_work_breakdown: { roadmap: 40, ops: 20, bugs: 20, regulatory: 10, tech_debt: 10 },
+    }) },
+    { name: "V5-interrupt", answers: A({
+      q6_volatility: "interrupt_driven",
+      q5_work_breakdown: { roadmap: 40, ops: 20, bugs: 20, regulatory: 10, tech_debt: 10 },
+    }) },
     { name: "D13-regulatory", answers: A({
       q10_architecture: "microservices",
       q5_work_breakdown: { roadmap: 40, ops: 5, bugs: 5, regulatory: 50, tech_debt: 0 },
@@ -155,8 +168,14 @@ export function documentedFixtures() {
       q8_compliance: "sox_tier1", q21_ci_maturity: "contracts_runtime",
     }) },
     { name: "ov-g-many-small", answers: A({ q19_change_volume: "many_small" }) },
-    { name: "ov-g-high", answers: A({ q6_volatility: "high" }) },
-    { name: "ov-g-interrupt", answers: A({ q6_volatility: "interrupt_driven" }) },
+    { name: "ov-g-high", answers: A({
+      q6_volatility: "high",
+      q5_work_breakdown: { roadmap: 40, ops: 20, bugs: 20, regulatory: 10, tech_debt: 10 },
+    }) },
+    { name: "ov-g-interrupt", answers: A({
+      q6_volatility: "interrupt_driven",
+      q5_work_breakdown: { roadmap: 40, ops: 20, bugs: 20, regulatory: 10, tech_debt: 10 },
+    }) },
     { name: "ov-g-neg", answers: A({
       q6_volatility: "moderate", q19_change_volume: "balanced",
     }) },
@@ -180,6 +199,7 @@ export function documentedFixtures() {
     { name: "C4-pos", answers: A({ q9_precision: "zero_tolerance" }) },
     { name: "C5-pos", answers: A({
       q5_work_breakdown: { roadmap: 20, ops: 20, bugs: 20, regulatory: 20, tech_debt: 20 },
+      q7_requirements: "high_level",
       q9_precision: "zero_tolerance",
     }) },
     { name: "C6-pos", answers: A({ q8_compliance: "sox_tier1", q14_release_autonomy: "coupled" }) },

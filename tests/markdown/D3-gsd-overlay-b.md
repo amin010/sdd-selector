@@ -1,5 +1,7 @@
 # SDD Selector report
 
+Confidence: high · score 9 · margin 9
+
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q19_change_volume, q21_ci_maturity
 
@@ -49,6 +51,15 @@ Source: Appendix A; V3
 _No bottlenecks ranked._
 
 Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+
+## Framework catalog
+- **OpenSpec** (`openspec`, recommended) — base candidate
+- **GitHub Spec Kit** (`speckit`, recommended) — base candidate
+- **BMAD Method** (`bmad`, recommended) — base candidate
+- **GSD Core** (`gsd`, viable) — base candidate
+- **Superpowers** (`superpowers`, viable) — base candidate
+- **Spec Kitty** (`speckitty`, viable) — base candidate
+- **Tessl SDD Tile** (`tessl`, watch) — watch — selected only with a warning
 
 ## Suggested directory layout
 ```

@@ -1,5 +1,7 @@
 # SDD Selector report
 
+Confidence: medium · score 4 · margin 4
+
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
 
@@ -15,7 +17,7 @@ Non-roadmap work favors specs written only for the change at hand.
 
 - Install: `openspec init (+ openspec config profile for expanded)`
 - Repo: `Fission-AI/OpenSpec`
-- Triggering answers: q5_work_breakdown = {"roadmap":20,"ops":20,"bugs":20,"regulatory":20,"tech_debt":20}
+- Triggering answers: q5_work_breakdown = {"roadmap":20,"ops":20,"bugs":20,"regulatory":20,"tech_debt":20}; q10_architecture = microservices; q6_volatility = moderate; q9_precision = zero_tolerance
 - Enforcement:
 Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
 Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
@@ -44,6 +46,15 @@ Source: Tessl tile; Fowler; V4
 _No bottlenecks ranked._
 
 Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+
+## Framework catalog
+- **OpenSpec** (`openspec`, recommended) — base candidate
+- **GitHub Spec Kit** (`speckit`, recommended) — base candidate
+- **BMAD Method** (`bmad`, recommended) — base candidate
+- **GSD Core** (`gsd`, viable) — base candidate
+- **Superpowers** (`superpowers`, viable) — base candidate
+- **Spec Kitty** (`speckitty`, viable) — base candidate
+- **Tessl SDD Tile** (`tessl`, watch) — watch — selected only with a warning
 
 ## Suggested directory layout
 ```

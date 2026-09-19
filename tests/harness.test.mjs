@@ -33,7 +33,7 @@ test("load-page exports evaluate/toMarkdown without document", () => {
   assert.equal(typeof api.toMarkdown, "function");
   assert.ok(api.QUESTIONS.length > 10);
   const r = api.evaluate({}, null, PINNED_NOW);
-  assert.ok(r.base || r.noRuntimeMatch);
+  assert.ok(r.base || r.noRuntimeMatch || r.insufficientSignal);
 });
 
 test("pinned now keeps evidenceAge.stale false on 2026-09-16", () => {

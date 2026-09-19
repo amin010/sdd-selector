@@ -3,14 +3,16 @@
 | Field | Value |
 |---|---|
 | Status | Draft — awaiting review |
-| Version | 0.4.1 |
+| Version | 0.5.1 |
 | Owner | Amin Rashidi |
-| Last updated | 2026-09-17 |
+| Last updated | 2026-09-18 |
 | Source material | *Modern Agentic Spec-Driven Development Frameworks* (`docs/archive/Agentic Spec-Driven Development Frameworks.md`), Appendix: "Team Diagnostic & SDD Model Selection Decision System"; *Finance Tech Team & Project Diagnostic Questionnaire* (the instrument) |
 | Evidence date | 2026-09-16 (see Appendix A for method) |
 
 **Changelog**
 
+- **0.5.1** — QC-driven rule/engine fixes, no new questions. (1) Weighted selection now skips a base rule whose `when` gate fails (D23); signals never elect a framework the rule itself says does not apply. (2) Spec Kitty is a selectable base (`base-6`) for structured requirements plus zero-tolerance precision. (3) Empty `runtimes` remains unrestricted at the Tier 0 candidate filter, but is no longer a scoring exemption (D24); BMAD and Tessl now document `claude_code`.
+- **0.5.0** — Base combination rule is weighted scoring (`settings.selection: weighted`) with soft Tier 0 runtime penalties and a confidence/insufficient-signal path. Tessl is reachable as a watch-penalized base (`base-5`).
 - **0.4.1** — Two QC-driven rule/engine fixes, no new questions. (1) Tier 0 treats an empty framework `runtimes` array as “no runtime restriction” rather than “supports nothing,” so answering `q20_runtimes` no longer drops BMAD (or any other unrestricted framework) from the candidate set; `watch` status is still excluded. (2) Base rule 1 is narrowed to `nonRoadmapShare ≥ 40` only — the architecture-only arm (`q10 ∈ {monolith, hybrid, batch_data}`) was dropped so more-specific later rules can fire. Source appendix order is unchanged (D1): OpenSpec remains first as the brownfield catch, then Spec Kit / BMAD / compact-team. Architecture still drives overlay E, not the base.
 - **0.4.0** — Questionnaire, frameworks, and rules are a validated JSON pack inlined at build time (`docs/archive/DESIGN-EXT-CONFIG.md`). URL marker is a content digest (`v=<digest8>`), not a hand-bumped schema integer. On-screen report trims profile and free-text to Markdown-only (`docs/archive/DESIGN-EXT-UI.md`). Second pack (`general-engineering`) proves the format; authoring guide in `docs/AUTHORING.md`.
 - **0.3.0** — Replaced inferred Q1–Q16 enums with the real Finance Tech diagnostic instrument. Answers are the instrument; the engine reads named derived views where a rule needs an aggregate (§7.6). Q13 and the instrument's open-text Q17 are collected. Design-added questions are Q18–Q21. URL schema `v=3`. New cautions C12 (interrupt-driven) and C13 (vendor-dependent).
@@ -489,11 +491,11 @@ Mapping the source appendix's rules against the **real instrument** (§7.1):
 | Q3 distribution | Overlay C | Unchanged. |
 | Q4a tenure | No | Collected and reported (D19). |
 | Q4b domain familiarity | Overlay D | Unchanged. |
-| Q5 work breakdown | Base rules 1, 2; C1 | Five percents. Rules read `derived.nonRoadmapShare` and `q5.roadmap` (D13). |
+| Q5 work breakdown | Base rules 1, 2, 6; C1 | Five percents. Rules read `derived.nonRoadmapShare` and `q5.roadmap` (D13). |
 | **Q6 volatility** | **Base rule 2; Overlay G; C12** | Source appendix never used it. V5 adds it. `interrupt_driven` counts as high (D15). |
-| Q7 requirements clarity | Base rules 2, 3; Overlay D | Unchanged. |
+| Q7 requirements clarity | Base rules 2, 3, 6; Overlay D | Structured plus zero-tolerance also selects Spec Kitty (base-6). |
 | Q8 compliance | Overlay A; C2; Overlay F | `internal_governance` does not fire A or C2 (D16). |
-| Q9 precision | Overlay B; Overlay F; C5 | `standard` replaces the invented `reconciled` value. |
+| Q9 precision | Base rule 6; Overlay B; Overlay F; C5 | `zero_tolerance` plus structured requirements selects Spec Kitty. |
 | Q10 architecture | Base rule 2; Overlay E | `streaming` is in the form; it is not brownfield and not Spec Kit's microservices path (D22). Architecture no longer selects OpenSpec as a base (0.4.1). |
 | Q11a deploy cadence | Base rule 4 | Instrument's "once or twice per sprint" is `sprint` (was `weekly`). |
 | Q11b cycle time | No | Collected and reported (D19). |
@@ -545,19 +547,21 @@ Since the strongest governance mechanisms in these frameworks are `advisory`, re
 
 ### 10.1 Tier 0 — runtime feasibility filter
 
-Before base selection, any framework that documents a **non-empty** runtime list and does not overlap `q20_runtimes` is removed from the candidate set, and frameworks with `status: 'watch'` are removed as base candidates (F15). An empty `runtimes` array means the framework documents no runtime restriction — it stays in the candidate set (BMAD is the motivating case; this is generic, not a BMAD special case). If `q20` is unanswered, no filtering occurs. If filtering empties the candidate set, the engine reports "no framework documents support for your runtimes" and lists the closest matches rather than falling through to a default.
+Before base selection, any framework that documents a **non-empty** runtime list and does not overlap `q20_runtimes` is removed from the candidate set in hard Tier 0 mode. An empty `runtimes` array still means no runtime restriction at the **candidate filter** — the framework stays in the set (0.4.1). In **weighted scoring**, empty is not a documented overlap: the runtime-mismatch penalty applies when the user named runtimes (D24). Shipped finance-tech uses soft Tier 0 (`mode: soft`): every catalog framework stays a candidate and mismatches are score-penalized. If `q20` is unanswered, no runtime penalty applies. If hard filtering empties the candidate set, the engine reports "no framework documents support for your runtimes" and lists the closest matches rather than falling through to a default.
 
 ### 10.2 Tier 1 — base selection
 
-Rules are evaluated **in order; the first whose predicate is true wins**, restricted to the Tier 0 candidate set. The runner-up is the next matching rule, reported per F13. If none fire, `FALLBACK_BASE` (OpenSpec) is selected and flagged `fallback: true`.
+Finance-tech ships `settings.selection: weighted`. A rule whose `when` gate is false is **ineligible** and is not scored (D23). Eligible rules accumulate signal weights, take runtime/watch penalties, and the highest positive score wins; the next distinct framework is the runner-up (F13). A low top score or thin margin is reported as insufficient signal rather than a silent fallback. First-match-wins remains available for other packs (`settings.selection` omitted or `first-match`).
 
-| # | Base | Predicate |
+| # | Base | Predicate (`when` gate) |
 |---|---|---|
 | 1 | **OpenSpec** | `derived.nonRoadmapShare ≥ 40` |
 | 2 | **GitHub Spec Kit** | `q5.roadmap ≥ 60` **AND** `q10 = microservices` **AND** `q7 = structured` **AND** `NOT derived.volatilityIsHigh` |
 | 3 | **BMAD Method** | `derived.hasRoles.{product_owner, scrum_master, qa_sdet}` all true **AND** `q7 ∈ {high_level, vague}` |
 | 4 | **Superpowers** or **GSD Core** | `derived.teamSize < 5` **AND** `q11_deploy_cadence ∈ {continuous, sprint}` **AND** `q14 = autonomous`; split per D3′ below |
-| — | OpenSpec (fallback) | none of the above |
+| 5 | **Tessl SDD Tile** (watch) | `derived.teamSize < 8` **AND** `q9 = standard`; watch penalty applies |
+| 6 | **Spec Kitty** | `q7 = structured` **AND** `q9 = zero_tolerance` |
+| — | OpenSpec (fallback) / insufficient signal | none of the above, or no score clears the confidence floor |
 
 **Rule 2 uses `NOT derived.volatilityIsHigh`** (divergence V5): Spec Kit's documented weakness is mid-implementation spec change, so a high-volatility or interrupt-driven team should not be routed to it even with otherwise-matching greenfield signals.
 
@@ -579,7 +583,7 @@ Evaluated independently; all that fire are included. Those whose `providedByBase
 |---|---|---|---|
 | **A** Regulatory constitution | Spec Kit | `q8 = sox_tier1` **OR** `q15 = cab` | Spec Kit |
 | **B** Autonomous TDD verification | **Superpowers** (not Tessl — V4) | `q9 = zero_tolerance` **OR** `test_fear ∈ q16[0..1]` | Superpowers |
-| **C** Worktree sandboxing & Decision Moments | Spec Kitty | `q14 ∈ {coupled, heavy}` **OR** `q3 = global_timezones` | — |
+| **C** Worktree sandboxing & Decision Moments | Spec Kitty | `q14 ∈ {coupled, heavy}` **OR** `q3 = global_timezones` | Spec Kitty |
 | **D** Domain reconnaissance | BMAD / Superpowers | `q4_domain_familiarity = low` **OR** `q7 = vague` **OR** `q16[0] = ambiguous_or_shifting` | BMAD, Superpowers |
 | **E** Ephemeral subagent waves | GSD Core | `q10 = monolith` | GSD Core |
 | **F** *(new)* Deterministic CI enforcement | none — native CI | `(q8 = sox_tier1 OR q9 = zero_tolerance)` **AND** `q21 ∈ {none, tests_only}` | — |
@@ -639,6 +643,8 @@ Predicates may read the answers, derived views, and the partial result. Rendered
 | D20 | The instrument's Q17 is free text. | Collect it, cap at 500 characters, copy into the Markdown report, never pass it to `evaluate`. Unanswered Q17 does not affect completeness-for-rules. | The engine stays boolean. The report is an adoption proposal; the mismatch note belongs there. |
 | D21 | Should Q1 domain steer SOX or ledger-specific overlays? | Display only. | A domain split without primary-source evidence would be speculation. |
 | D22 | Where does event-driven streaming sit in base selection? | Not in rule 1's brownfield set and not in rule 2's `microservices` conjunct. Streaming teams fall through unless another rule matches. | Streaming is modern, not a monolith/legacy signal, and Spec Kit's greenfield path is documented around services, not Kafka topologies. |
+| D23 | In weighted selection, what does a failed `when` gate mean? | The rule is ineligible — skip it. Signals never override the gate. | `when` is the documented eligibility predicate. Scoring a rule whose gate is false lets additive signals elect a framework the rule itself says does not apply. Skip matches first-match intent. |
+| D24 | Empty framework `runtimes` vs. the runtime-mismatch penalty. | Candidate filter: empty still means unrestricted (0.4.1). Weighted score: empty is not a documented overlap — apply the penalty when the user named runtimes. Document the actual runtimes (BMAD and Tessl: `claude_code`). | An exemption for empty lists rewards frameworks that omit runtime evidence and penalizes those that document it honestly. |
 
 ## 11. Divergences from the source document
 

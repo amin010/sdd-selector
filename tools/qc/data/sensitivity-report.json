@@ -1,48 +1,54 @@
 {
   "meta": {
-    "generatedAt": "2026-09-17T22:58:31.805Z",
+    "generatedAt": "2026-09-18T00:38:18.549Z",
     "pinnedNow": 1789560000000,
     "corpusSizes": {
-      "documented": 52,
+      "documented": 53,
       "boundary": 171,
       "random": 50000,
       "malformed": 108,
-      "total": 50331
+      "total": 50332
     },
     "oatSampleSize": 2000,
-    "elapsedMs": 14759
+    "elapsedMs": 16964
   },
   "a1": {
     "distribution": {
-      "total": 50331,
+      "total": 50332,
       "errors": 0,
       "counts": {
-        "openspec": 14219,
-        "speckit": 248,
-        "bmad": 2936,
-        "superpowers": 42,
-        "gsd": 215,
-        "fallback_openspec": 29457,
-        "no_runtime_match": 3214
+        "openspec": 13096,
+        "speckit": 294,
+        "bmad": 4158,
+        "superpowers": 69,
+        "gsd": 344,
+        "speckitty": 2485,
+        "tessl": 0,
+        "fallback_openspec": 0,
+        "no_runtime_match": 0,
+        "insufficient_signal": 29886
       },
       "percentages": {
-        "openspec": 28.25,
-        "speckit": 0.49,
-        "bmad": 5.83,
-        "superpowers": 0.08,
-        "gsd": 0.43,
-        "fallback_openspec": 58.53,
-        "no_runtime_match": 6.39
+        "openspec": 26.02,
+        "speckit": 0.58,
+        "bmad": 8.26,
+        "superpowers": 0.14,
+        "gsd": 0.68,
+        "speckitty": 4.94,
+        "tessl": 0,
+        "fallback_openspec": 0,
+        "no_runtime_match": 0,
+        "insufficient_signal": 59.38
       }
     },
     "bmadHole": {
-      "corpusSize": 50331,
-      "q20AnsweredCount": 27969,
-      "base3WhenMatchedCount": 3197,
-      "holeCount": 1066,
-      "holeShareOfCorpusPct": 2.118,
-      "holeShareOfQ20AnsweredPct": 3.811,
-      "holeShareOfBase3MatchedPct": 33.344
+      "corpusSize": 50332,
+      "q20AnsweredCount": 28084,
+      "base3WhenMatchedCount": 3174,
+      "holeCount": 334,
+      "holeShareOfCorpusPct": 0.664,
+      "holeShareOfQ20AnsweredPct": 1.189,
+      "holeShareOfBase3MatchedPct": 10.523
     }
   },
   "a2": {
@@ -53,7 +59,7 @@
         "questionId": "q1_domain",
         "questionReportOnly": true,
         "kind": "single",
-        "totalPairs": 10796,
+        "totalPairs": 10776,
         "baseInfluenceScore": 0,
         "overlayInfluenceScore": 0,
         "cautionInfluenceScore": 0,
@@ -64,10 +70,10 @@
         "questionId": "q2_team",
         "questionReportOnly": false,
         "kind": "record",
-        "totalPairs": 12781,
-        "baseInfluenceScore": 4.5536,
-        "overlayInfluenceScore": 0.7433,
-        "cautionInfluenceScore": 5.516,
+        "totalPairs": 12769,
+        "baseInfluenceScore": 6.0224,
+        "overlayInfluenceScore": 3.8139,
+        "cautionInfluenceScore": 6.5784,
         "evalErrors": 0
       },
       {
@@ -75,10 +81,10 @@
         "questionId": "q3_distribution",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4821,
+        "totalPairs": 4800,
         "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 31.9436,
-        "cautionInfluenceScore": 6.3887,
+        "overlayInfluenceScore": 13.5208,
+        "cautionInfluenceScore": 3.0417,
         "evalErrors": 0
       },
       {
@@ -97,9 +103,9 @@
         "questionId": "q4",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4855,
+        "totalPairs": 4781,
         "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 31.8023,
+        "overlayInfluenceScore": 13.4491,
         "cautionInfluenceScore": 0,
         "evalErrors": 0
       },
@@ -108,10 +114,10 @@
         "questionId": "q5_work_breakdown",
         "questionReportOnly": false,
         "kind": "record",
-        "totalPairs": 5556,
-        "baseInfluenceScore": 14.3988,
-        "overlayInfluenceScore": 0,
-        "cautionInfluenceScore": 1.6919,
+        "totalPairs": 5664,
+        "baseInfluenceScore": 13.1003,
+        "overlayInfluenceScore": 12.0939,
+        "cautionInfluenceScore": 7.3093,
         "evalErrors": 0
       },
       {
@@ -119,10 +125,10 @@
         "questionId": "q6_volatility",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6804,
-        "baseInfluenceScore": 0.2058,
-        "overlayInfluenceScore": 43.5332,
-        "cautionInfluenceScore": 2.3516,
+        "totalPairs": 6830,
+        "baseInfluenceScore": 0.8492,
+        "overlayInfluenceScore": 17.6867,
+        "cautionInfluenceScore": 3.4846,
         "evalErrors": 0
       },
       {
@@ -130,10 +136,10 @@
         "questionId": "q7_requirements",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4793,
-        "baseInfluenceScore": 8.9297,
-        "overlayInfluenceScore": 33.1942,
-        "cautionInfluenceScore": 8.7628,
+        "totalPairs": 4800,
+        "baseInfluenceScore": 18.4375,
+        "overlayInfluenceScore": 22.2083,
+        "cautionInfluenceScore": 18.2917,
         "evalErrors": 0
       },
       {
@@ -141,10 +147,10 @@
         "questionId": "q8_compliance",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6787,
-        "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 31.3246,
-        "cautionInfluenceScore": 36.5257,
+        "totalPairs": 6795,
+        "baseInfluenceScore": 0.3238,
+        "overlayInfluenceScore": 13.2303,
+        "cautionInfluenceScore": 16.1737,
         "evalErrors": 0
       },
       {
@@ -152,10 +158,10 @@
         "questionId": "q9_precision",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4788,
-        "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 41.2907,
-        "cautionInfluenceScore": 45.614,
+        "totalPairs": 4828,
+        "baseInfluenceScore": 10.9155,
+        "overlayInfluenceScore": 23.488,
+        "cautionInfluenceScore": 24.4822,
         "evalErrors": 0
       },
       {
@@ -163,10 +169,10 @@
         "questionId": "q10_architecture",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 8838,
-        "baseInfluenceScore": 0.7128,
-        "overlayInfluenceScore": 28.0267,
-        "cautionInfluenceScore": 0.5205,
+        "totalPairs": 8844,
+        "baseInfluenceScore": 1.5943,
+        "overlayInfluenceScore": 13.4781,
+        "cautionInfluenceScore": 1.4473,
         "evalErrors": 0
       },
       {
@@ -174,10 +180,10 @@
         "questionId": "q11",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6801,
-        "baseInfluenceScore": 0.4117,
-        "overlayInfluenceScore": 0.147,
-        "cautionInfluenceScore": 0.4117,
+        "totalPairs": 6822,
+        "baseInfluenceScore": 1.0261,
+        "overlayInfluenceScore": 0.4691,
+        "cautionInfluenceScore": 1.0261,
         "evalErrors": 0
       },
       {
@@ -185,7 +191,7 @@
         "questionId": "q11",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6783,
+        "totalPairs": 6796,
         "baseInfluenceScore": 0,
         "overlayInfluenceScore": 0,
         "cautionInfluenceScore": 0,
@@ -197,9 +203,9 @@
         "questionReportOnly": false,
         "kind": "multi",
         "totalPairs": 12000,
-        "baseInfluenceScore": 0.0083,
-        "overlayInfluenceScore": 0.0583,
-        "cautionInfluenceScore": 0.0583,
+        "baseInfluenceScore": 0.0917,
+        "overlayInfluenceScore": 0,
+        "cautionInfluenceScore": 0.0917,
         "evalErrors": 0
       },
       {
@@ -207,7 +213,7 @@
         "questionId": "q13_branching",
         "questionReportOnly": true,
         "kind": "single",
-        "totalPairs": 4847,
+        "totalPairs": 4806,
         "baseInfluenceScore": 0,
         "overlayInfluenceScore": 0,
         "cautionInfluenceScore": 0,
@@ -218,10 +224,10 @@
         "questionId": "q14_release_autonomy",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6814,
-        "baseInfluenceScore": 0.7191,
-        "overlayInfluenceScore": 44.0857,
-        "cautionInfluenceScore": 41.6495,
+        "totalPairs": 6815,
+        "baseInfluenceScore": 1.2472,
+        "overlayInfluenceScore": 18.3859,
+        "cautionInfluenceScore": 41.7021,
         "evalErrors": 0
       },
       {
@@ -229,9 +235,9 @@
         "questionId": "q15_governance",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4806,
+        "totalPairs": 4802,
         "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 38.6808,
+        "overlayInfluenceScore": 17.4927,
         "cautionInfluenceScore": 0,
         "evalErrors": 0
       },
@@ -240,10 +246,10 @@
         "questionId": "q16_bottlenecks",
         "questionReportOnly": false,
         "kind": "ranked",
-        "totalPairs": 5518,
+        "totalPairs": 5508,
         "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 42.4792,
-        "cautionInfluenceScore": 13.6644,
+        "overlayInfluenceScore": 17.0842,
+        "cautionInfluenceScore": 6.3544,
         "evalErrors": 0
       },
       {
@@ -262,10 +268,10 @@
         "questionId": "q18_token_budget",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6773,
-        "baseInfluenceScore": 0.0886,
-        "overlayInfluenceScore": 0.0591,
-        "cautionInfluenceScore": 16.3295,
+        "totalPairs": 6818,
+        "baseInfluenceScore": 0.088,
+        "overlayInfluenceScore": 0.0293,
+        "cautionInfluenceScore": 10.0616,
         "evalErrors": 0
       },
       {
@@ -273,10 +279,10 @@
         "questionId": "q19_change_volume",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4821,
+        "totalPairs": 4815,
         "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 32.8148,
-        "cautionInfluenceScore": 2.8625,
+        "overlayInfluenceScore": 14.3302,
+        "cautionInfluenceScore": 4.1952,
         "evalErrors": 0
       },
       {
@@ -284,10 +290,10 @@
         "questionId": "q20_runtimes",
         "questionReportOnly": false,
         "kind": "multi",
-        "totalPairs": 16000,
-        "baseInfluenceScore": 22.85,
-        "overlayInfluenceScore": 13.8563,
-        "cautionInfluenceScore": 9.5563,
+        "totalPairs": 18000,
+        "baseInfluenceScore": 0.3778,
+        "overlayInfluenceScore": 0.0944,
+        "cautionInfluenceScore": 7.65,
         "evalErrors": 0
       },
       {
@@ -295,9 +301,9 @@
         "questionId": "q21_ci_maturity",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6814,
+        "totalPairs": 6817,
         "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 16.5542,
+        "overlayInfluenceScore": 10.2098,
         "cautionInfluenceScore": 0,
         "evalErrors": 0
       }
@@ -313,9 +319,7 @@
       "q21_ci_maturity",
       "q3_distribution",
       "q4_domain_familiarity",
-      "q4_tenure",
-      "q8_compliance",
-      "q9_precision"
+      "q4_tenure"
     ],
     "sanityCheck": {
       "expectedZero": [
@@ -335,117 +339,117 @@
       {
         "fieldId": "q5_work_breakdown",
         "questionId": "q5_work_breakdown",
-        "miBits": 1.2478
+        "miBits": 1.3034
       },
       {
         "fieldId": "q2_team",
         "questionId": "q2_team",
-        "miBits": 1.0993
+        "miBits": 1.1275
       },
       {
         "fieldId": "q20_runtimes",
         "questionId": "q20_runtimes",
-        "miBits": 0.536
-      },
-      {
-        "fieldId": "q16_bottlenecks",
-        "questionId": "q16_bottlenecks",
-        "miBits": 0.236
-      },
-      {
-        "fieldId": "q12_quality_gates",
-        "questionId": "q12_quality_gates",
-        "miBits": 0.1531
+        "miBits": 0.3714
       },
       {
         "fieldId": "q7_requirements",
         "questionId": "q7_requirements",
-        "miBits": 0.1368
+        "miBits": 0.2663
       },
       {
-        "fieldId": "q17_process_mismatch",
-        "questionId": "q17_process_mismatch",
-        "miBits": 0.1097
-      },
-      {
-        "fieldId": "q8_compliance",
-        "questionId": "q8_compliance",
-        "miBits": 0.066
-      },
-      {
-        "fieldId": "q4_tenure",
-        "questionId": "q4",
-        "miBits": 0.0639
-      },
-      {
-        "fieldId": "q14_release_autonomy",
-        "questionId": "q14_release_autonomy",
-        "miBits": 0.0638
-      },
-      {
-        "fieldId": "q15_governance",
-        "questionId": "q15_governance",
-        "miBits": 0.059
-      },
-      {
-        "fieldId": "q4_domain_familiarity",
-        "questionId": "q4",
-        "miBits": 0.0589
-      },
-      {
-        "fieldId": "q18_token_budget",
-        "questionId": "q18_token_budget",
-        "miBits": 0.0587
-      },
-      {
-        "fieldId": "q6_volatility",
-        "questionId": "q6_volatility",
-        "miBits": 0.058
-      },
-      {
-        "fieldId": "q10_architecture",
-        "questionId": "q10_architecture",
-        "miBits": 0.058
-      },
-      {
-        "fieldId": "q11_deploy_cadence",
-        "questionId": "q11",
-        "miBits": 0.0567
-      },
-      {
-        "fieldId": "q1_domain",
-        "questionId": "q1_domain",
-        "miBits": 0.0542
-      },
-      {
-        "fieldId": "q3_distribution",
-        "questionId": "q3_distribution",
-        "miBits": 0.0536
-      },
-      {
-        "fieldId": "q21_ci_maturity",
-        "questionId": "q21_ci_maturity",
-        "miBits": 0.0534
-      },
-      {
-        "fieldId": "q11_cycle_time",
-        "questionId": "q11",
-        "miBits": 0.0532
-      },
-      {
-        "fieldId": "q19_change_volume",
-        "questionId": "q19_change_volume",
-        "miBits": 0.0529
-      },
-      {
-        "fieldId": "q13_branching",
-        "questionId": "q13_branching",
-        "miBits": 0.0509
+        "fieldId": "q16_bottlenecks",
+        "questionId": "q16_bottlenecks",
+        "miBits": 0.2439
       },
       {
         "fieldId": "q9_precision",
         "questionId": "q9_precision",
-        "miBits": 0.0485
+        "miBits": 0.1898
+      },
+      {
+        "fieldId": "q12_quality_gates",
+        "questionId": "q12_quality_gates",
+        "miBits": 0.1704
+      },
+      {
+        "fieldId": "q17_process_mismatch",
+        "questionId": "q17_process_mismatch",
+        "miBits": 0.1496
+      },
+      {
+        "fieldId": "q4_domain_familiarity",
+        "questionId": "q4",
+        "miBits": 0.0806
+      },
+      {
+        "fieldId": "q14_release_autonomy",
+        "questionId": "q14_release_autonomy",
+        "miBits": 0.0712
+      },
+      {
+        "fieldId": "q11_deploy_cadence",
+        "questionId": "q11",
+        "miBits": 0.0708
+      },
+      {
+        "fieldId": "q1_domain",
+        "questionId": "q1_domain",
+        "miBits": 0.0643
+      },
+      {
+        "fieldId": "q4_tenure",
+        "questionId": "q4",
+        "miBits": 0.0623
+      },
+      {
+        "fieldId": "q10_architecture",
+        "questionId": "q10_architecture",
+        "miBits": 0.0588
+      },
+      {
+        "fieldId": "q15_governance",
+        "questionId": "q15_governance",
+        "miBits": 0.0578
+      },
+      {
+        "fieldId": "q11_cycle_time",
+        "questionId": "q11",
+        "miBits": 0.0576
+      },
+      {
+        "fieldId": "q18_token_budget",
+        "questionId": "q18_token_budget",
+        "miBits": 0.056
+      },
+      {
+        "fieldId": "q8_compliance",
+        "questionId": "q8_compliance",
+        "miBits": 0.0556
+      },
+      {
+        "fieldId": "q3_distribution",
+        "questionId": "q3_distribution",
+        "miBits": 0.0555
+      },
+      {
+        "fieldId": "q19_change_volume",
+        "questionId": "q19_change_volume",
+        "miBits": 0.0542
+      },
+      {
+        "fieldId": "q13_branching",
+        "questionId": "q13_branching",
+        "miBits": 0.0506
+      },
+      {
+        "fieldId": "q21_ci_maturity",
+        "questionId": "q21_ci_maturity",
+        "miBits": 0.0479
+      },
+      {
+        "fieldId": "q6_volatility",
+        "questionId": "q6_volatility",
+        "miBits": 0.0435
       }
     ],
     "pairwiseRedundancy": [
@@ -453,103 +457,211 @@
         "ruleId": "base-4",
         "fieldA": "q2_team",
         "fieldB": "q12_quality_gates",
-        "miBits": 3.1096
+        "miBits": 2.9237
       },
       {
-        "ruleId": "base-2",
+        "ruleId": "base-1",
         "fieldA": "q5_work_breakdown",
         "fieldB": "q10_architecture",
-        "miBits": 1.5587
+        "miBits": 1.5796
       },
       {
-        "ruleId": "base-4",
-        "fieldA": "q2_team",
-        "fieldB": "q18_token_budget",
-        "miBits": 1.4946
+        "ruleId": "base-1",
+        "fieldA": "q5_work_breakdown",
+        "fieldB": "q8_compliance",
+        "miBits": 1.4749
       },
       {
-        "ruleId": "base-4",
-        "fieldA": "q2_team",
+        "ruleId": "base-6",
+        "fieldA": "q5_work_breakdown",
         "fieldB": "q14_release_autonomy",
-        "miBits": 1.4804
+        "miBits": 1.4663
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q5_work_breakdown",
+        "fieldB": "q6_volatility",
+        "miBits": 1.4324
       },
       {
         "ruleId": "base-4",
         "fieldA": "q2_team",
         "fieldB": "q11_deploy_cadence",
-        "miBits": 1.4608
+        "miBits": 1.4193
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q2_team",
+        "fieldB": "q14_release_autonomy",
+        "miBits": 1.4067
+      },
+      {
+        "ruleId": "base-3",
+        "fieldA": "q2_team",
+        "fieldB": "q8_compliance",
+        "miBits": 1.4024
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q2_team",
+        "fieldB": "q18_token_budget",
+        "miBits": 1.4019
       },
       {
         "ruleId": "base-2",
         "fieldA": "q5_work_breakdown",
-        "fieldB": "q6_volatility",
-        "miBits": 1.4472
+        "fieldB": "q7_requirements",
+        "miBits": 1.2804
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q5_work_breakdown",
+        "fieldB": "q9_precision",
+        "miBits": 1.2593
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q2_team",
+        "fieldB": "q9_precision",
+        "miBits": 1.2291
       },
       {
         "ruleId": "base-3",
         "fieldA": "q2_team",
         "fieldB": "q7_requirements",
-        "miBits": 1.2839
+        "miBits": 1.22
       },
       {
-        "ruleId": "base-2",
-        "fieldA": "q5_work_breakdown",
-        "fieldB": "q7_requirements",
-        "miBits": 1.2579
+        "ruleId": "base-4",
+        "fieldA": "q14_release_autonomy",
+        "fieldB": "q12_quality_gates",
+        "miBits": 0.2628
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q11_deploy_cadence",
+        "fieldB": "q12_quality_gates",
+        "miBits": 0.2445
       },
       {
         "ruleId": "base-4",
         "fieldA": "q12_quality_gates",
         "fieldB": "q18_token_budget",
-        "miBits": 0.2659
+        "miBits": 0.232
       },
       {
         "ruleId": "base-4",
-        "fieldA": "q14_release_autonomy",
-        "fieldB": "q12_quality_gates",
-        "miBits": 0.2519
+        "fieldA": "q12_quality_gates",
+        "fieldB": "q9_precision",
+        "miBits": 0.2292
       },
       {
-        "ruleId": "base-4",
-        "fieldA": "q11_deploy_cadence",
-        "fieldB": "q12_quality_gates",
-        "miBits": 0.2483
+        "ruleId": "base-6",
+        "fieldA": "q7_requirements",
+        "fieldB": "q14_release_autonomy",
+        "miBits": 0.1252
       },
       {
-        "ruleId": "base-4",
-        "fieldA": "q14_release_autonomy",
-        "fieldB": "q18_token_budget",
-        "miBits": 0.1267
+        "ruleId": "base-6",
+        "fieldA": "q8_compliance",
+        "fieldB": "q14_release_autonomy",
+        "miBits": 0.1249
       },
       {
         "ruleId": "base-2",
-        "fieldA": "q10_architecture",
-        "fieldB": "q6_volatility",
-        "miBits": 0.1242
+        "fieldA": "q7_requirements",
+        "fieldB": "q8_compliance",
+        "miBits": 0.1181
       },
       {
         "ruleId": "base-4",
-        "fieldA": "q11_deploy_cadence",
+        "fieldA": "q14_release_autonomy",
         "fieldB": "q18_token_budget",
-        "miBits": 0.1121
-      },
-      {
-        "ruleId": "base-4",
-        "fieldA": "q11_deploy_cadence",
-        "fieldB": "q14_release_autonomy",
-        "miBits": 0.1079
+        "miBits": 0.118
       },
       {
         "ruleId": "base-2",
         "fieldA": "q7_requirements",
         "fieldB": "q6_volatility",
-        "miBits": 0.104
+        "miBits": 0.1085
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q10_architecture",
+        "fieldB": "q8_compliance",
+        "miBits": 0.1084
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q18_token_budget",
+        "fieldB": "q9_precision",
+        "miBits": 0.1078
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q6_volatility",
+        "fieldB": "q8_compliance",
+        "miBits": 0.1077
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q10_architecture",
+        "fieldB": "q6_volatility",
+        "miBits": 0.1043
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q10_architecture",
+        "fieldB": "q9_precision",
+        "miBits": 0.1024
       },
       {
         "ruleId": "base-2",
         "fieldA": "q10_architecture",
         "fieldB": "q7_requirements",
-        "miBits": 0.0976
+        "miBits": 0.1021
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q7_requirements",
+        "fieldB": "q9_precision",
+        "miBits": 0.1017
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q11_deploy_cadence",
+        "fieldB": "q14_release_autonomy",
+        "miBits": 0.0974
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q11_deploy_cadence",
+        "fieldB": "q18_token_budget",
+        "miBits": 0.0967
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q8_compliance",
+        "fieldB": "q9_precision",
+        "miBits": 0.096
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q11_deploy_cadence",
+        "fieldB": "q9_precision",
+        "miBits": 0.0955
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q6_volatility",
+        "fieldB": "q9_precision",
+        "miBits": 0.0924
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q14_release_autonomy",
+        "fieldB": "q9_precision",
+        "miBits": 0.0917
       }
     ]
   },
@@ -558,26 +670,26 @@
     "nonRoadmapShareGte40": {
       "cliff": 40,
       "band": "±5 points",
-      "definedCount": 25628,
-      "nearCliffCount": 2788,
-      "nearCliffPctOfDefined": 10.879,
-      "nearCliffPctOfCorpus": 5.576
+      "definedCount": 25546,
+      "nearCliffCount": 2817,
+      "nearCliffPctOfDefined": 11.027,
+      "nearCliffPctOfCorpus": 5.634
     },
     "roadmapShareGte60": {
       "cliff": 60,
       "band": "±5 points",
-      "definedCount": 30094,
-      "nearCliffCount": 3284,
-      "nearCliffPctOfDefined": 10.912,
-      "nearCliffPctOfCorpus": 6.568
+      "definedCount": 30020,
+      "nearCliffCount": 3311,
+      "nearCliffPctOfDefined": 11.029,
+      "nearCliffPctOfCorpus": 6.622
     },
     "teamSizeLt5": {
       "cliff": 5,
       "band": "±1 person",
-      "definedCount": 27083,
-      "nearCliffCount": 4131,
-      "nearCliffPctOfDefined": 15.253,
-      "nearCliffPctOfCorpus": 8.262
+      "definedCount": 27006,
+      "nearCliffCount": 4004,
+      "nearCliffPctOfDefined": 14.826,
+      "nearCliffPctOfCorpus": 8.008
     }
   }
 }

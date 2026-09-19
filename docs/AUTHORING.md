@@ -9,11 +9,11 @@ A pack is a single JSON file under `packs/` with `schema: 1`. Top-level keys:
 | Key | Role |
 |---|---|
 | `meta` | `id` (slug), `version` (semver), title, description, `updated` |
-| `settings` | Fallback base, stale days, Tier 0 runtime filter, rating/status vocabularies |
-| `frameworks` | Candidate bases and overlay sources (evidence, runtimes, enforcement). An empty `runtimes` array means no runtime restriction at Tier 0, not “supports nothing.” |
+| `settings` | Fallback base, stale days, Tier 0 runtime filter (`mode: hard|soft`), `selection: first-match|weighted`, rating/status vocabularies |
+| `frameworks` | Candidate bases and overlay sources (evidence, runtimes, enforcement). An empty `runtimes` array still means no runtime restriction at the Tier 0 candidate filter, but in weighted scoring it is **not** a documented overlap — the runtime-mismatch penalty applies when the user named runtimes. Document the actual runtimes rather than leaving the list empty. |
 | `sections` / `questions` | Questionnaire: questions group **fields** of six kinds |
 | `derived` | Named scalar views (`key` + expression) |
-| `baseRules` / `overlays` / `cautions` | Ordered rules with expression `when` predicates |
+| `baseRules` / `overlays` / `cautions` | Ordered rules with expression `when` predicates. Base rules may add `signals: [{ when, weight, label }]` used when `settings.selection` is `weighted` |
 | `report` | Profile fields, free-text fields, unaddressed-bottleneck mode |
 | `fixtures` | Answer sets with `expect` for `?selftest` |
 
@@ -113,7 +113,7 @@ Fixtures and G-PARITY will show what else moved. That is intentional: you learn 
 4. Add at least one fixture under `fixtures` that expects the new base.
 5. `npm run build` and `?selftest`.
 
-Base rules are **first-match wins** in array order. Where you insert the rule is a product decision (same as DESIGN.md D1), not an engine special case.
+Base rules are **first-match wins** when `settings.selection` is omitted or `first-match`. Finance-tech ships `weighted`: a rule whose `when` gate fails is skipped (D23), every matching signal on an eligible rule adds its weight, candidates are ranked, and a low top score or near-zero margin is reported as insufficient signal instead of a silent OpenSpec fallback.
 
 ## See also
 

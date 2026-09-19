@@ -2,10 +2,10 @@
   "schema": 1,
   "meta": {
     "id": "finance-tech",
-    "version": "0.4.1",
+    "version": "0.5.1",
     "title": "Finance Tech SDD Selector",
     "description": "Spec-driven development framework selector for finance-tech teams.",
-    "updated": "2026-09-17"
+    "updated": "2026-09-18"
   },
   "settings": {
     "fallbackBase": "openspec",
@@ -16,7 +16,13 @@
       "excludeStatusesFromBase": [
         "watch"
       ],
-      "onEmptyCandidates": "no_match"
+      "onEmptyCandidates": "no_match",
+      "mode": "soft",
+      "unsureValues": [
+        "unsure"
+      ],
+      "runtimeMismatchPenalty": 3,
+      "watchPenalty": 6
     },
     "ratings": [
       {
@@ -66,7 +72,7 @@
       {
         "id": "watch",
         "label": "Watch",
-        "selectableAsBase": false,
+        "selectableAsBase": true,
         "badge": "watch"
       }
     ],
@@ -91,7 +97,12 @@
         "label": "Human gate",
         "description": "Requires human judgment to advance."
       }
-    ]
+    ],
+    "selection": "weighted",
+    "confidence": {
+      "minScore": 1,
+      "minMargin": 1
+    }
   },
   "frameworks": [
     {
@@ -215,7 +226,9 @@
         "language": "Python",
         "license": "NOASSERTION"
       },
-      "runtimes": [],
+      "runtimes": [
+        "claude_code"
+      ],
       "ratings": {
         "ceremony": 3,
         "tokenCost": 4,
@@ -427,7 +440,9 @@
         "language": "Shell",
         "license": "MIT"
       },
-      "runtimes": [],
+      "runtimes": [
+        "claude_code"
+      ],
       "ratings": {
         "ceremony": 3,
         "tokenCost": 3,
@@ -455,7 +470,8 @@
           "class": "human_gate",
           "note": "Human approves specs before code."
         }
-      ]
+      ],
+      "catalogRole": "watch"
     }
   ],
   "sections": [
@@ -466,15 +482,20 @@
     {
       "id": "constraints",
       "title": "Constraints"
+    },
+    {
+      "id": "profile",
+      "title": "Team profile (optional — not used for the recommendation)",
+      "collapsed": true
     }
   ],
   "questions": [
     {
       "id": "q1_domain",
       "number": "Q1",
-      "section": "instrument",
+      "section": "profile",
       "legend": "What is your team's core functional domain?",
-      "help": "Shown in the report; does not change the recommendation.",
+      "help": "Optional team profile. Shown in the Markdown report; does not change the recommendation.",
       "reportOnly": true,
       "fields": [
         {
@@ -617,7 +638,7 @@
       "number": "Q3",
       "section": "instrument",
       "legend": "Geographic and time-zone distribution",
-      "help": "Global distribution with little overlap can trigger worktree / Decision Moment practices.",
+      "help": "Shapes overlays and cautions; does not pick the base framework by itself.",
       "fields": [
         {
           "kind": "single",
@@ -645,7 +666,7 @@
       "number": "Q4",
       "section": "instrument",
       "legend": "Team tenure and domain experience",
-      "help": "Tenure is report-only. Low finance-domain familiarity can trigger domain reconnaissance.",
+      "help": "Tenure is optional profile. Low finance-domain familiarity can trigger domain reconnaissance (overlay/caution only).",
       "fields": [
         {
           "kind": "single",
@@ -816,7 +837,7 @@
       "number": "Q8",
       "section": "instrument",
       "legend": "What level of financial regulatory oversight applies?",
-      "help": "SOX Tier 1 (not internal governance) triggers a constitution overlay and enforcement cautions.",
+      "help": "SOX Tier 1 boosts frameworks with enforced gates (Spec Kit, BMAD, Superpowers) and penalizes all-advisory stacks.",
       "fields": [
         {
           "kind": "single",
@@ -848,7 +869,7 @@
       "number": "Q9",
       "section": "instrument",
       "legend": "Data accuracy and precision requirements",
-      "help": "Zero-tolerance fires autonomous TDD and, with weak CI, a deterministic CI overlay.",
+      "help": "Zero-tolerance boosts Superpowers and Spec Kit (enforced TDD / review gates) and penalizes advisory-only stacks.",
       "fields": [
         {
           "kind": "single",
@@ -1008,9 +1029,9 @@
     {
       "id": "q13_branching",
       "number": "Q13",
-      "section": "instrument",
+      "section": "profile",
       "legend": "Source control and branching strategy",
-      "help": "Shown in the report; does not change the recommendation.",
+      "help": "Optional team profile. Shown in the Markdown report; does not change the recommendation.",
       "reportOnly": true,
       "fields": [
         {
@@ -1071,7 +1092,7 @@
       "number": "Q15",
       "section": "instrument",
       "legend": "Approval gates and governance",
-      "help": "CAB on every release triggers a regulatory constitution overlay.",
+      "help": "Shapes overlays and cautions; does not pick the base framework by itself. CAB still adds a constitution overlay.",
       "fields": [
         {
           "kind": "single",
@@ -1099,7 +1120,7 @@
       "number": "Q16",
       "section": "instrument",
       "legend": "Rank your team's top 3 productivity bottlenecks",
-      "help": "Rank 1 ambiguous-or-shifting fires reconnaissance. Test-fear in the top 2 fires TDD verification.",
+      "help": "Shapes overlays and cautions; does not pick the base framework by itself. Ranked bottlenecks fill the resolution matrix.",
       "fields": [
         {
           "kind": "ranked",
@@ -1148,9 +1169,9 @@
     {
       "id": "q17_process_mismatch",
       "number": "Q17",
-      "section": "instrument",
+      "section": "profile",
       "legend": "What currently feels mismatched about your development process or delivery cadence?",
-      "help": "Copied into the Markdown report. The engine never reads this text.",
+      "help": "Optional team profile. Copied into the Markdown report. The engine never reads this text.",
       "reportOnly": true,
       "fields": [
         {
@@ -1198,7 +1219,7 @@
       "number": "Q19",
       "section": "constraints",
       "legend": "Change volume profile",
-      "help": "Many small changes add a documented fast path beside any heavyweight pipeline.",
+      "help": "Shapes overlays and cautions; does not pick the base framework by itself. Many-small still adds a documented fast path.",
       "fields": [
         {
           "kind": "single",
@@ -1226,7 +1247,7 @@
       "number": "Q20",
       "section": "constraints",
       "legend": "Agent runtimes in use",
-      "help": "Frameworks that do not document at least one selected runtime are removed before base selection.",
+      "help": "Soft preference: frameworks that do not list a selected runtime are score-penalized, not removed. Choose Unsure / any if you do not know.",
       "fields": [
         {
           "kind": "multi",
@@ -1264,6 +1285,10 @@
             {
               "value": "other",
               "label": "Other"
+            },
+            {
+              "value": "unsure",
+              "label": "Unsure / any runtime"
             }
           ]
         }
@@ -1274,7 +1299,7 @@
       "number": "Q21",
       "section": "constraints",
       "legend": "Existing CI enforcement maturity",
-      "help": "SOX or zero-tolerance with tests-only or no CI adds a deterministic CI overlay.",
+      "help": "Shapes overlays and cautions; does not pick the base framework by itself. Weak CI with SOX or zero-tolerance still adds overlay F.",
       "fields": [
         {
           "kind": "single",
@@ -1428,7 +1453,11 @@
         ]
       },
       "requires": [
-        "q5_work_breakdown"
+        "q5_work_breakdown",
+        "q10_architecture",
+        "q6_volatility",
+        "q8_compliance",
+        "q9_precision"
       ],
       "adopt": {
         "framework": "openspec",
@@ -1445,7 +1474,80 @@
           "/opsx:archive"
         ],
         "rationale": "Non-roadmap work favors specs written only for the change at hand."
-      }
+      },
+      "signals": [
+        {
+          "label": "High non-roadmap load",
+          "weight": 4,
+          "when": {
+            "gte": [
+              {
+                "derived": "nonRoadmapShare"
+              },
+              40
+            ]
+          }
+        },
+        {
+          "label": "Brownfield architecture",
+          "weight": 2,
+          "when": {
+            "in": [
+              {
+                "answer": "q10_architecture"
+              },
+              [
+                "monolith",
+                "hybrid",
+                "batch_data"
+              ]
+            ]
+          }
+        },
+        {
+          "label": "High unplanned share",
+          "weight": 2,
+          "when": {
+            "gte": [
+              {
+                "derived": "unplannedShare"
+              },
+              30
+            ]
+          }
+        },
+        {
+          "label": "High volatility",
+          "weight": 2,
+          "when": {
+            "derived": "volatilityIsHigh"
+          }
+        },
+        {
+          "label": "SOX / zero-tolerance penalty",
+          "weight": -2,
+          "when": {
+            "any": [
+              {
+                "eq": [
+                  {
+                    "answer": "q8_compliance"
+                  },
+                  "sox_tier1"
+                ]
+              },
+              {
+                "eq": [
+                  {
+                    "answer": "q9_precision"
+                  },
+                  "zero_tolerance"
+                ]
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "base-2",
@@ -1487,7 +1589,9 @@
         "q5_work_breakdown",
         "q10_architecture",
         "q7_requirements",
-        "q6_volatility"
+        "q6_volatility",
+        "q8_compliance",
+        "q9_precision"
       ],
       "adopt": {
         "framework": "speckit",
@@ -1507,7 +1611,91 @@
           "/speckit.implement"
         ],
         "rationale": "Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline."
-      }
+      },
+      "signals": [
+        {
+          "label": "Roadmap-heavy",
+          "weight": 3,
+          "when": {
+            "gte": [
+              {
+                "answer": "q5_work_breakdown.roadmap"
+              },
+              60
+            ]
+          }
+        },
+        {
+          "label": "Microservices",
+          "weight": 2,
+          "when": {
+            "eq": [
+              {
+                "answer": "q10_architecture"
+              },
+              "microservices"
+            ]
+          }
+        },
+        {
+          "label": "Structured requirements",
+          "weight": 1,
+          "when": {
+            "eq": [
+              {
+                "answer": "q7_requirements"
+              },
+              "structured"
+            ]
+          }
+        },
+        {
+          "label": "Not high volatility",
+          "weight": 1,
+          "when": {
+            "in": [
+              {
+                "answer": "q6_volatility"
+              },
+              [
+                "very_low",
+                "moderate"
+              ]
+            ]
+          }
+        },
+        {
+          "label": "SOX or zero-tolerance",
+          "weight": 2,
+          "when": {
+            "any": [
+              {
+                "eq": [
+                  {
+                    "answer": "q8_compliance"
+                  },
+                  "sox_tier1"
+                ]
+              },
+              {
+                "eq": [
+                  {
+                    "answer": "q9_precision"
+                  },
+                  "zero_tolerance"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "label": "High volatility penalty",
+          "weight": -4,
+          "when": {
+            "derived": "volatilityIsHigh"
+          }
+        }
+      ]
     },
     {
       "id": "base-3",
@@ -1538,7 +1726,8 @@
       },
       "requires": [
         "q2_team",
-        "q7_requirements"
+        "q7_requirements",
+        "q8_compliance"
       ],
       "adopt": {
         "framework": "bmad",
@@ -1557,7 +1746,57 @@
           "bmad-quick-spec"
         ],
         "rationale": "PO, Scrum Master, and QA exist, and requirements are not yet stories — BMAD's personas pay off."
-      }
+      },
+      "signals": [
+        {
+          "label": "Product owner present",
+          "weight": 2,
+          "when": {
+            "derived": "hasProductOwner"
+          }
+        },
+        {
+          "label": "Scrum master present",
+          "weight": 2,
+          "when": {
+            "derived": "hasScrumMaster"
+          }
+        },
+        {
+          "label": "QA/SDET present",
+          "weight": 2,
+          "when": {
+            "derived": "hasQaSdet"
+          }
+        },
+        {
+          "label": "Vague or high-level requirements",
+          "weight": 4,
+          "when": {
+            "in": [
+              {
+                "answer": "q7_requirements"
+              },
+              [
+                "high_level",
+                "vague"
+              ]
+            ]
+          }
+        },
+        {
+          "label": "SOX tier 1",
+          "weight": 2,
+          "when": {
+            "eq": [
+              {
+                "answer": "q8_compliance"
+              },
+              "sox_tier1"
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "base-4",
@@ -1598,7 +1837,8 @@
         "q11_deploy_cadence",
         "q14_release_autonomy",
         "q12_quality_gates",
-        "q18_token_budget"
+        "q18_token_budget",
+        "q9_precision"
       ],
       "adoptWhen": [
         {
@@ -1678,7 +1918,237 @@
           "/gsd:resume-work"
         ],
         "rationale": "A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core."
+      },
+      "signals": [
+        {
+          "label": "Compact team",
+          "weight": 4,
+          "when": {
+            "lt": [
+              {
+                "derived": "teamSize"
+              },
+              5
+            ]
+          }
+        },
+        {
+          "label": "Frequent deploys",
+          "weight": 3,
+          "when": {
+            "in": [
+              {
+                "answer": "q11_deploy_cadence"
+              },
+              [
+                "continuous",
+                "sprint"
+              ]
+            ]
+          }
+        },
+        {
+          "label": "Release autonomy",
+          "weight": 2,
+          "when": {
+            "eq": [
+              {
+                "answer": "q14_release_autonomy"
+              },
+              "autonomous"
+            ]
+          }
+        },
+        {
+          "label": "Zero-tolerance precision",
+          "weight": 2,
+          "when": {
+            "eq": [
+              {
+                "answer": "q9_precision"
+              },
+              "zero_tolerance"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "base-5",
+      "label": "Tessl SDD Tile — lightweight spec interview (watch)",
+      "when": {
+        "all": [
+          {
+            "lt": [
+              {
+                "derived": "teamSize"
+              },
+              8
+            ]
+          },
+          {
+            "eq": [
+              {
+                "answer": "q9_precision"
+              },
+              "standard"
+            ]
+          }
+        ]
+      },
+      "signals": [
+        {
+          "label": "Small-to-mid team",
+          "weight": 2,
+          "when": {
+            "lt": [
+              {
+                "derived": "teamSize"
+              },
+              8
+            ]
+          }
+        },
+        {
+          "label": "Standard precision",
+          "weight": 1,
+          "when": {
+            "eq": [
+              {
+                "answer": "q9_precision"
+              },
+              "standard"
+            ]
+          }
+        }
+      ],
+      "requires": [
+        "q2_team",
+        "q9_precision"
+      ],
+      "adopt": {
+        "framework": "tessl",
+        "artifacts": [
+          "*.spec.md with [@test] links"
+        ],
+        "commands": [
+          "requirement-gathering",
+          "spec-writer",
+          "validate-specs.sh"
+        ],
+        "rationale": "A small team wanting a lightweight spec interview can use Tessl, but it is watch-status and never a confident default."
       }
+    },
+    {
+      "id": "base-6",
+      "label": "Spec Kitty — hard-gated lanes for structured, zero-tolerance work",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              {
+                "answer": "q7_requirements"
+              },
+              "structured"
+            ]
+          },
+          {
+            "eq": [
+              {
+                "answer": "q9_precision"
+              },
+              "zero_tolerance"
+            ]
+          }
+        ]
+      },
+      "requires": [
+        "q7_requirements",
+        "q9_precision",
+        "q5_work_breakdown",
+        "q8_compliance",
+        "q14_release_autonomy"
+      ],
+      "adopt": {
+        "framework": "speckitty",
+        "artifacts": [
+          "kitty-specs/",
+          ".worktrees/",
+          ".kittify/config.yaml",
+          "append-only status log"
+        ],
+        "commands": [
+          "spec-kitty specify/plan/tasks",
+          "spec-kitty agent action implement",
+          "spec-kitty sync workspace"
+        ],
+        "rationale": "Structured requirements plus zero-tolerance precision need a hard-gated lane machine, not advisory Markdown."
+      },
+      "signals": [
+        {
+          "label": "Zero-tolerance precision",
+          "weight": 4,
+          "when": {
+            "eq": [
+              {
+                "answer": "q9_precision"
+              },
+              "zero_tolerance"
+            ]
+          }
+        },
+        {
+          "label": "Structured requirements",
+          "weight": 3,
+          "when": {
+            "eq": [
+              {
+                "answer": "q7_requirements"
+              },
+              "structured"
+            ]
+          }
+        },
+        {
+          "label": "Non-roadmap load",
+          "weight": 2,
+          "when": {
+            "gte": [
+              {
+                "derived": "nonRoadmapShare"
+              },
+              40
+            ]
+          }
+        },
+        {
+          "label": "SOX tier 1",
+          "weight": 2,
+          "when": {
+            "eq": [
+              {
+                "answer": "q8_compliance"
+              },
+              "sox_tier1"
+            ]
+          }
+        },
+        {
+          "label": "Coupled or heavy releases",
+          "weight": 2,
+          "when": {
+            "in": [
+              {
+                "answer": "q14_release_autonomy"
+              },
+              [
+                "coupled",
+                "heavy"
+              ]
+            ]
+          }
+        }
+      ]
     }
   ],
   "overlays": [
@@ -1819,7 +2289,9 @@
       "resolves": [
         "cross_team_approvals"
       ],
-      "providedByBase": [],
+      "providedByBase": [
+        "speckitty"
+      ],
       "adopt": {
         "framework": "speckitty",
         "practice": "Lane state machine and worktrees",
@@ -2420,6 +2892,75 @@
         "mitigation": "Keep the selected stack for work this team owns. Treat vendor-gated work as out of scope for the SDD recommendation rather than overlaying Spec Kitty.",
         "source": "D18"
       }
+    },
+    {
+      "id": "C14",
+      "label": "C14 unplanned load vs Spec Kit",
+      "when": {
+        "all": [
+          {
+            "gte": [
+              {
+                "derived": "unplannedShare"
+              },
+              40
+            ]
+          },
+          {
+            "eq": [
+              {
+                "result": "baseFramework"
+              },
+              "speckit"
+            ]
+          }
+        ]
+      },
+      "requires": [
+        "q5_work_breakdown"
+      ],
+      "caution": {
+        "severity": "medium",
+        "kind": "warning",
+        "finding": "A large share of work is unplanned (ops + bugs). Spec Kit's phase pipeline prices a session per change that interrupt and defect work will not wait for.",
+        "mitigation": "Keep Spec Kit for architecturally novel roadmap work. Route unplanned work through OpenSpec or a documented fast path.",
+        "source": "QC experiment; unplannedShare derived view"
+      }
+    },
+    {
+      "id": "C20",
+      "label": "C20 runtime mismatch is a preference, not a veto",
+      "when": {
+        "flag": "runtimeMismatch"
+      },
+      "requires": [],
+      "caution": {
+        "severity": "medium",
+        "kind": "warning",
+        "finding": "The recommended framework does not document the agent runtimes you selected. Runtime match is a soft preference: the framework stayed in consideration and was score-penalized instead of being deleted.",
+        "mitigation": "If you are unsure which runtimes you use, choose Unsure / any. Confirm the recommended framework actually supports your agent before adopting it.",
+        "source": "QC experiment; q20 danger quadrant"
+      }
+    },
+    {
+      "id": "C15",
+      "label": "C15 watch-status base",
+      "when": {
+        "eq": [
+          {
+            "result": "baseFramework"
+          },
+          "tessl"
+        ]
+      },
+      "requires": [],
+      "caution": {
+        "severity": "high",
+        "kind": "warning",
+        "finding": "Tessl SDD Tile is status watch: small, stale, and its [@test] anchors are not a fail-closed gate. It was reachable only because watch is a score penalty, not a hard exclusion.",
+        "mitigation": "Do not treat Tessl as a production default. Prefer OpenSpec or GSD Core unless you explicitly want the interview technique.",
+        "source": "DESIGN.md §8.8; QC catalog honesty"
+      }
     }
   ],
   "report": {
@@ -2639,6 +3180,42 @@
       }
     },
     {
+      "name": "base-6 speckitty",
+      "answers": {
+        "q7_requirements": "structured",
+        "q9_precision": "zero_tolerance",
+        "q8_compliance": "sox_tier1",
+        "q10_architecture": "hybrid",
+        "q11_deploy_cadence": "monthly",
+        "q14_release_autonomy": "coupled",
+        "q6_volatility": "moderate",
+        "q5_work_breakdown": {
+          "roadmap": 40,
+          "ops": 15,
+          "bugs": 15,
+          "regulatory": 15,
+          "tech_debt": 15
+        },
+        "q2_team": {
+          "total": 8,
+          "swe": 6,
+          "data_engineers": 0,
+          "qa_sdet": 0,
+          "product_owner": "none",
+          "scrum_master": "none"
+        },
+        "q12_quality_gates": [
+          "unit_coverage",
+          "integration_contract",
+          "e2e"
+        ]
+      },
+      "expect": {
+        "base": "speckitty",
+        "fallback": false
+      }
+    },
+    {
       "name": "D1 rule1 wins rule4 runnerup",
       "answers": {
         "q7_requirements": "structured",
@@ -2668,8 +3245,8 @@
         ]
       },
       "expect": {
-        "base": "openspec",
-        "runnerUp": "base-4"
+        "base": "gsd",
+        "runnerUp": "base-1"
       }
     },
     {
@@ -2702,8 +3279,8 @@
         ]
       },
       "expect": {
-        "base": "openspec",
-        "fallback": true
+        "base": null,
+        "fallback": false
       }
     },
     {
@@ -2816,11 +3393,11 @@
         "q14_release_autonomy": "autonomous",
         "q6_volatility": "high",
         "q5_work_breakdown": {
-          "roadmap": 80,
-          "ops": 5,
-          "bugs": 5,
-          "regulatory": 5,
-          "tech_debt": 5
+          "roadmap": 40,
+          "ops": 20,
+          "bugs": 20,
+          "regulatory": 10,
+          "tech_debt": 10
         },
         "q2_team": {
           "total": 8,
@@ -2849,11 +3426,11 @@
         "q14_release_autonomy": "autonomous",
         "q6_volatility": "interrupt_driven",
         "q5_work_breakdown": {
-          "roadmap": 80,
-          "ops": 5,
-          "bugs": 5,
-          "regulatory": 5,
-          "tech_debt": 5
+          "roadmap": 40,
+          "ops": 20,
+          "bugs": 20,
+          "regulatory": 10,
+          "tech_debt": 10
         },
         "q2_team": {
           "total": 8,
@@ -2936,8 +3513,8 @@
         ]
       },
       "expect": {
-        "base": "openspec",
-        "fallback": true
+        "base": null,
+        "fallback": false
       }
     },
     {
@@ -3009,8 +3586,8 @@
         ]
       },
       "expect": {
-        "noRuntimeMatch": true,
-        "base": null
+        "noRuntimeMatch": false,
+        "base": "speckit"
       }
     },
     {
@@ -3540,11 +4117,11 @@
         "q14_release_autonomy": "autonomous",
         "q6_volatility": "high",
         "q5_work_breakdown": {
-          "roadmap": 80,
-          "ops": 5,
-          "bugs": 5,
-          "regulatory": 5,
-          "tech_debt": 5
+          "roadmap": 40,
+          "ops": 20,
+          "bugs": 20,
+          "regulatory": 10,
+          "tech_debt": 10
         },
         "q2_team": {
           "total": 8,
@@ -3576,11 +4153,11 @@
         "q14_release_autonomy": "autonomous",
         "q6_volatility": "interrupt_driven",
         "q5_work_breakdown": {
-          "roadmap": 80,
-          "ops": 5,
-          "bugs": 5,
-          "regulatory": 5,
-          "tech_debt": 5
+          "roadmap": 40,
+          "ops": 20,
+          "bugs": 20,
+          "regulatory": 10,
+          "tech_debt": 10
         },
         "q2_team": {
           "total": 8,
@@ -4102,7 +4679,7 @@
     {
       "name": "C+C5",
       "answers": {
-        "q7_requirements": "structured",
+        "q7_requirements": "high_level",
         "q10_architecture": "microservices",
         "q11_deploy_cadence": "monthly",
         "q14_release_autonomy": "autonomous",

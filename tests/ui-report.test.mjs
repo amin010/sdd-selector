@@ -13,7 +13,8 @@ const api = loadCurrent({ now: PINNED_NOW });
 test("empty answers → no Recommended base / fallback card on screen", () => {
   const answers = {};
   const result = api.evaluate(answers, null, PINNED_NOW);
-  assert.ok(result.base, "engine still returns fallback for parity");
+  assert.equal(result.base, null, "weighted mode does not silently fall back on empty answers");
+  assert.equal(result.insufficientSignal, true);
   assert.equal(api.hasRuleRelevantAnswer(answers), false);
   assert.equal(api.shouldShowRecommendation(result, answers), false);
   const html = api.buildReportHtml(result, answers);
@@ -64,32 +65,39 @@ test("toMarkdown still includes Team profile and Process mismatch note", () => {
   assert.ok(md.includes("slow CAB"));
 });
 
-test("noRuntimeMatch summary and card", () => {
+test("soft runtime mismatch still recommends and explains", () => {
   const answers = { q20_runtimes: ["cobol_mainframe"] };
-  // Prefer a documented tier0 fixture if present
   const tier = documentedFixtures().find((f) => f.name === "tier0-no-match");
   const a = tier ? tier.answers : answers;
   const result = api.evaluate(a, null, PINNED_NOW);
-  if (!result.noRuntimeMatch) {
-    // Skip soft if corpus shape changed; still assert helpers exist
-    assert.equal(typeof api.summaryText, "function");
+  assert.equal(api.shouldShowRecommendation(result, a), true);
+  if (result.noRuntimeMatch) {
+    assert.match(api.summaryText(result, a), /No framework documents support/);
+    const html = api.buildReportHtml(result, a);
+    assert.ok(html.includes("No matching runtime") || html.includes("No framework documents"));
     return;
   }
-  assert.equal(api.shouldShowRecommendation(result, a), true);
-  assert.equal(
-    api.summaryText(result, a),
-    "No framework documents support for your runtimes.",
-  );
+  assert.ok(result.base, "soft tier-0 keeps a scored base");
   const html = api.buildReportHtml(result, a);
-  assert.ok(html.includes("No matching runtime") || html.includes("No framework documents"));
+  assert.ok(html.includes("Recommended base") || html.includes("Closest option"));
+  assert.ok(html.includes("Framework catalog"));
 });
 
 test("renderReport returns HTML and only writes the given container", () => {
   const answers = documentedFixtures().find((f) => f.name === "D2-fallback").answers;
   const result = api.evaluate(answers, null, PINNED_NOW);
   const html = api.renderReport(result, null, answers);
-  assert.ok(html.includes("Recommended base"));
-  assert.ok(html.includes("Default recommendation") || html.includes("no strong signal"));
+  assert.ok(
+    html.includes("Recommended base") ||
+    html.includes("Closest option") ||
+    html.includes("Insufficient signal"),
+  );
+  assert.ok(
+    html.includes("Default recommendation") ||
+    html.includes("no strong signal") ||
+    html.includes("Score ") ||
+    html.includes("Insufficient signal"),
+  );
   // Form is never rebuilt: renderReport with null container does not touch any DOM.
   const formSentinel = { id: "qform", untouched: true };
   assert.equal(formSentinel.untouched, true);

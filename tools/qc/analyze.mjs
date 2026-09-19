@@ -11,7 +11,7 @@
  * downstream engine-accuracy claim):
  *   B4.1  Fleiss' kappa across the 3 judges' top-1 picks.
  *   B4.2  Majority judge label; engine aggregate label; Cohen's kappa;
- *         confusion matrix restricted to the 5 reachable bases.
+ *         confusion matrix restricted to the reachable bases.
  *   B4.3  Runner-up credit accuracy.
  *   B4.4  Caution precision/recall (fixed keyword heuristic).
  *   B5    Three baselines: constant-openspec, prior-weighted-random,
@@ -50,7 +50,7 @@ const LABELS_PATH = path.join(DATA_DIR, "labels.json");
 const SENSITIVITY_PATH = path.join(DATA_DIR, "sensitivity-report.json");
 const OUT_PATH = path.join(DATA_DIR, "analysis-report.json");
 
-const REACHABLE_BASES = ["openspec", "speckit", "bmad", "superpowers", "gsd"];
+const REACHABLE_BASES = ["openspec", "speckit", "bmad", "superpowers", "gsd", "speckitty", "tessl"];
 
 function round(n, digits = 4) {
   if (n == null || !Number.isFinite(n)) return n;
@@ -157,19 +157,34 @@ const sensitivityReport = readJson(SENSITIVITY_PATH, "run node tools/qc/sensitiv
 const api = loadEngine();
 const FRAMEWORK_IDS = frameworkCatalog(api).map((f) => f.id); // 7 catalog ids, catalog order
 
+const failedAnswers = answers.filter((r) => r.failed || !r.answers);
+const usableAnswers = answers.filter((r) => !r.failed && r.answers);
+const parseFailureLabels = labels.filter((r) => r.parseFailure || !Array.isArray(r.rankedTop3) || r.rankedTop3.length < 3);
+const usableLabels = labels.filter((r) => !r.parseFailure && Array.isArray(r.rankedTop3) && r.rankedTop3.length >= 3);
+
 const vignetteById = new Map(vignettes.map((v) => [v.id, v]));
 const answersByVignette = new Map();
-for (const rec of answers) {
+for (const rec of usableAnswers) {
   if (!answersByVignette.has(rec.vignetteId)) answersByVignette.set(rec.vignetteId, []);
   answersByVignette.get(rec.vignetteId).push(rec);
 }
 for (const arr of answersByVignette.values()) arr.sort((a, b) => a.respondentIndex - b.respondentIndex);
 const labelsByVignette = new Map();
-for (const rec of labels) {
+for (const rec of usableLabels) {
   if (!labelsByVignette.has(rec.vignetteId)) labelsByVignette.set(rec.vignetteId, []);
   labelsByVignette.get(rec.vignetteId).push(rec);
 }
 for (const arr of labelsByVignette.values()) arr.sort((a, b) => a.judgeIndex - b.judgeIndex);
+
+const dataQuality = {
+  answersTotal: answers.length,
+  answersFailed: failedAnswers.length,
+  answersUsable: usableAnswers.length,
+  labelsTotal: labels.length,
+  labelsParseFailure: parseFailureLabels.length,
+  labelsUsable: usableLabels.length,
+  note: "Failed respondent fills and judge parse failures are excluded from every metric. Parse failures are not backfilled from presentation order.",
+};
 
 const vignetteIds = vignettes.map((v) => v.id);
 
@@ -205,7 +220,7 @@ const perVignette = new Map(); // vignetteId -> { respondents: [{index, rawLabel
 
 for (const vid of vignetteIds) {
   const respondentRecs = answersByVignette.get(vid) || [];
-  const respondents = respondentRecs.map((rec) => {
+  const respondents = respondentRecs.filter((rec) => rec.answers).map((rec) => {
     const result = evaluateAnswers(api, rec.answers); // shipped rules, PINNED_NOW
     const projection = projectOutcome(result);
     const rawLabel = outcomeLabel(projection);
@@ -227,10 +242,12 @@ for (const vid of vignetteIds) {
       mappedLabel: mapLabelForComparison(rawLabel),
       runnerUpFrameworkId,
       cautions: projection.cautions || [],
+      winningRule: result.base && result.base.rule ? result.base.rule : null,
+      derived: result.derived || {},
     };
   });
   const mappedLabels = respondents.map((r) => r.mappedLabel);
-  const agg = modeOf(mappedLabels);
+  const agg = mappedLabels.length ? modeOf(mappedLabels) : { value: null, unanimous: false, tie: false };
   const representative = respondents.find((r) => r.mappedLabel === agg.value) || respondents[0];
   perVignette.set(vid, {
     respondents,
@@ -249,11 +266,11 @@ const judgeMajorityByVignette = new Map(); // vignetteId -> { label, unanimous, 
 let noConsensusCount = 0;
 for (const vid of vignetteIds) {
   const judgeRecs = labelsByVignette.get(vid) || [];
-  const top1s = judgeRecs.map((r) => (Array.isArray(r.rankedTop3) ? r.rankedTop3[0] : null));
+  const top1s = judgeRecs.map((r) => (Array.isArray(r.rankedTop3) ? r.rankedTop3[0] : null)).filter((t) => t != null);
   const agg = modeOf(top1s);
-  const noConsensus = agg.count < 2; // with 3 raters, "no majority" means all three differ
+  const noConsensus = top1s.length < 2 || agg.count < 2;
   if (noConsensus) noConsensusCount++;
-  judgeMajorityByVignette.set(vid, { label: agg.value, unanimous: agg.unanimous, noConsensus, top1s });
+  judgeMajorityByVignette.set(vid, { label: agg.value, unanimous: agg.unanimous, noConsensus, top1s, usableJudges: top1s.length });
 }
 
 // ===========================================================================
@@ -263,7 +280,7 @@ for (const vid of vignetteIds) {
 
 const fleissSubjects = vignetteIds
   .map((vid) => judgeMajorityByVignette.get(vid).top1s)
-  .filter((top1s) => top1s.every((t) => t != null));
+  .filter((top1s) => top1s.length >= 2 && top1s.every((t) => t != null));
 const fleiss = fleissKappa(fleissSubjects, FRAMEWORK_IDS);
 
 let oracleVerdict;
@@ -273,9 +290,10 @@ else if (fleiss.kappa < 0.2) oracleVerdict = "UNUSABLE";
 else oracleVerdict = "WEAKLY_USABLE_GRAY_ZONE";
 
 const b41 = {
-  method: "Fleiss' kappa (standard formula) over 3 judges x 7-framework categories",
+  method: "Fleiss' kappa (standard formula) over usable judges x 7-framework categories; parse failures excluded",
   vignettesConsidered: fleissSubjects.length,
   vignettesTotal: vignetteIds.length,
+  parseFailures: parseFailureLabels.length,
   kappa: round(fleiss.kappa),
   P_bar: round(fleiss.P_bar),
   P_e: round(fleiss.P_e),
@@ -288,7 +306,11 @@ const b41 = {
 // confusion matrix restricted to the 5 reachable bases.
 // ===========================================================================
 
-const consensusVignetteIds = vignetteIds.filter((vid) => !judgeMajorityByVignette.get(vid).noConsensus);
+const consensusVignetteIds = vignetteIds.filter((vid) => {
+  const jm = judgeMajorityByVignette.get(vid);
+  const pv = perVignette.get(vid);
+  return jm && !jm.noConsensus && pv && pv.aggregateMappedLabel;
+});
 const cohenPairs = consensusVignetteIds.map((vid) => [
   perVignette.get(vid).aggregateMappedLabel,
   judgeMajorityByVignette.get(vid).label,
@@ -349,6 +371,80 @@ const b42 = {
 };
 
 // ===========================================================================
+// Headroom — answer-elicitation bounds, label-reachability ceiling, and
+// winning-rule `when` gate integrity (regression guard for D23).
+// ===========================================================================
+
+function gateHolds(rule, answers, derived) {
+  if (!rule || rule.when == null) return true;
+  try {
+    return api.SDDExpr.evalExpr(rule.when, {
+      answers: answers || {},
+      derived: derived || {},
+      result: null,
+      flags: {},
+      fieldIndex: api.FIELD_INDEX || {},
+    }) === true;
+  } catch {
+    return false;
+  }
+}
+
+const selectableFromRules = new Set();
+for (const rule of api.BASE_RULES || []) {
+  if (rule.adopt && rule.adopt.framework) selectableFromRules.add(rule.adopt.framework);
+  for (const branch of rule.adoptWhen || []) {
+    if (branch.framework) selectableFromRules.add(branch.framework);
+    if (branch.ifUnavailable && branch.ifUnavailable.framework) {
+      selectableFromRules.add(branch.ifUnavailable.framework);
+    }
+  }
+}
+if (api.SETTINGS && api.SETTINGS.fallbackBase) selectableFromRules.add(api.SETTINGS.fallbackBase);
+
+let bestOf3Matches = 0;
+let all3AgreeAndRight = 0;
+let unreachableGold = 0;
+let falseGateWinners = 0;
+const falseGateByRule = {};
+const unreachableGoldCounts = {};
+for (const vid of consensusVignetteIds) {
+  const gold = judgeMajorityByVignette.get(vid).label;
+  const pv = perVignette.get(vid);
+  const labs = pv.respondents.map((r) => r.mappedLabel);
+  if (labs.includes(gold)) bestOf3Matches++;
+  if (labs.length && labs.every((l) => l === gold)) all3AgreeAndRight++;
+  if (!selectableFromRules.has(gold)) {
+    unreachableGold++;
+    unreachableGoldCounts[gold] = (unreachableGoldCounts[gold] || 0) + 1;
+  }
+  const rep = pv.respondents.find((r) => r.respondentIndex === pv.representativeIndex);
+  if (rep && rep.winningRule && !gateHolds(rep.winningRule, rep.answers, rep.derived)) {
+    falseGateWinners++;
+    const rid = rep.winningRule.id || "(unknown)";
+    falseGateByRule[rid] = (falseGateByRule[rid] || 0) + 1;
+  }
+}
+
+const headroom = {
+  n: consensusVignetteIds.length,
+  modeOf3Accuracy: round(top1Accuracy),
+  bestOf3Accuracy: round(pct(bestOf3Matches, consensusVignetteIds.length) / 100),
+  bestOf3Matches,
+  all3AgreeAndRightAccuracy: round(pct(all3AgreeAndRight, consensusVignetteIds.length) / 100),
+  all3AgreeAndRight,
+  elicitationHeadroomPp: round((pct(bestOf3Matches, consensusVignetteIds.length) / 100 - top1Accuracy) * 100),
+  labelReachabilityCeiling: round(pct(consensusVignetteIds.length - unreachableGold, consensusVignetteIds.length) / 100),
+  unreachableGoldCount: unreachableGold,
+  unreachableGoldCounts,
+  selectableFromRules: [...selectableFromRules].sort(),
+  falseGateWinners,
+  falseGateWinnerShare: round(pct(falseGateWinners, consensusVignetteIds.length) / 100),
+  falseGateByRule,
+  note: "best-of-3 credits a vignette if any respondent's answers land on the judge-majority label (optimistic elicitation bound). all-3-agree-and-right is the floor. labelReachabilityCeiling is the share of gold labels some baseRules entry or fallback can emit. falseGateWinners must stay 0 after D23.",
+};
+
+// ===========================================================================
 // B4.3 — runner-up credit: match if engine base OR reported runner-up
 // (from the *representative* respondent) equals the judges' majority label.
 // ===========================================================================
@@ -373,49 +469,37 @@ const b43 = {
 };
 
 // ===========================================================================
-// B4.4 — caution precision/recall against a fixed, hand-labeled keyword
-// heuristic mapping judge free-text reasoning to engine caution ids.
-// THIS IS A HEURISTIC, NOT A CLAIM OF PRECISION — see the file header.
-// Keep this mapping colocated and easy to audit/adjust.
+// B4.4 — caution precision/recall against judge-emitted structured risk tags
+// (same ids as engine cautions). Labels without riskTags are skipped; we do
+// not fall back to keyword matching of free-text reasoning.
 // ===========================================================================
 
-const CAUTION_KEYWORDS = {
-  C1: ["spec kit", "fabricat", "brownfield", "legacy migration", "hallucinat"],
-  C2: ["constitution", "prompt context", "not a control", "not an independent"],
-  C3: ["token", "budget", "metered", "rationed", "cost"],
-  C4: ["tessl", "fail-closed", "fail closed", "link checker"],
-  C5: ["verify", "archive", "does not block", "opt-in"],
-  C6: ["spec kitty", "audit trail", "lane", "27 transitions"],
-  C7: ["ceremony", "change volume", "small change", "per-change overhead"],
-  C8: ["worktree", "concurrency", "solo developer", "below three"],
-  C9: ["immatur", "young project", "track record", "four months", "new dependency"],
-  C10: ["maintenance", "stale", "inactive", "no commits", "abandon"],
-  C11: ["license", "licensing", "legal review", "noassertion"],
-  C12: ["interrupt", "real time", "real-time", "unpredictable"],
-  C13: ["vendor", "external release train", "blocked on a vendor"],
-};
+const ENGINE_CAUTION_IDS = (api.CAUTIONS || []).map((c) => c.id);
+const RISK_TAG_LABELS = usableLabels.filter((r) => Array.isArray(r.riskTags));
 
-function flaggedCautionIds(reasoningTexts) {
-  const combined = reasoningTexts.filter(Boolean).join(" \n ").toLowerCase();
-  const flagged = new Set();
-  for (const [cautionId, keywords] of Object.entries(CAUTION_KEYWORDS)) {
-    if (keywords.some((kw) => combined.includes(kw))) flagged.add(cautionId);
+function unionRiskTags(judgeRecs) {
+  const tags = new Set();
+  for (const rec of judgeRecs) {
+    for (const id of rec.riskTags || []) tags.add(id);
   }
-  return flagged;
+  return tags;
 }
 
 let cautionTP = 0;
 let cautionFP = 0;
 let cautionFN = 0;
-const perCautionCounts = Object.fromEntries(Object.keys(CAUTION_KEYWORDS).map((id) => [id, { tp: 0, fp: 0, fn: 0 }]));
+const perCautionCounts = Object.fromEntries(ENGINE_CAUTION_IDS.map((id) => [id, { tp: 0, fp: 0, fn: 0 }]));
+let cautionVignettesScored = 0;
 
 for (const vid of vignetteIds) {
+  const judgeRecs = (labelsByVignette.get(vid) || []).filter((r) => Array.isArray(r.riskTags));
+  if (!judgeRecs.length) continue;
+  cautionVignettesScored++;
   const pv = perVignette.get(vid);
   const rep = pv.respondents.find((r) => r.respondentIndex === pv.representativeIndex);
   const engineFired = new Set(rep ? rep.cautions : []);
-  const judgeRecs = labelsByVignette.get(vid) || [];
-  const judgeFlagged = flaggedCautionIds(judgeRecs.map((r) => r.reasoning));
-  for (const cautionId of Object.keys(CAUTION_KEYWORDS)) {
+  const judgeFlagged = unionRiskTags(judgeRecs);
+  for (const cautionId of ENGINE_CAUTION_IDS) {
     const fired = engineFired.has(cautionId);
     const flagged = judgeFlagged.has(cautionId);
     if (fired && flagged) {
@@ -432,10 +516,12 @@ for (const vid of vignetteIds) {
 }
 
 const b44 = {
-  method: "fixed keyword/topic heuristic mapping judge free-text reasoning to engine caution ids (CAUTION_KEYWORDS in this file) — a heuristic, not ground truth.",
+  method: "structured risk tags emitted by judges (riskTags on labels.json). Labels without riskTags are excluded — no keyword fallback.",
   representativeRespondentPerVignette: true,
-  precision: round(cautionTP / (cautionTP + cautionFP || 1)),
-  recall: round(cautionTP / (cautionTP + cautionFN || 1)),
+  vignettesWithRiskTags: cautionVignettesScored,
+  labelsWithRiskTags: RISK_TAG_LABELS.length,
+  precision: cautionVignettesScored ? round(cautionTP / (cautionTP + cautionFP || 1)) : null,
+  recall: cautionVignettesScored ? round(cautionTP / (cautionTP + cautionFN || 1)) : null,
   truePositives: cautionTP,
   falsePositives: cautionFP,
   falseNegatives: cautionFN,
@@ -706,7 +792,13 @@ function buildMutatedRules(matchFn, newValue) {
   const hits = { count: 0 };
   replaceThreshold(baseRules, matchFn, newValue, hits);
   if (hits.count === 0) throw new Error(`Part D: threshold mutation matched 0 nodes (newValue=${newValue})`);
-  return { FRAMEWORKS: api.FRAMEWORKS, BASE_RULES: baseRules, OVERLAYS: api.OVERLAYS, CAUTIONS: api.CAUTIONS };
+  return {
+    FRAMEWORKS: api.FRAMEWORKS,
+    BASE_RULES: baseRules,
+    OVERLAYS: api.OVERLAYS,
+    CAUTIONS: api.CAUTIONS,
+    SETTINGS: api.SETTINGS,
+  };
 }
 
 /** Recompute the aggregate mapped label per vignette under a rules override, then Cohen's kappa vs judge majority. */
@@ -753,6 +845,28 @@ function summarizeSweep(name, matchFn, shippedValue, sweepValues) {
   }
   return { name, shippedValue, sweepValues, points, peak, shippedKappa: shippedPoint ? shippedPoint.kappa : null, verdict, deltaFromPeak: round(delta) };
 }
+
+function kappaUnderSelection(selection) {
+  const settings = { ...api.SETTINGS, selection };
+  return kappaUnderRules({
+    FRAMEWORKS: api.FRAMEWORKS,
+    BASE_RULES: api.BASE_RULES,
+    OVERLAYS: api.OVERLAYS,
+    CAUTIONS: api.CAUTIONS,
+    SETTINGS: settings,
+  });
+}
+
+const firstMatchKappa = kappaUnderSelection("first-match");
+const weightedKappa = kappaUnderSelection("weighted");
+const partE = {
+  method: "Offline re-score of frozen answers/labels under first-match vs weighted selection. No new panel.",
+  shippedSelection: api.SETTINGS && api.SETTINGS.selection,
+  firstMatchKappa: round(firstMatchKappa),
+  weightedKappa: round(weightedKappa),
+  delta: round((weightedKappa == null || firstMatchKappa == null) ? null : weightedKappa - firstMatchKappa),
+  note: "Positive delta means weighted scoring agrees more with the frozen judge majority than first-match-wins.",
+};
 
 const partD = {
   nonRoadmapShareGte40: summarizeSweep(
@@ -839,10 +953,12 @@ const report = {
     generatedAt: new Date().toISOString(),
     pinnedNow: PINNED_NOW,
     counts: { vignettes: vignetteIds.length, answers: answers.length, labels: labels.length },
+    dataQuality,
     note: "This report's numbers are ONLY as meaningful as the underlying vignettes/answers/labels — see each file's generatorModel/model fields. Under the mock LLM provider (no ANTHROPIC_API_KEY/OPENAI_API_KEY), this is a pipeline-validation run, not a real Part B/C/D result (docs/QC-EXPERIMENT.md §11).",
   },
   b41_fleissKappa: b41,
   b42_engineVsMajority: b42,
+  headroom,
   b43_runnerUpCredit: b43,
   b44_cautionPrecisionRecall: b44,
   b5_baselines: b5,
@@ -851,6 +967,7 @@ const report = {
   c3_dangerQuadrant: c3,
   rq2a_questionInfluenceCoverage: rq2a,
   partD_thresholdCalibration: partD,
+  partE_weightedScoring: partE,
   verdicts,
 };
 
@@ -869,7 +986,7 @@ function printSweep(sweep) {
   console.log(`    curve: ${sweep.points.map((p) => `${p.value}:${p.kappa}`).join("  ")}`);
 }
 
-console.log(`\ntools/qc/analyze.mjs — ${vignetteIds.length} vignettes, ${answers.length} answers, ${labels.length} labels\n`);
+console.log(`\ntools/qc/analyze.mjs — ${vignetteIds.length} vignettes, ${answers.length} answers (${failedAnswers.length} failed), ${labels.length} labels (${parseFailureLabels.length} parse failures)\n`);
 
 console.log("=== B4.1 Inter-judge Fleiss' kappa ===");
 console.log(`  kappa=${b41.kappa}  (n=${b41.vignettesConsidered}/${b41.vignettesTotal})  verdict=${b41.verdict}`);
@@ -879,10 +996,15 @@ console.log(`  consensus vignettes: ${b42.consensusVignettes}/${b42.vignettesTot
 console.log(`  top-1 accuracy: ${b42.top1Accuracy}  Cohen's kappa: ${b42.cohenKappa}`);
 console.log(`  per-respondent accuracy: ${JSON.stringify(perRespondentAccuracy)}`);
 
+console.log("\n=== Headroom (elicitation / reachability / gate integrity) ===");
+console.log(`  mode-of-3: ${headroom.modeOf3Accuracy}  best-of-3: ${headroom.bestOf3Accuracy}  all-3-right: ${headroom.all3AgreeAndRightAccuracy}  elicitation headroom: ${headroom.elicitationHeadroomPp} pp`);
+console.log(`  label-reachability ceiling: ${headroom.labelReachabilityCeiling}  unreachable gold: ${JSON.stringify(headroom.unreachableGoldCounts)}`);
+console.log(`  false-gate winners: ${headroom.falseGateWinners}/${headroom.n} (${headroom.falseGateWinnerShare}) ${JSON.stringify(headroom.falseGateByRule)}`);
+
 console.log("\n=== B4.3 Runner-up credit ===");
 console.log(`  base-only accuracy: ${b43.baseOnlyAccuracy}  with runner-up credit: ${b43.withRunnerUpCreditAccuracy} (+${b43.additionalMatchesFromRunnerUp})`);
 
-console.log("\n=== B4.4 Caution precision/recall (heuristic) ===");
+console.log("\n=== B4.4 Caution precision/recall (structured risk tags) ===");
 console.log(`  precision=${b44.precision} recall=${b44.recall}  (tp=${b44.truePositives} fp=${b44.falsePositives} fn=${b44.falseNegatives})`);
 
 console.log("\n=== B5 Baselines ===");
@@ -901,6 +1023,11 @@ console.log(`  fields in quadrant: ${dangerQuadrant.length ? JSON.stringify(dang
 
 console.log("\n=== RQ2(a) question-influence coverage ===");
 console.log(`  ${rq2a.nonZeroBaseInfluenceCount}/${rq2a.nonReportOnlyFieldsConsidered} = ${rq2a.fraction} (pass >= 0.60: ${rq2a.pass})`);
+
+console.log("\n=== Part E — weighted vs first-match (frozen labels) ===");
+console.log(`  shipped selection: ${partE.shippedSelection}`);
+console.log(`  first-match kappa: ${partE.firstMatchKappa}`);
+console.log(`  weighted kappa:    ${partE.weightedKappa}  (delta ${partE.delta})`);
 
 console.log("\n=== Part D — threshold calibration ===");
 printSweep(partD.nonRoadmapShareGte40);

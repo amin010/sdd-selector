@@ -1,5 +1,7 @@
 # SDD Selector report
 
+Confidence: high · score 8 · margin 8
+
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
 
@@ -11,12 +13,11 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Branching: —
 
 ## Recommended base: OpenSpec
-**Default recommendation — no strong signal.**
-No base rule matched. OpenSpec is the lowest-ceremony, highest brownfield-fit default.
+Non-roadmap work favors specs written only for the change at hand.
 
 - Install: `openspec init (+ openspec config profile for expanded)`
 - Repo: `Fission-AI/OpenSpec`
-- Triggering answers: No base rule fired.
+- Triggering answers: q5_work_breakdown = {"roadmap":40,"ops":20,"bugs":20,"regulatory":10,"tech_debt":10}; q10_architecture = microservices; q6_volatility = high
 - Enforcement:
 Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
 Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
@@ -37,6 +38,15 @@ _None._
 _No bottlenecks ranked._
 
 Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+
+## Framework catalog
+- **OpenSpec** (`openspec`, recommended) — base candidate
+- **GitHub Spec Kit** (`speckit`, recommended) — base candidate
+- **BMAD Method** (`bmad`, recommended) — base candidate
+- **GSD Core** (`gsd`, viable) — base candidate
+- **Superpowers** (`superpowers`, viable) — base candidate
+- **Spec Kitty** (`speckitty`, viable) — base candidate
+- **Tessl SDD Tile** (`tessl`, watch) — watch — selected only with a warning
 
 ## Suggested directory layout
 ```

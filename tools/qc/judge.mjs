@@ -137,6 +137,27 @@ const FRAMEWORK_PROFILES = [
 
 const ALL_FRAMEWORK_IDS = FRAMEWORK_PROFILES.map((f) => f.id);
 
+/**
+ * Fixed risk taxonomy judges must tag. Ids match engine caution ids so
+ * B4.4 can score structured tags instead of keyword-matching free text.
+ */
+const RISK_TAXONOMY = [
+  { id: "C1", label: "Spec Kit fabricating or hallucinating on brownfield / legacy work" },
+  { id: "C2", label: "constitution.md / prompt context treated as an audit control" },
+  { id: "C3", label: "Token-intensive stack on a metered or rationed budget" },
+  { id: "C4", label: "Tessl [@test] anchors mistaken for fail-closed verification" },
+  { id: "C5", label: "Verify/archive is advisory and does not block shipping" },
+  { id: "C6", label: "Spec Kitty lane / audit-trail overhead" },
+  { id: "C7", label: "Ceremony too heavy for high change volume / small changes" },
+  { id: "C8", label: "Worktree / concurrency overhead for a solo or tiny team" },
+  { id: "C9", label: "Immature or young project / short track record" },
+  { id: "C10", label: "Maintenance risk: stale, inactive, or abandoned tooling" },
+  { id: "C11", label: "License / legal-review risk" },
+  { id: "C12", label: "Interrupt-driven / real-time work vs a planned pipeline" },
+  { id: "C13", label: "Delivery blocked on an external vendor release train" },
+];
+const RISK_TAG_IDS = RISK_TAXONOMY.map((r) => r.id);
+
 /** Deterministic per-(vignette, judgeIndex) shuffle of framework presentation order. */
 function shuffledFrameworkOrder(vignetteId, judgeIndex) {
   const seedHex = hashObject({ vignetteId, judgeIndex, salt: "qc-judge-shuffle" });
@@ -185,24 +206,19 @@ function reportProgress(label, done, total, provider, cached) {
 }
 
 /**
- * Deduplicate a rankedTop3 response and backfill to exactly 3 distinct ids
- * if the model (mock or real) returned fewer than 3 distinct entries. The
- * mock provider in particular fabricates each array slot independently, so
- * duplicates are expected there; backfill is deterministic, walking the
- * per-call shuffled presentation order (not the raw catalog order) so the
- * fallback picks are still "the next thing this judge was shown" rather
- * than an arbitrary global default.
+ * Deduplicate a rankedTop3 response. Does NOT backfill missing or invalid
+ * ids from presentation order — a short or polluted ranking is a parse
+ * failure, not a fabricated label. Returns { rankedTop3, parseFailure }.
  */
-function repairRankedTop3(raw, presentationOrderIds) {
+function repairRankedTop3(raw) {
   const seen = new Set();
   const cleaned = (Array.isArray(raw) ? raw : []).filter(
     (id) => ALL_FRAMEWORK_IDS.includes(id) && !seen.has(id) && seen.add(id),
   );
-  for (const id of presentationOrderIds) {
-    if (cleaned.length >= 3) break;
-    if (!cleaned.includes(id)) cleaned.push(id);
+  if (cleaned.length < 3) {
+    return { rankedTop3: null, parseFailure: true };
   }
-  return cleaned.slice(0, 3);
+  return { rankedTop3: cleaned.slice(0, 3), parseFailure: false };
 }
 
 async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
@@ -223,8 +239,10 @@ async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
     `--- TEAM STORY (${vignette.id}) ---\n${vignette.prose}\n\n` +
     `--- FRAMEWORK PROFILES (presented in randomized order this call) ---\n${profilesText}\n\n` +
     `Return your ranked top-3 framework picks (by id) for this team, best fit ` +
-    `first, plus 1-3 sentences of reasoning. Respond with strict JSON: ` +
-    `{"rankedTop3": ["<id>", "<id>", "<id>"], "reasoning": "<text>"}. No ` +
+    `first, plus 1-3 sentences of reasoning, plus zero or more risk tags from ` +
+    `this fixed taxonomy (use the ids only): ${RISK_TAXONOMY.map((r) => `${r.id}=${r.label}`).join("; ")}. ` +
+    `Respond with strict JSON: ` +
+    `{"rankedTop3": ["<id>", "<id>", "<id>"], "reasoning": "<text>", "riskTags": ["<C-id>", ...]}. No ` +
     `commentary outside the JSON.`;
 
   const mockSchema = {
@@ -232,6 +250,7 @@ async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
     properties: {
       rankedTop3: { type: "array", items: { type: "string", enum: ALL_FRAMEWORK_IDS }, minItems: 3, maxItems: 3 },
       reasoning: { type: "string", minLength: 60, maxLength: 400 },
+      riskTags: { type: "array", items: { type: "string", enum: RISK_TAG_IDS }, minItems: 0, maxItems: RISK_TAG_IDS.length },
     },
   };
 
@@ -239,24 +258,42 @@ async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
     system,
     messages: [{ role: "user", content: user }],
     temperature: 0.5,
-    maxTokens: 400,
+    maxTokens: 4096,
     mockSchema,
   });
   if (onCallComplete) onCallComplete(response);
 
-  let rankedTop3;
-  let reasoning;
+  let rankedTop3 = null;
+  let reasoning = "";
+  let riskTags = [];
+  let parseFailure = false;
   try {
     const parsed = parseJsonResponse(response.text);
-    rankedTop3 = repairRankedTop3(parsed.rankedTop3, order.map((f) => f.id));
+    const repaired = repairRankedTop3(parsed.rankedTop3);
+    rankedTop3 = repaired.rankedTop3;
+    parseFailure = repaired.parseFailure;
     reasoning = typeof parsed.reasoning === "string" ? parsed.reasoning : "";
+    riskTags = [...new Set((Array.isArray(parsed.riskTags) ? parsed.riskTags : []).filter((id) => RISK_TAG_IDS.includes(id)))];
+    if (parseFailure) {
+      console.warn(`judge: ${vignette.id} judge ${judgeIndex} returned an incomplete ranking; recording parseFailure`);
+    }
   } catch (err) {
-    console.warn(`judge: ${vignette.id} judge ${judgeIndex} failed to parse response (${err.message}); using presentation-order fallback`);
-    rankedTop3 = order.slice(0, 3).map((f) => f.id);
+    console.warn(`judge: ${vignette.id} judge ${judgeIndex} failed to parse response (${err.message}); recording parseFailure`);
+    parseFailure = true;
+    rankedTop3 = null;
     reasoning = "";
+    riskTags = [];
   }
 
-  return { vignetteId: vignette.id, judgeIndex, model: response.model, rankedTop3, reasoning };
+  return {
+    vignetteId: vignette.id,
+    judgeIndex,
+    model: response.model,
+    rankedTop3,
+    reasoning,
+    riskTags,
+    parseFailure,
+  };
 }
 
 async function main() {
@@ -264,27 +301,31 @@ async function main() {
     throw new Error(`tools/qc/judge.mjs: ${VIGNETTES_PATH} does not exist — run \`node tools/qc/personas.mjs\` first.`);
   }
   const vignettes = JSON.parse(fs.readFileSync(VIGNETTES_PATH, "utf8"));
-  const client = createClient({ role: "judge" });
+  const clients = Array.from({ length: JUDGES_PER_VIGNETTE }, (_, judgeIndex) =>
+    createClient({ role: "judge", judgeIndex }),
+  );
 
   const totalCalls = vignettes.length * JUDGES_PER_VIGNETTE;
-  console.log(`tools/qc/judge.mjs — provider=${client.provider} model=${client.model}`);
+  console.log(`tools/qc/judge.mjs — ${clients.map((c, i) => `judge${i}=${c.provider}/${c.model}`).join(" ")}`);
   console.log(`${vignettes.length} vignettes x ${JUDGES_PER_VIGNETTE} judges = ${totalCalls} calls`);
   console.log(`framework menu (${ALL_FRAMEWORK_IDS.length}): ${ALL_FRAMEWORK_IDS.join(", ")}`);
 
   const out = [];
   let done = 0;
+  let parseFailures = 0;
   for (const vignette of vignettes) {
     for (let judgeIndex = 0; judgeIndex < JUDGES_PER_VIGNETTE; judgeIndex++) {
-      out.push(
-        await judgeOnce(client, {
-          vignette,
-          judgeIndex,
-          onCallComplete: (response) => {
-            done++;
-            reportProgress("judging", done, totalCalls, client.provider, response.cached);
-          },
-        }),
-      );
+      const client = clients[judgeIndex];
+      const rec = await judgeOnce(client, {
+        vignette,
+        judgeIndex,
+        onCallComplete: (response) => {
+          done++;
+          reportProgress("judging", done, totalCalls, client.provider, response.cached);
+        },
+      });
+      if (rec.parseFailure) parseFailures++;
+      out.push(rec);
     }
   }
   if (process.stdout.isTTY) process.stdout.write("\n");
@@ -293,7 +334,7 @@ async function main() {
   fs.writeFileSync(path.join(DATA_DIR, "labels.json.tmp"), JSON.stringify(out, null, 2));
   fs.renameSync(path.join(DATA_DIR, "labels.json.tmp"), OUT_PATH);
 
-  console.log(`wrote ${out.length} judge label records to ${path.relative(process.cwd(), OUT_PATH)}`);
+  console.log(`wrote ${out.length} judge label records (${parseFailures} parse failures) to ${path.relative(process.cwd(), OUT_PATH)}`);
 }
 
 const isMain =
@@ -310,4 +351,4 @@ if (isMain) {
     });
 }
 
-export { FRAMEWORK_PROFILES, ALL_FRAMEWORK_IDS, shuffledFrameworkOrder, repairRankedTop3 };
+export { FRAMEWORK_PROFILES, ALL_FRAMEWORK_IDS, RISK_TAXONOMY, RISK_TAG_IDS, shuffledFrameworkOrder, repairRankedTop3 };
