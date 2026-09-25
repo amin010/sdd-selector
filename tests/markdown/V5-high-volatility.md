@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 8 · margin 8
+**Harness acceptability** (conformal set: OpenSpec, GSD Core, GitHub Spec Kit, BMAD Method):
+- OpenSpec — 50%
+- GSD Core — 12%
+- GitHub Spec Kit — 11%
+- BMAD Method — 11%
+- Spec Kitty — 9%
+- Superpowers — 8%
+
+Confidence: medium · score -1.96714 · margin 1.4241157692307689
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
@@ -13,31 +21,50 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Branching: —
 
 ## Recommended base: OpenSpec
-Non-roadmap work favors specs written only for the change at hand.
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
 - Install: `openspec init (+ openspec config profile for expanded)`
 - Repo: `Fission-AI/OpenSpec`
-- Triggering answers: q5_work_breakdown = {"roadmap":40,"ops":20,"bugs":20,"regulatory":10,"tech_debt":10}; q10_architecture = microservices; q6_volatility = high
+- Triggering answers: brownfield demand 1.00; midFlightChange demand 1.00; fastPath demand 0.85
+- Axis contributions:
+  - brownfield: demand 1.00, coverage 0.47, unmet 0.63
+  - fastPath: demand 0.85, coverage 0.31, unmet 0.49
+  - midFlightChange: demand 1.00, coverage 0.42, unmet 0.49
 - Enforcement:
 Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
 Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
 - Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
 
+## Runner-up
+GSD Core — Acceptability 12% vs 50% for OpenSpec.
+
 ## Practice overlays
-### Low-ceremony fast path (included in base)
-Source: BMAD Method
-Many small changes or high/interrupt-driven volatility need a documented fast path beside any heavyweight pipeline.
-Enforcement: Hard gate — Python-backed sprint-status merge (Prevents state regression.)
-Human gate — Personas and phase gates (Value depends on using the roles.)
-Triggered by: q6_volatility = high
+### Delta-only specs (included in base) — 68% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Low-ceremony fast path (included in base) — 62% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Change archive (included in base) — 47% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
 
 ## Cautions
 _None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate

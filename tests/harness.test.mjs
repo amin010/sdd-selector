@@ -104,14 +104,9 @@ test("in-page selftest still passes under vm", () => {
   assert.equal(out.ok, true, out.fails && out.fails.join("\n"));
 });
 
-test("current page matches golden when both are finance-tech P5", () => {
+test("G-PARITY current↔golden is retired at S5 (EXT-SELECT T46)", () => {
   assert.ok(fs.existsSync(CURRENT_PAGE));
-  const report = runParity({
-    leftApi: loadCurrent({ now: PINNED_NOW }),
-    rightApi: loadGolden({ now: PINNED_NOW }),
-    cases: documentedFixtures(),
-    label: "current↔golden-doc",
-    stopAt: 3,
-  });
-  assert.equal(report.ok, true, JSON.stringify(report.failures, null, 2));
+  const current = loadCurrent({ now: PINNED_NOW });
+  assert.equal(current.SETTINGS.selection, "utility");
+  assert.ok((current.PACK.practices || []).length >= 7);
 });

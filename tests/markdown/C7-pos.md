@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 7 · margin 7
+**Harness acceptability** (conformal set: OpenSpec, BMAD Method, GSD Core, GitHub Spec Kit, Spec Kitty):
+- OpenSpec — 32%
+- BMAD Method — 17%
+- GSD Core — 16%
+- GitHub Spec Kit — 14%
+- Spec Kitty — 11%
+- Superpowers — 10%
+
+Confidence: low · score -1.6204861538461537 · margin 0.6695023076923077
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q21_ci_maturity
@@ -12,35 +20,50 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: monthly; cycle time: —
 - Branching: —
 
-## Recommended base: GitHub Spec Kit
-Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline.
+## Recommended base: OpenSpec
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `uvx specify init`
-- Repo: `github/spec-kit`
-- Triggering answers: q5_work_breakdown = {"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5}; q10_architecture = microservices; q7_requirements = structured; q6_volatility = moderate
+- Install: `openspec init (+ openspec config profile for expanded)`
+- Repo: `Fission-AI/OpenSpec`
+- Triggering answers: fastPath demand 1.00; ceremonyTolerance demand 1.00
+- Axis contributions:
+  - fastPath: demand 1.00, coverage 0.31, unmet 0.58
+  - ceremonyTolerance: demand 1.00, coverage 0.30, unmet 0.53
 - Enforcement:
-Advisory — constitution.md (Prompt context; not an independent gate.)
-Human gate — Phase reviews (Human advances each phase.)
-- Evidence: 137140 stars, 100 commits/30d, v1.0.7 (2026-09-15); verified 2026-09-16
+Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
+
+## Runner-up
+BMAD Method — Acceptability 17% vs 32% for OpenSpec.
 
 ## Practice overlays
-### Low-ceremony fast path
-Source: BMAD Method
-Many small changes or high/interrupt-driven volatility need a documented fast path beside any heavyweight pipeline.
-Enforcement: Hard gate — Python-backed sprint-status merge (Prevents state regression.)
-Human gate — Personas and phase gates (Value depends on using the roles.)
-Triggered by: q19_change_volume = many_small; q6_volatility = moderate
+### Low-ceremony fast path (included in base) — 59% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Delta-only specs (included in base) — 47% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Change archive (included in base) — 31% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
 
 ## Cautions
-### C7 — high
-Per-change ceremony dominates at high change volume. Field measurement puts Spec Kit at roughly one full session per ~2,000 LOC unit.
-Mitigation: Adopt overlay G's two-track policy and hold the heavyweight pipeline for architecturally novel work only.
-Source: ERP field report; §8.3
+_None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -54,9 +77,6 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── constitution.md    # Base: GitHub Spec Kit
-├── spec.md    # Base: GitHub Spec Kit
-├── plan.md    # Base: GitHub Spec Kit
-├── tasks.md    # Base: GitHub Spec Kit
-├── written scope rule for when not to run the full pipeline    # Low-ceremony fast path
+├── openspec/specs/    # Base: OpenSpec
+├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
 ```

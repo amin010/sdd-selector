@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 7 · margin 7
+**Harness acceptability** (conformal set: Spec Kitty, OpenSpec, GSD Core, GitHub Spec Kit, Superpowers):
+- Spec Kitty — 24%
+- OpenSpec — 20%
+- GSD Core — 18%
+- GitHub Spec Kit — 17%
+- Superpowers — 12%
+- BMAD Method — 10%
+
+Confidence: low · score -1.3531923076923078 · margin 0.1661450000000002
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
@@ -12,26 +20,42 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: monthly; cycle time: —
 - Branching: —
 
-## Recommended base: GitHub Spec Kit
-Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline.
+## Recommended base: Spec Kitty
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `uvx specify init`
-- Repo: `github/spec-kit`
-- Triggering answers: q5_work_breakdown = {"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5}; q10_architecture = microservices; q7_requirements = structured; q6_volatility = moderate; q8_compliance = internal_governance
+- Install: `pip install spec-kitty-cli`
+- Repo: `spec-kitty/spec-kitty`
+- Triggering answers: auditTrail demand 0.46
+- Counterfactuals:
+  - Below 0 on q8_compliance the harness flips to openspec.
+  - Below 0 on q8_compliance the harness flips to openspec.
+  - Above 33 on derived.nonRoadmapShare the harness flips to openspec.
+- Axis contributions:
+  - traceability: demand 0.31, coverage 0.00, unmet 0.22
+  - midFlightChange: demand 0.15, coverage 0.00, unmet 0.13
+  - deterministicEnforcement: demand 0.38, coverage 0.70, unmet 0.13
+  - auditTrail: demand 0.46, coverage 0.85, unmet 0.06
 - Enforcement:
-Advisory — constitution.md (Prompt context; not an independent gate.)
-Human gate — Phase reviews (Human advances each phase.)
-- Evidence: 137140 stars, 100 commits/30d, v1.0.7 (2026-09-15); verified 2026-09-16
+Hard gate — 27-transition lane machine (--force requires actor + reason.)
+Human gate — Decision Moments (Human review to advance.)
+- Evidence: 1627 stars, unknown commits/30d, —; verified 2026-09-16
+
+## Runner-up
+OpenSpec — Acceptability 20% vs 24% for Spec Kitty.
 
 ## Practice overlays
-_None._
+### Lane state machine and worktrees (included in base) — 30% inclusion
+Source: Spec Kitty
+27-transition lane machine. It is the tool, so it is not liftable.
+Enforcement: Hard gate — 27-transition lane machine (--force requires actor + reason.)
+Human gate — Decision Moments (Human review to advance.)
+Triggered by: derived view
+
 ## Cautions
 _None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -45,8 +69,8 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── constitution.md    # Base: GitHub Spec Kit
-├── spec.md    # Base: GitHub Spec Kit
-├── plan.md    # Base: GitHub Spec Kit
-├── tasks.md    # Base: GitHub Spec Kit
+├── kitty-specs/    # Base: Spec Kitty
+├── .worktrees/    # Base: Spec Kitty
+├── .kittify/config.yaml    # Base: Spec Kitty
+├── append-only status log    # Base: Spec Kitty
 ```

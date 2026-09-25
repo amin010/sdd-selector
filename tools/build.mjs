@@ -16,8 +16,11 @@ const defaultPack = path.join(root, "packs", "finance-tech.json");
 
 const EXPR_BEGIN = "/* BEGIN EXPR */";
 const EXPR_END = "/* END EXPR */";
+const SELECT_BEGIN = "/* BEGIN SELECT */";
+const SELECT_END = "/* END SELECT */";
 const PACK_BEGIN = "/* BEGIN PACK */";
 const PACK_END = "/* END PACK */";
+const selectPath = path.join(root, "src", "select.mjs");
 
 function parseArgs(argv) {
   let packPath = defaultPack;
@@ -55,22 +58,32 @@ function replaceMarkerBlock(page, begin, end, body) {
   return page.replace(pattern, `$1${indented}$2`);
 }
 
-function inlineExpr(page) {
-  const source = fs.readFileSync(exprPath, "utf8");
+function inlineModule(page, filePath, begin, end, globalName, required) {
+  const source = fs.readFileSync(filePath, "utf8");
   const exports = Array.from(
     source.matchAll(/^export\s+(?:const|function)\s+([A-Za-z_$][\w$]*)/gm),
     (match) => match[1],
   );
-  if (!exports.includes("evalExpr") || !exports.includes("evalDerived")) {
-    throw new Error("src/expr.mjs must export evalExpr and evalDerived");
+  for (const name of required) {
+    if (!exports.includes(name)) {
+      throw new Error(`${filePath} must export ${name}`);
+    }
   }
   const script = source
     .replace(/^export\s+/gm, "")
     .replace(/\bconst\b/g, "var")
     .replace(/\blet\b/g, "var")
     .trimEnd();
-  const body = `${script}\n\nvar SDDExpr = { ${exports.join(", ")} };`;
-  return replaceMarkerBlock(page, EXPR_BEGIN, EXPR_END, body);
+  const body = `${script}\n\nvar ${globalName} = { ${exports.join(", ")} };`;
+  return replaceMarkerBlock(page, begin, end, body);
+}
+
+function inlineExpr(page) {
+  return inlineModule(page, exprPath, EXPR_BEGIN, EXPR_END, "SDDExpr", ["evalExpr", "evalDerived"]);
+}
+
+function inlineSelect(page) {
+  return inlineModule(page, selectPath, SELECT_BEGIN, SELECT_END, "SDDSelect", ["selectUtility", "ramp"]);
 }
 
 function inlinePack(page, pack, stripFixtures) {
@@ -109,7 +122,11 @@ function main() {
   if (!page.includes(PACK_BEGIN) || !page.includes(PACK_END)) {
     throw new Error("index.html is missing BEGIN/END PACK markers");
   }
+  if (!page.includes(SELECT_BEGIN) || !page.includes(SELECT_END)) {
+    throw new Error("index.html is missing BEGIN/END SELECT markers");
+  }
   page = inlineExpr(page);
+  page = inlineSelect(page);
   page = inlinePack(page, pack, stripFixtures);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, page);

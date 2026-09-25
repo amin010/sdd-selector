@@ -1,256 +1,293 @@
 {
   "meta": {
-    "generatedAt": "2026-09-18T00:38:18.549Z",
+    "generatedAt": "2026-09-19T21:08:48.607Z",
     "pinnedNow": 1789560000000,
     "corpusSizes": {
       "documented": 53,
       "boundary": 171,
-      "random": 50000,
+      "random": 1500,
       "malformed": 108,
-      "total": 50332
+      "total": 1832
     },
-    "oatSampleSize": 2000,
-    "elapsedMs": 16964
+    "oatSampleSize": 80,
+    "quick": true,
+    "elapsedMs": 65483
   },
   "a1": {
     "distribution": {
-      "total": 50332,
+      "total": 1832,
       "errors": 0,
       "counts": {
-        "openspec": 13096,
-        "speckit": 294,
-        "bmad": 4158,
-        "superpowers": 69,
-        "gsd": 344,
-        "speckitty": 2485,
+        "openspec": 773,
+        "speckit": 2,
+        "bmad": 0,
+        "superpowers": 3,
+        "gsd": 9,
+        "speckitty": 1019,
         "tessl": 0,
         "fallback_openspec": 0,
-        "no_runtime_match": 0,
-        "insufficient_signal": 29886
+        "no_runtime_match": 26,
+        "insufficient_signal": 0
       },
       "percentages": {
-        "openspec": 26.02,
-        "speckit": 0.58,
-        "bmad": 8.26,
-        "superpowers": 0.14,
-        "gsd": 0.68,
-        "speckitty": 4.94,
+        "openspec": 42.19,
+        "speckit": 0.11,
+        "bmad": 0,
+        "superpowers": 0.16,
+        "gsd": 0.49,
+        "speckitty": 55.62,
         "tessl": 0,
         "fallback_openspec": 0,
-        "no_runtime_match": 0,
-        "insufficient_signal": 59.38
+        "no_runtime_match": 1.42,
+        "insufficient_signal": 0
       }
     },
     "bmadHole": {
-      "corpusSize": 50332,
-      "q20AnsweredCount": 28084,
-      "base3WhenMatchedCount": 3174,
-      "holeCount": 334,
-      "holeShareOfCorpusPct": 0.664,
-      "holeShareOfQ20AnsweredPct": 1.189,
-      "holeShareOfBase3MatchedPct": 10.523
+      "corpusSize": 1832,
+      "q20AnsweredCount": 828,
+      "base3WhenMatchedCount": 100,
+      "holeCount": 100,
+      "holeShareOfCorpusPct": 5.459,
+      "holeShareOfQ20AnsweredPct": 12.077,
+      "holeShareOfBase3MatchedPct": 100
     }
   },
   "a2": {
-    "sampleSize": 2000,
+    "sampleSize": 80,
     "fields": [
       {
         "fieldId": "q1_domain",
         "questionId": "q1_domain",
         "questionReportOnly": true,
         "kind": "single",
-        "totalPairs": 10776,
+        "totalPairs": 435,
         "baseInfluenceScore": 0,
         "overlayInfluenceScore": 0,
         "cautionInfluenceScore": 0,
-        "evalErrors": 0
+        "evalErrors": 0,
+        "totalInfluenceScore": 0,
+        "sobolFirstOrderProxy": 0
       },
       {
         "fieldId": "q2_team",
         "questionId": "q2_team",
         "questionReportOnly": false,
         "kind": "record",
-        "totalPairs": 12769,
-        "baseInfluenceScore": 6.0224,
-        "overlayInfluenceScore": 3.8139,
-        "cautionInfluenceScore": 6.5784,
-        "evalErrors": 0
+        "totalPairs": 515,
+        "baseInfluenceScore": 2.5243,
+        "overlayInfluenceScore": 17.4757,
+        "cautionInfluenceScore": 2.7184,
+        "evalErrors": 0,
+        "totalInfluenceScore": 22.7184,
+        "sobolFirstOrderProxy": 0.2272
       },
       {
         "fieldId": "q3_distribution",
         "questionId": "q3_distribution",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4800,
-        "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 13.5208,
-        "cautionInfluenceScore": 3.0417,
-        "evalErrors": 0
+        "totalPairs": 196,
+        "baseInfluenceScore": 5.102,
+        "overlayInfluenceScore": 5.102,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0,
+        "totalInfluenceScore": 10.204,
+        "sobolFirstOrderProxy": 0.102
       },
       {
         "fieldId": "q4_tenure",
         "questionId": "q4",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4795,
+        "totalPairs": 188,
         "baseInfluenceScore": 0,
         "overlayInfluenceScore": 0,
         "cautionInfluenceScore": 0,
-        "evalErrors": 0
+        "evalErrors": 0,
+        "totalInfluenceScore": 0,
+        "sobolFirstOrderProxy": 0
       },
       {
         "fieldId": "q4_domain_familiarity",
         "questionId": "q4",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4781,
+        "totalPairs": 195,
         "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 13.4491,
+        "overlayInfluenceScore": 27.1795,
         "cautionInfluenceScore": 0,
-        "evalErrors": 0
+        "evalErrors": 0,
+        "totalInfluenceScore": 27.1795,
+        "sobolFirstOrderProxy": 0.2718
       },
       {
         "fieldId": "q5_work_breakdown",
         "questionId": "q5_work_breakdown",
         "questionReportOnly": false,
         "kind": "record",
-        "totalPairs": 5664,
-        "baseInfluenceScore": 13.1003,
-        "overlayInfluenceScore": 12.0939,
-        "cautionInfluenceScore": 7.3093,
-        "evalErrors": 0
+        "totalPairs": 243,
+        "baseInfluenceScore": 1.2346,
+        "overlayInfluenceScore": 2.8807,
+        "cautionInfluenceScore": 0.823,
+        "evalErrors": 0,
+        "totalInfluenceScore": 4.9383,
+        "sobolFirstOrderProxy": 0.0494
       },
       {
         "fieldId": "q6_volatility",
         "questionId": "q6_volatility",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6830,
-        "baseInfluenceScore": 0.8492,
-        "overlayInfluenceScore": 17.6867,
-        "cautionInfluenceScore": 3.4846,
-        "evalErrors": 0
+        "totalPairs": 273,
+        "baseInfluenceScore": 15.3846,
+        "overlayInfluenceScore": 25.2747,
+        "cautionInfluenceScore": 45.4212,
+        "evalErrors": 0,
+        "totalInfluenceScore": 86.0805,
+        "sobolFirstOrderProxy": 0.8608
       },
       {
         "fieldId": "q7_requirements",
         "questionId": "q7_requirements",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4800,
-        "baseInfluenceScore": 18.4375,
-        "overlayInfluenceScore": 22.2083,
-        "cautionInfluenceScore": 18.2917,
-        "evalErrors": 0
+        "totalPairs": 188,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 48.9362,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0,
+        "totalInfluenceScore": 48.9362,
+        "sobolFirstOrderProxy": 0.4894
       },
       {
         "fieldId": "q8_compliance",
         "questionId": "q8_compliance",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6795,
-        "baseInfluenceScore": 0.3238,
-        "overlayInfluenceScore": 13.2303,
-        "cautionInfluenceScore": 16.1737,
-        "evalErrors": 0
+        "totalPairs": 278,
+        "baseInfluenceScore": 3.2374,
+        "overlayInfluenceScore": 39.2086,
+        "cautionInfluenceScore": 19.7842,
+        "evalErrors": 0,
+        "totalInfluenceScore": 62.2302,
+        "sobolFirstOrderProxy": 0.6223
       },
       {
         "fieldId": "q9_precision",
         "questionId": "q9_precision",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4828,
-        "baseInfluenceScore": 10.9155,
-        "overlayInfluenceScore": 23.488,
-        "cautionInfluenceScore": 24.4822,
-        "evalErrors": 0
+        "totalPairs": 199,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 42.7136,
+        "cautionInfluenceScore": 0,
+        "evalErrors": 0,
+        "totalInfluenceScore": 42.7136,
+        "sobolFirstOrderProxy": 0.4271
       },
       {
         "fieldId": "q10_architecture",
         "questionId": "q10_architecture",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 8844,
-        "baseInfluenceScore": 1.5943,
-        "overlayInfluenceScore": 13.4781,
-        "cautionInfluenceScore": 1.4473,
-        "evalErrors": 0
+        "totalPairs": 350,
+        "baseInfluenceScore": 18,
+        "overlayInfluenceScore": 46.8571,
+        "cautionInfluenceScore": 2,
+        "evalErrors": 0,
+        "totalInfluenceScore": 66.8571,
+        "sobolFirstOrderProxy": 0.6686
       },
       {
         "fieldId": "q11_deploy_cadence",
         "questionId": "q11",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6822,
-        "baseInfluenceScore": 1.0261,
-        "overlayInfluenceScore": 0.4691,
-        "cautionInfluenceScore": 1.0261,
-        "evalErrors": 0
+        "totalPairs": 272,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 11.0294,
+        "cautionInfluenceScore": 24.2647,
+        "evalErrors": 0,
+        "totalInfluenceScore": 35.2941,
+        "sobolFirstOrderProxy": 0.3529
       },
       {
         "fieldId": "q11_cycle_time",
         "questionId": "q11",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6796,
+        "totalPairs": 270,
         "baseInfluenceScore": 0,
         "overlayInfluenceScore": 0,
         "cautionInfluenceScore": 0,
-        "evalErrors": 0
+        "evalErrors": 0,
+        "totalInfluenceScore": 0,
+        "sobolFirstOrderProxy": 0
       },
       {
         "fieldId": "q12_quality_gates",
         "questionId": "q12_quality_gates",
         "questionReportOnly": false,
         "kind": "multi",
-        "totalPairs": 12000,
-        "baseInfluenceScore": 0.0917,
-        "overlayInfluenceScore": 0,
-        "cautionInfluenceScore": 0.0917,
-        "evalErrors": 0
+        "totalPairs": 480,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 19.1667,
+        "cautionInfluenceScore": 1.0417,
+        "evalErrors": 0,
+        "totalInfluenceScore": 20.2084,
+        "sobolFirstOrderProxy": 0.2021
       },
       {
         "fieldId": "q13_branching",
         "questionId": "q13_branching",
         "questionReportOnly": true,
         "kind": "single",
-        "totalPairs": 4806,
+        "totalPairs": 195,
         "baseInfluenceScore": 0,
         "overlayInfluenceScore": 0,
         "cautionInfluenceScore": 0,
-        "evalErrors": 0
+        "evalErrors": 0,
+        "totalInfluenceScore": 0,
+        "sobolFirstOrderProxy": 0
       },
       {
         "fieldId": "q14_release_autonomy",
         "questionId": "q14_release_autonomy",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6815,
-        "baseInfluenceScore": 1.2472,
-        "overlayInfluenceScore": 18.3859,
-        "cautionInfluenceScore": 41.7021,
-        "evalErrors": 0
+        "totalPairs": 276,
+        "baseInfluenceScore": 17.029,
+        "overlayInfluenceScore": 17.029,
+        "cautionInfluenceScore": 1.4493,
+        "evalErrors": 0,
+        "totalInfluenceScore": 35.5073,
+        "sobolFirstOrderProxy": 0.3551
       },
       {
         "fieldId": "q15_governance",
         "questionId": "q15_governance",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4802,
-        "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 17.4927,
-        "cautionInfluenceScore": 0,
-        "evalErrors": 0
+        "totalPairs": 193,
+        "baseInfluenceScore": 7.2539,
+        "overlayInfluenceScore": 43.5233,
+        "cautionInfluenceScore": 20.7254,
+        "evalErrors": 0,
+        "totalInfluenceScore": 71.5026,
+        "sobolFirstOrderProxy": 0.715
       },
       {
         "fieldId": "q16_bottlenecks",
         "questionId": "q16_bottlenecks",
         "questionReportOnly": false,
-        "kind": "ranked",
-        "totalPairs": 5508,
-        "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 17.0842,
-        "cautionInfluenceScore": 6.3544,
-        "evalErrors": 0
+        "kind": "record",
+        "totalPairs": 1932,
+        "baseInfluenceScore": 0.7764,
+        "overlayInfluenceScore": 13.1988,
+        "cautionInfluenceScore": 0.1035,
+        "evalErrors": 0,
+        "totalInfluenceScore": 14.0787,
+        "sobolFirstOrderProxy": 0.1408
       },
       {
         "fieldId": "q17_process_mismatch",
@@ -261,66 +298,79 @@
         "baseInfluenceScore": 0,
         "overlayInfluenceScore": 0,
         "cautionInfluenceScore": 0,
-        "evalErrors": 0
+        "evalErrors": 0,
+        "totalInfluenceScore": 0,
+        "sobolFirstOrderProxy": 0
       },
       {
         "fieldId": "q18_token_budget",
         "questionId": "q18_token_budget",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 6818,
-        "baseInfluenceScore": 0.088,
-        "overlayInfluenceScore": 0.0293,
-        "cautionInfluenceScore": 10.0616,
-        "evalErrors": 0
+        "totalPairs": 273,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 0,
+        "cautionInfluenceScore": 45.4212,
+        "evalErrors": 0,
+        "totalInfluenceScore": 45.4212,
+        "sobolFirstOrderProxy": 0.4542
       },
       {
         "fieldId": "q19_change_volume",
         "questionId": "q19_change_volume",
         "questionReportOnly": false,
         "kind": "single",
-        "totalPairs": 4815,
+        "totalPairs": 196,
         "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 14.3302,
-        "cautionInfluenceScore": 4.1952,
-        "evalErrors": 0
+        "overlayInfluenceScore": 19.3878,
+        "cautionInfluenceScore": 30.6122,
+        "evalErrors": 0,
+        "totalInfluenceScore": 50,
+        "sobolFirstOrderProxy": 0.5
       },
       {
         "fieldId": "q20_runtimes",
         "questionId": "q20_runtimes",
         "questionReportOnly": false,
         "kind": "multi",
-        "totalPairs": 18000,
-        "baseInfluenceScore": 0.3778,
-        "overlayInfluenceScore": 0.0944,
-        "cautionInfluenceScore": 7.65,
-        "evalErrors": 0
+        "totalPairs": 720,
+        "baseInfluenceScore": 8.3333,
+        "overlayInfluenceScore": 5.8333,
+        "cautionInfluenceScore": 1.6667,
+        "evalErrors": 0,
+        "totalInfluenceScore": 15.8333,
+        "sobolFirstOrderProxy": 0.1583
       },
       {
         "fieldId": "q21_ci_maturity",
         "questionId": "q21_ci_maturity",
         "questionReportOnly": false,
-        "kind": "single",
-        "totalPairs": 6817,
+        "kind": "multi",
+        "totalPairs": 400,
         "baseInfluenceScore": 0,
-        "overlayInfluenceScore": 10.2098,
+        "overlayInfluenceScore": 30,
         "cautionInfluenceScore": 0,
-        "evalErrors": 0
+        "evalErrors": 0,
+        "totalInfluenceScore": 30,
+        "sobolFirstOrderProxy": 0.3
       }
     ],
     "zeroBaseInfluenceFields": [
       "q11_cycle_time",
+      "q11_deploy_cadence",
+      "q12_quality_gates",
       "q13_branching",
-      "q15_governance",
-      "q16_bottlenecks",
       "q17_process_mismatch",
+      "q18_token_budget",
       "q19_change_volume",
       "q1_domain",
       "q21_ci_maturity",
-      "q3_distribution",
       "q4_domain_familiarity",
-      "q4_tenure"
+      "q4_tenure",
+      "q7_requirements",
+      "q9_precision"
     ],
+    "sobolNote": "OAT retained. sobolFirstOrderProxy is total-influence/100 on the same sample — a discrete first-order stand-in until a full Saltelli sweep lands. Total-order indices equal first-order here because the proxy cannot see interactions.",
     "sanityCheck": {
       "expectedZero": [
         "q1_domain",
@@ -334,122 +384,168 @@
     }
   },
   "a3": {
-    "sampleSize": 2000,
+    "sampleSize": 80,
     "topMi": [
       {
         "fieldId": "q5_work_breakdown",
         "questionId": "q5_work_breakdown",
-        "miBits": 1.3034
+        "miBits": 0.7611,
+        "miBitsPractices": 3.992,
+        "miBitsCautions": 2.5537
       },
       {
         "fieldId": "q2_team",
         "questionId": "q2_team",
-        "miBits": 1.1275
+        "miBits": 0.5892,
+        "miBitsPractices": 3.8875,
+        "miBitsCautions": 2.4225
       },
       {
         "fieldId": "q20_runtimes",
         "questionId": "q20_runtimes",
-        "miBits": 0.3714
-      },
-      {
-        "fieldId": "q7_requirements",
-        "questionId": "q7_requirements",
-        "miBits": 0.2663
+        "miBits": 0.6293,
+        "miBitsPractices": 3.5378,
+        "miBitsCautions": 2.1814
       },
       {
         "fieldId": "q16_bottlenecks",
         "questionId": "q16_bottlenecks",
-        "miBits": 0.2439
-      },
-      {
-        "fieldId": "q9_precision",
-        "questionId": "q9_precision",
-        "miBits": 0.1898
+        "miBits": 0.5327,
+        "miBitsPractices": 3.4016,
+        "miBitsCautions": 2.0071
       },
       {
         "fieldId": "q12_quality_gates",
         "questionId": "q12_quality_gates",
-        "miBits": 0.1704
-      },
-      {
-        "fieldId": "q17_process_mismatch",
-        "questionId": "q17_process_mismatch",
-        "miBits": 0.1496
-      },
-      {
-        "fieldId": "q4_domain_familiarity",
-        "questionId": "q4",
-        "miBits": 0.0806
-      },
-      {
-        "fieldId": "q14_release_autonomy",
-        "questionId": "q14_release_autonomy",
-        "miBits": 0.0712
-      },
-      {
-        "fieldId": "q11_deploy_cadence",
-        "questionId": "q11",
-        "miBits": 0.0708
-      },
-      {
-        "fieldId": "q1_domain",
-        "questionId": "q1_domain",
-        "miBits": 0.0643
-      },
-      {
-        "fieldId": "q4_tenure",
-        "questionId": "q4",
-        "miBits": 0.0623
-      },
-      {
-        "fieldId": "q10_architecture",
-        "questionId": "q10_architecture",
-        "miBits": 0.0588
-      },
-      {
-        "fieldId": "q15_governance",
-        "questionId": "q15_governance",
-        "miBits": 0.0578
-      },
-      {
-        "fieldId": "q11_cycle_time",
-        "questionId": "q11",
-        "miBits": 0.0576
-      },
-      {
-        "fieldId": "q18_token_budget",
-        "questionId": "q18_token_budget",
-        "miBits": 0.056
-      },
-      {
-        "fieldId": "q8_compliance",
-        "questionId": "q8_compliance",
-        "miBits": 0.0556
-      },
-      {
-        "fieldId": "q3_distribution",
-        "questionId": "q3_distribution",
-        "miBits": 0.0555
-      },
-      {
-        "fieldId": "q19_change_volume",
-        "questionId": "q19_change_volume",
-        "miBits": 0.0542
-      },
-      {
-        "fieldId": "q13_branching",
-        "questionId": "q13_branching",
-        "miBits": 0.0506
+        "miBits": 0.3379,
+        "miBitsPractices": 3.1542,
+        "miBitsCautions": 1.7635
       },
       {
         "fieldId": "q21_ci_maturity",
         "questionId": "q21_ci_maturity",
-        "miBits": 0.0479
+        "miBits": 0.2943,
+        "miBitsPractices": 2.7465,
+        "miBitsCautions": 1.4807
+      },
+      {
+        "fieldId": "q10_architecture",
+        "questionId": "q10_architecture",
+        "miBits": 0.0537,
+        "miBitsPractices": 1.9934,
+        "miBitsCautions": 0.7895
+      },
+      {
+        "fieldId": "q1_domain",
+        "questionId": "q1_domain",
+        "miBits": 0.152,
+        "miBitsPractices": 1.8773,
+        "miBitsCautions": 0.8267
+      },
+      {
+        "fieldId": "q14_release_autonomy",
+        "questionId": "q14_release_autonomy",
+        "miBits": 0.1816,
+        "miBitsPractices": 1.7396,
+        "miBitsCautions": 0.7021
+      },
+      {
+        "fieldId": "q11_cycle_time",
+        "questionId": "q11",
+        "miBits": 0.1476,
+        "miBitsPractices": 1.7333,
+        "miBitsCautions": 0.7791
       },
       {
         "fieldId": "q6_volatility",
         "questionId": "q6_volatility",
-        "miBits": 0.0435
+        "miBits": 0.1873,
+        "miBitsPractices": 1.6523,
+        "miBitsCautions": 1.2952
+      },
+      {
+        "fieldId": "q11_deploy_cadence",
+        "questionId": "q11",
+        "miBits": 0.0315,
+        "miBitsPractices": 1.6472,
+        "miBitsCautions": 0.9649
+      },
+      {
+        "fieldId": "q8_compliance",
+        "questionId": "q8_compliance",
+        "miBits": 0.0353,
+        "miBitsPractices": 1.633,
+        "miBitsCautions": 0.657
+      },
+      {
+        "fieldId": "q7_requirements",
+        "questionId": "q7_requirements",
+        "miBits": 0.1421,
+        "miBitsPractices": 1.6261,
+        "miBitsCautions": 0.5711
+      },
+      {
+        "fieldId": "q18_token_budget",
+        "questionId": "q18_token_budget",
+        "miBits": 0.0988,
+        "miBitsPractices": 1.6124,
+        "miBitsCautions": 1.1032
+      },
+      {
+        "fieldId": "q15_governance",
+        "questionId": "q15_governance",
+        "miBits": 0.0975,
+        "miBitsPractices": 1.5541,
+        "miBitsCautions": 0.5868
+      },
+      {
+        "fieldId": "q4_tenure",
+        "questionId": "q4",
+        "miBits": 0.0716,
+        "miBitsPractices": 1.5408,
+        "miBitsCautions": 0.618
+      },
+      {
+        "fieldId": "q13_branching",
+        "questionId": "q13_branching",
+        "miBits": 0.0567,
+        "miBitsPractices": 1.5102,
+        "miBitsCautions": 0.5329
+      },
+      {
+        "fieldId": "q19_change_volume",
+        "questionId": "q19_change_volume",
+        "miBits": 0.1181,
+        "miBitsPractices": 1.4946,
+        "miBitsCautions": 0.769
+      },
+      {
+        "fieldId": "q4_domain_familiarity",
+        "questionId": "q4",
+        "miBits": 0.0621,
+        "miBitsPractices": 1.4364,
+        "miBitsCautions": 0.6178
+      },
+      {
+        "fieldId": "q9_precision",
+        "questionId": "q9_precision",
+        "miBits": 0.0235,
+        "miBitsPractices": 1.4095,
+        "miBitsCautions": 0.5564
+      },
+      {
+        "fieldId": "q3_distribution",
+        "questionId": "q3_distribution",
+        "miBits": 0.0969,
+        "miBitsPractices": 1.3741,
+        "miBitsCautions": 0.4818
+      },
+      {
+        "fieldId": "q17_process_mismatch",
+        "questionId": "q17_process_mismatch",
+        "miBits": 0.0426,
+        "miBitsPractices": 0.2401,
+        "miBitsCautions": 0.1136
       }
     ],
     "pairwiseRedundancy": [
@@ -457,239 +553,240 @@
         "ruleId": "base-4",
         "fieldA": "q2_team",
         "fieldB": "q12_quality_gates",
-        "miBits": 2.9237
+        "miBits": 2.7941
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q5_work_breakdown",
+        "fieldB": "q6_volatility",
+        "miBits": 1.8106
       },
       {
         "ruleId": "base-1",
         "fieldA": "q5_work_breakdown",
         "fieldB": "q10_architecture",
-        "miBits": 1.5796
-      },
-      {
-        "ruleId": "base-1",
-        "fieldA": "q5_work_breakdown",
-        "fieldB": "q8_compliance",
-        "miBits": 1.4749
+        "miBits": 1.7851
       },
       {
         "ruleId": "base-6",
         "fieldA": "q5_work_breakdown",
         "fieldB": "q14_release_autonomy",
-        "miBits": 1.4663
+        "miBits": 1.673
       },
       {
         "ruleId": "base-1",
         "fieldA": "q5_work_breakdown",
-        "fieldB": "q6_volatility",
-        "miBits": 1.4324
+        "fieldB": "q8_compliance",
+        "miBits": 1.5672
       },
       {
         "ruleId": "base-4",
         "fieldA": "q2_team",
         "fieldB": "q11_deploy_cadence",
-        "miBits": 1.4193
-      },
-      {
-        "ruleId": "base-4",
-        "fieldA": "q2_team",
-        "fieldB": "q14_release_autonomy",
-        "miBits": 1.4067
-      },
-      {
-        "ruleId": "base-3",
-        "fieldA": "q2_team",
-        "fieldB": "q8_compliance",
-        "miBits": 1.4024
+        "miBits": 1.547
       },
       {
         "ruleId": "base-4",
         "fieldA": "q2_team",
         "fieldB": "q18_token_budget",
-        "miBits": 1.4019
+        "miBits": 1.5245
       },
       {
         "ruleId": "base-2",
         "fieldA": "q5_work_breakdown",
         "fieldB": "q7_requirements",
-        "miBits": 1.2804
+        "miBits": 1.43
       },
       {
         "ruleId": "base-1",
         "fieldA": "q5_work_breakdown",
         "fieldB": "q9_precision",
-        "miBits": 1.2593
+        "miBits": 1.4273
       },
       {
         "ruleId": "base-4",
         "fieldA": "q2_team",
-        "fieldB": "q9_precision",
-        "miBits": 1.2291
+        "fieldB": "q14_release_autonomy",
+        "miBits": 1.4078
+      },
+      {
+        "ruleId": "base-3",
+        "fieldA": "q2_team",
+        "fieldB": "q8_compliance",
+        "miBits": 1.3684
       },
       {
         "ruleId": "base-3",
         "fieldA": "q2_team",
         "fieldB": "q7_requirements",
-        "miBits": 1.22
+        "miBits": 1.3367
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q2_team",
+        "fieldB": "q9_precision",
+        "miBits": 1.283
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q12_quality_gates",
+        "fieldB": "q18_token_budget",
+        "miBits": 1.1149
       },
       {
         "ruleId": "base-4",
         "fieldA": "q14_release_autonomy",
         "fieldB": "q12_quality_gates",
-        "miBits": 0.2628
+        "miBits": 1.0796
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q12_quality_gates",
+        "fieldB": "q9_precision",
+        "miBits": 1.0637
       },
       {
         "ruleId": "base-4",
         "fieldA": "q11_deploy_cadence",
         "fieldB": "q12_quality_gates",
-        "miBits": 0.2445
+        "miBits": 1
       },
       {
-        "ruleId": "base-4",
-        "fieldA": "q12_quality_gates",
-        "fieldB": "q18_token_budget",
-        "miBits": 0.232
-      },
-      {
-        "ruleId": "base-4",
-        "fieldA": "q12_quality_gates",
-        "fieldB": "q9_precision",
-        "miBits": 0.2292
-      },
-      {
-        "ruleId": "base-6",
-        "fieldA": "q7_requirements",
-        "fieldB": "q14_release_autonomy",
-        "miBits": 0.1252
-      },
-      {
-        "ruleId": "base-6",
-        "fieldA": "q8_compliance",
-        "fieldB": "q14_release_autonomy",
-        "miBits": 0.1249
-      },
-      {
-        "ruleId": "base-2",
-        "fieldA": "q7_requirements",
-        "fieldB": "q8_compliance",
-        "miBits": 0.1181
-      },
-      {
-        "ruleId": "base-4",
-        "fieldA": "q14_release_autonomy",
-        "fieldB": "q18_token_budget",
-        "miBits": 0.118
-      },
-      {
-        "ruleId": "base-2",
-        "fieldA": "q7_requirements",
+        "ruleId": "base-1",
+        "fieldA": "q10_architecture",
         "fieldB": "q6_volatility",
-        "miBits": 0.1085
+        "miBits": 0.4315
       },
       {
         "ruleId": "base-1",
         "fieldA": "q10_architecture",
         "fieldB": "q8_compliance",
-        "miBits": 0.1084
+        "miBits": 0.4047
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q11_deploy_cadence",
+        "fieldB": "q14_release_autonomy",
+        "miBits": 0.3673
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q10_architecture",
+        "fieldB": "q7_requirements",
+        "miBits": 0.3545
+      },
+      {
+        "ruleId": "base-4",
+        "fieldA": "q14_release_autonomy",
+        "fieldB": "q18_token_budget",
+        "miBits": 0.3447
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q7_requirements",
+        "fieldB": "q8_compliance",
+        "miBits": 0.3358
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q10_architecture",
+        "fieldB": "q9_precision",
+        "miBits": 0.327
       },
       {
         "ruleId": "base-4",
         "fieldA": "q18_token_budget",
         "fieldB": "q9_precision",
-        "miBits": 0.1078
+        "miBits": 0.3148
       },
       {
         "ruleId": "base-1",
         "fieldA": "q6_volatility",
-        "fieldB": "q8_compliance",
-        "miBits": 0.1077
-      },
-      {
-        "ruleId": "base-1",
-        "fieldA": "q10_architecture",
-        "fieldB": "q6_volatility",
-        "miBits": 0.1043
-      },
-      {
-        "ruleId": "base-1",
-        "fieldA": "q10_architecture",
         "fieldB": "q9_precision",
-        "miBits": 0.1024
-      },
-      {
-        "ruleId": "base-2",
-        "fieldA": "q10_architecture",
-        "fieldB": "q7_requirements",
-        "miBits": 0.1021
-      },
-      {
-        "ruleId": "base-2",
-        "fieldA": "q7_requirements",
-        "fieldB": "q9_precision",
-        "miBits": 0.1017
-      },
-      {
-        "ruleId": "base-4",
-        "fieldA": "q11_deploy_cadence",
-        "fieldB": "q14_release_autonomy",
-        "miBits": 0.0974
+        "miBits": 0.2692
       },
       {
         "ruleId": "base-4",
         "fieldA": "q11_deploy_cadence",
         "fieldB": "q18_token_budget",
-        "miBits": 0.0967
+        "miBits": 0.2563
+      },
+      {
+        "ruleId": "base-6",
+        "fieldA": "q7_requirements",
+        "fieldB": "q14_release_autonomy",
+        "miBits": 0.2553
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q7_requirements",
+        "fieldB": "q9_precision",
+        "miBits": 0.2283
+      },
+      {
+        "ruleId": "base-6",
+        "fieldA": "q8_compliance",
+        "fieldB": "q14_release_autonomy",
+        "miBits": 0.2181
       },
       {
         "ruleId": "base-1",
         "fieldA": "q8_compliance",
         "fieldB": "q9_precision",
-        "miBits": 0.096
+        "miBits": 0.2139
+      },
+      {
+        "ruleId": "base-2",
+        "fieldA": "q7_requirements",
+        "fieldB": "q6_volatility",
+        "miBits": 0.2115
+      },
+      {
+        "ruleId": "base-1",
+        "fieldA": "q6_volatility",
+        "fieldB": "q8_compliance",
+        "miBits": 0.21
       },
       {
         "ruleId": "base-4",
         "fieldA": "q11_deploy_cadence",
         "fieldB": "q9_precision",
-        "miBits": 0.0955
-      },
-      {
-        "ruleId": "base-1",
-        "fieldA": "q6_volatility",
-        "fieldB": "q9_precision",
-        "miBits": 0.0924
+        "miBits": 0.1716
       },
       {
         "ruleId": "base-4",
         "fieldA": "q14_release_autonomy",
         "fieldB": "q9_precision",
-        "miBits": 0.0917
+        "miBits": 0.1434
       }
-    ]
+    ],
+    "note": "miBits is against the harness/base label; miBitsPractices and miBitsCautions are against the practice-set and caution-set fingerprints."
   },
   "a4": {
-    "corpusSize": 50000,
+    "corpusSize": 1500,
     "nonRoadmapShareGte40": {
       "cliff": 40,
       "band": "±5 points",
-      "definedCount": 25546,
-      "nearCliffCount": 2817,
-      "nearCliffPctOfDefined": 11.027,
-      "nearCliffPctOfCorpus": 5.634
+      "definedCount": 856,
+      "nearCliffCount": 102,
+      "nearCliffPctOfDefined": 11.916,
+      "nearCliffPctOfCorpus": 6.8
     },
     "roadmapShareGte60": {
       "cliff": 60,
       "band": "±5 points",
-      "definedCount": 30020,
-      "nearCliffCount": 3311,
-      "nearCliffPctOfDefined": 11.029,
-      "nearCliffPctOfCorpus": 6.622
+      "definedCount": 889,
+      "nearCliffCount": 100,
+      "nearCliffPctOfDefined": 11.249,
+      "nearCliffPctOfCorpus": 6.667
     },
     "teamSizeLt5": {
       "cliff": 5,
       "band": "±1 person",
-      "definedCount": 27006,
-      "nearCliffCount": 4004,
-      "nearCliffPctOfDefined": 14.826,
-      "nearCliffPctOfCorpus": 8.008
+      "definedCount": 805,
+      "nearCliffCount": 118,
+      "nearCliffPctOfDefined": 14.658,
+      "nearCliffPctOfCorpus": 7.867
     }
   }
 }

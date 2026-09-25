@@ -163,6 +163,21 @@ Fixed now. Not to be adjusted after seeing results — see the note at the top o
 
 Kappa between 0.20 and 0.40 is a gray zone: the oracle is treated as *weakly* usable, RQ1 claims may be reported but must be explicitly qualified with the kappa value, and no pass/fail verdict on RQ1 is asserted.
 
+### 8.1 EXT-SELECT retarget (v0.6.0)
+
+`docs/archive/DESIGN-EXT-SELECTION.md` §8.5 withdraws the original RQ1 base-accuracy gate. The table above is retained as the historical pre-registration. Replacement criteria, fixed before any new S1 labels:
+
+| Claim | Criterion |
+|---|---|
+| **RQ1'** | Practice-set macro-F1 exceeds the prevalence baseline by a margin whose 95% cluster-bootstrap CI excludes zero. S4 cutover gate. |
+| **RQ2'** | Every non-`reportOnly` field has non-zero influence on at least one output, and the danger quadrant is empty under *total* influence (base + overlay + caution). |
+| **RQ3'** | Caution precision and recall against judge `riskTags` both clear a floor (replaces `b44` reporting `null`). |
+| **RQ4'** | Harness conformal sets achieve their nominal coverage on holdout. |
+| **RQ5'** | `G-STABILITY` passes for every framework in the catalogue. |
+| **RQ6'** | The fitted harness lands in the judge majority's top-3 at a rate no worse than the pre-cutover runner-up-credit accuracy (T17). Sanity floor, not a top-1 target. |
+
+Harness top-1 versus `constant-openspec` is **reported, not gated**. Analyze writes `verdicts.engineRQ1.verdict = UNSTATED` for the withdrawn RQ1. G-PARITY (current↔golden) is retired at S5; use current↔current / golden↔golden, plus G-FIT / G-PRACTICE / G-STABILITY.
+
 ---
 
 ## 9. Data contracts
@@ -207,10 +222,21 @@ Array<{
   model: string,
   rankedTop3: [frameworkId, frameworkId, frameworkId],
   reasoning: string,
+  riskTags?: string[],          // C-ids from the fixed taxonomy; empty if omitted
+  bestWorst?: Array<{           // T13; several four-practice sets per vignette
+    setIndex: number,
+    presented: string[],        // PracticeIds shown, already shuffled
+    most: string,
+    least: string,
+  }>,
+  parseFailure?: boolean,       // rankedTop3 malformed — do not backfill
+  bestWorstParseFailure?: boolean, // a best-worst set malformed — independent of rankedTop3
 }>
 ```
 
 `frameworkId` values are drawn from the full 7-framework catalog (all IDs in `packs/finance-tech.json`'s `frameworks`), not restricted to the 5 reachable bases — `tessl` and `speckitty` are valid entries (§5, B3).
+
+`most` / `least` must be members of that row's `presented` list and distinct. Malformed best-worst rows are dropped (`bestWorstParseFailure`); they are **not** repaired from presentation order. The frozen `labels.json` predates T13 and has no `bestWorst` — G-PRACTICE waits on a judge re-run.
 
 ### `tools/qc/data/sensitivity-report.json` (produced by Part A, consumed by Part C's danger quadrant and Part D)
 

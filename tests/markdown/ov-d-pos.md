@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 7 · margin 7
+**Harness acceptability** (conformal set: OpenSpec, Superpowers, GitHub Spec Kit, GSD Core, BMAD Method, Spec Kitty):
+- OpenSpec — 20%
+- Superpowers — 18%
+- GitHub Spec Kit — 17%
+- GSD Core — 17%
+- BMAD Method — 16%
+- Spec Kitty — 12%
+
+Confidence: low · score -1.628111153846154 · margin 0.24991807692307666
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q18_token_budget, q19_change_volume, q21_ci_maturity
@@ -12,34 +20,62 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: monthly; cycle time: —
 - Branching: —
 
-## Recommended base: GitHub Spec Kit
-Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline.
+## Recommended base: OpenSpec
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `uvx specify init`
-- Repo: `github/spec-kit`
-- Triggering answers: q5_work_breakdown = {"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5}; q10_architecture = microservices; q7_requirements = structured; q6_volatility = moderate
+- Install: `openspec init (+ openspec config profile for expanded)`
+- Repo: `Fission-AI/OpenSpec`
+- Triggering answers: ambiguityHandling demand 1.00
+- Counterfactuals:
+  - Above 0 on q9_precision the harness flips to superpowers.
+  - Above 0 on q8_compliance the harness flips to superpowers.
+- Axis contributions:
+  - ambiguityHandling: demand 1.00, coverage 0.30, unmet 0.67
+  - verificationStrength: demand 0.22, coverage 0.00, unmet 0.23
 - Enforcement:
-Advisory — constitution.md (Prompt context; not an independent gate.)
-Human gate — Phase reviews (Human advances each phase.)
-- Evidence: 137140 stars, 100 commits/30d, v1.0.7 (2026-09-15); verified 2026-09-16
+Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
+
+## Runner-up
+Superpowers — Acceptability 18% vs 20% for OpenSpec.
 
 ## Practice overlays
-### Domain reconnaissance
+### Low-ceremony fast path (included in base) — 46% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Domain reconnaissance — 44% inclusion
 Source: BMAD Method
-Low domain familiarity, vague goals, or ambiguous-or-shifting as the #1 bottleneck need discovery before implementation.
+Discovery before implementation when the domain or the ask is still vague.
 Enforcement: Hard gate — Python-backed sprint-status merge (Prevents state regression.)
 Human gate — Personas and phase gates (Value depends on using the roles.)
-Triggered by: q7_requirements = structured; q16_bottlenecks = ["ambiguous_or_shifting","flaky_cicd","test_fear"]
+Triggered by: derived view
+
+### Delta-only specs (included in base) — 36% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Change archive (included in base) — 23% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
 
 ## Cautions
 _None._
 
 ## Bottleneck resolution
-1. Ambiguous or shifting requirements — Domain reconnaissance
-2. Flaky CI/CD pipelines or slow builds — not addressed by this stack
-3. Lack of test automation / fear of breaking financial calculations — not addressed by this stack
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+1. [blocking] Ambiguous or shifting requirements — Domain reconnaissance
+2. [major] Flaky CI/CD pipelines or slow builds — not addressed by this stack
+3. [minor] Lack of test automation / fear of breaking financial calculations — not addressed by this stack
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -53,10 +89,8 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── constitution.md    # Base: GitHub Spec Kit
-├── spec.md    # Base: GitHub Spec Kit
-├── plan.md    # Base: GitHub Spec Kit
-├── tasks.md    # Base: GitHub Spec Kit
+├── openspec/specs/    # Base: OpenSpec
+├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
 ├── research notes    # Domain reconnaissance
 ├── PRD.md    # Domain reconnaissance
 ```

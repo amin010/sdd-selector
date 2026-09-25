@@ -40,7 +40,11 @@ import {
   outcomeLabel,
   frameworkCatalog,
   REACHABLE_OUTCOMES,
+  clusterBootstrap,
+  mcnemar,
+  singleJudgeVsMajority,
 } from "./lib.mjs";
+import { scoreMultiLabel, prevalenceBaseline, perLabelMajority } from "./metrics.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, "data");
@@ -244,6 +248,7 @@ for (const vid of vignetteIds) {
       cautions: projection.cautions || [],
       winningRule: result.base && result.base.rule ? result.base.rule : null,
       derived: result.derived || {},
+      conformal: result.conformal || [],
     };
   });
   const mappedLabels = respondents.map((r) => r.mappedLabel);
@@ -369,6 +374,27 @@ const b42 = {
   aggregateMethod:
     "mode of the 3 respondents' mapped outcome label per vignette; ties broken lexicographically. representativeIndex = first respondent whose label equals the mode, reused for B4.3/B4.4/stub-fitting.",
 };
+
+const judgesByVignette = new Map();
+for (const vid of vignetteIds) {
+  const recs = (labelsByVignette.get(vid) || []).filter((r) => Array.isArray(r.rankedTop3) && r.rankedTop3[0]);
+  judgesByVignette.set(vid, recs.map((r) => r.rankedTop3[0]));
+}
+const oracleCeiling = singleJudgeVsMajority(judgesByVignette);
+const top1Ci = clusterBootstrap(consensusVignetteIds, (ids) => {
+  let hit = 0;
+  for (const vid of ids) {
+    const pv = perVignette.get(vid);
+    const jm = judgeMajorityByVignette.get(vid);
+    if (pv && jm && pv.aggregateMappedLabel === jm.label) hit++;
+  }
+  return ids.length ? hit / ids.length : 0;
+});
+const mcnemarVsConstant = mcnemar(consensusVignetteIds.map((vid) => {
+  const pv = perVignette.get(vid);
+  const gold = judgeMajorityByVignette.get(vid).label;
+  return [pv && pv.aggregateMappedLabel === gold, gold === "openspec"];
+}));
 
 // ===========================================================================
 // Headroom — answer-elicitation bounds, label-reachability ceiling, and
@@ -667,11 +693,65 @@ const c1PerField = ALL_ANSWER_FIELD_IDS.map((fieldId) => {
 });
 const c1ByField = new Map(c1PerField.map((r) => [r.fieldId, r]));
 
+const TOLERANCE_FIELDS = ["q5_work_breakdown", "q2_team"];
 const c1 = {
   numericTolerance: NUMERIC_TOLERANCE,
-  toleranceNote: "exact match for categorical/multi/ranked fields; ±10 tolerance for q5_work_breakdown percentages and q2_team headcounts (documented heuristic).",
-  perField: c1PerField.sort((a, b) => a.agreementScore - b.agreementScore),
+  toleranceFields: TOLERANCE_FIELDS,
+  toleranceNote: "exact match for categorical/multi/ranked fields; ±10 tolerance for q5_work_breakdown percentages and q2_team headcounts (documented heuristic). Those ±10 fields are listed in toleranceFields so they are not read against exact-match scores.",
+  perField: c1PerField.sort((a, b) => a.agreementScore - b.agreementScore).map((row) => ({
+    ...row,
+    matchRule: TOLERANCE_FIELDS.includes(row.fieldId) ? "tolerance_pm_10" : "exact",
+  })),
+  determinability: {
+    note: "Agreement overall vs on the subset where vignette prose contains a field cue (§7.3). Keyword heuristics; not an LLM pass.",
+  },
 };
+
+const FIELD_CUES = {
+  q2_team: ["engineer", "headcount", "team of", "developers", "qa"],
+  q3_distribution: ["overlap", "timezone", "hours", "colocat", "remote", "distributed"],
+  q5_work_breakdown: ["roadmap", "percent", "ops", "bugs", "tech debt", "regulatory"],
+  q6_volatility: ["volatil", "interrupt", "priority", "shifting"],
+  q7_requirements: ["requirement", "spec", "vague", "structured"],
+  q8_compliance: ["sox", "audit", "compliance", "regulator"],
+  q9_precision: ["zero-tolerance", "precision", "ledger", "calculation"],
+  q10_architecture: ["monolith", "microservice", "streaming", "architecture"],
+  q12_quality_gates: ["coverage", "e2e", "unit test", "quality gate"],
+  q14_release_autonomy: ["vendor", "release train", "autonomous", "coupled"],
+  q16_bottlenecks: ["bottleneck", "flaky", "test fear", "ticket", "approval"],
+  q18_token_budget: ["token", "metered", "budget"],
+  q19_change_volume: ["small change", "many small", "volume"],
+  q20_runtimes: ["cursor", "claude", "copilot", "runtime"],
+  q21_ci_maturity: ["ci", "pull request", "status check", "linter"],
+};
+
+c1.determinability.perField = ALL_ANSWER_FIELD_IDS.map((fieldId) => {
+  const cues = FIELD_CUES[fieldId] || [];
+  let agreeAll = 0;
+  let nAll = 0;
+  let agreeDet = 0;
+  let nDet = 0;
+  for (const vid of vignetteIds) {
+    const recs = answersByVignette.get(vid) || [];
+    if (recs.length < 3) continue;
+    nAll++;
+    const values = recs.map((r) => r.answers[fieldId]);
+    const agreed = valuesAgree(fieldId, values);
+    if (agreed) agreeAll++;
+    const prose = String((vignetteById.get(vid) || {}).prose || "").toLowerCase();
+    const determinable = cues.length === 0 || cues.some((c) => prose.includes(c));
+    if (determinable) {
+      nDet++;
+      if (agreed) agreeDet++;
+    }
+  }
+  return {
+    fieldId,
+    agreementOverall: round(pct(agreeAll, nAll) / 100),
+    agreementDeterminable: nDet ? round(pct(agreeDet, nDet) / 100) : null,
+    determinableShare: round(pct(nDet, nAll) / 100),
+  };
+});
 
 // ===========================================================================
 // C2 — end-to-end recommendation stability: fraction of vignettes where all
@@ -702,25 +782,34 @@ const c2 = {
 const RULE_INERT_FIELD_IDS = ["q1_domain", "q13_branching", "q17_process_mismatch", "q4_tenure", "q11_cycle_time"];
 const a2FieldsById = new Map((sensitivityReport.a2 && sensitivityReport.a2.fields || []).map((f) => [f.fieldId, f]));
 
+function totalInfluence(a2Field) {
+  return (a2Field.baseInfluenceScore || 0) + (a2Field.overlayInfluenceScore || 0) + (a2Field.cautionInfluenceScore || 0);
+}
+
 const dangerQuadrant = [];
 for (const [fieldId, a2Field] of a2FieldsById) {
   if (RULE_INERT_FIELD_IDS.includes(fieldId)) continue;
   const c1Field = c1ByField.get(fieldId);
   if (!c1Field) continue;
-  if (a2Field.baseInfluenceScore > 5 && c1Field.agreementScore < 0.6) {
+  const total = totalInfluence(a2Field);
+  if (total > 5 && c1Field.agreementScore < 0.6) {
     dangerQuadrant.push({
       fieldId,
+      totalInfluenceScore: round(total),
       baseInfluenceScore: a2Field.baseInfluenceScore,
+      overlayInfluenceScore: a2Field.overlayInfluenceScore,
+      cautionInfluenceScore: a2Field.cautionInfluenceScore,
       agreementScore: c1Field.agreementScore,
     });
   }
 }
 
 const c3 = {
-  rule: "base-influence > 5 (percentage points, from A2) AND respondent agreement < 0.60 (from C1)",
+  rule: "total-influence (base+overlay+caution) > 5 (percentage points, from A2) AND respondent agreement < 0.60 (from C1)",
   ruleInertFieldsExcluded: RULE_INERT_FIELD_IDS,
   fieldsInQuadrant: dangerQuadrant,
   isEmpty: dangerQuadrant.length === 0,
+  assertNonEmpty: true,
 };
 
 // ===========================================================================
@@ -743,14 +832,16 @@ const c3 = {
 // ===========================================================================
 
 const nonInertFields = [...a2FieldsById.values()].filter((f) => !RULE_INERT_FIELD_IDS.includes(f.fieldId));
-const nonInertNonZero = nonInertFields.filter((f) => f.baseInfluenceScore > 0);
+const nonInertNonZero = nonInertFields.filter((f) => totalInfluence(f) > 0);
 const rq2a = {
   totalFields: a2FieldsById.size,
   ruleInertFieldsExcluded: RULE_INERT_FIELD_IDS.length,
   nonReportOnlyFieldsConsidered: nonInertFields.length,
-  nonZeroBaseInfluenceCount: nonInertNonZero.length,
+  nonZeroAnyInfluenceCount: nonInertNonZero.length,
+  nonZeroBaseInfluenceCount: nonInertFields.filter((f) => f.baseInfluenceScore > 0).length,
   fraction: round(nonInertNonZero.length / nonInertFields.length),
-  fieldsWithZeroInfluence: nonInertFields.filter((f) => f.baseInfluenceScore === 0).map((f) => f.fieldId),
+  fieldsWithZeroInfluence: nonInertFields.filter((f) => totalInfluence(f) === 0).map((f) => f.fieldId),
+  criterion: "non-zero influence on any output (base, overlay, or caution)",
   passThreshold: 0.6,
   pass: nonInertNonZero.length / nonInertFields.length >= 0.6,
 };
@@ -859,13 +950,81 @@ function kappaUnderSelection(selection) {
 
 const firstMatchKappa = kappaUnderSelection("first-match");
 const weightedKappa = kappaUnderSelection("weighted");
+const utilityKappa = kappaUnderSelection("utility");
+
+const practiceUniverse = (api.PACK.practices || []).map((p) => p.id);
+const practicePairs = [];
+for (const vid of vignetteIds) {
+  const recs = answersByVignette.get(vid) || [];
+  if (!recs.length) continue;
+  const result = evaluateAnswers(api, recs[0].answers);
+  const pred = (result.overlays || []).map((o) => o.rule && o.rule.id).filter(Boolean);
+  const goldFromBw = [];
+  for (const lab of (labelsByVignette.get(vid) || [])) {
+    for (const row of lab.bestWorst || []) {
+      if (row.most) goldFromBw.push(row.most);
+    }
+  }
+  practicePairs.push({ pred, gold: [...new Set(goldFromBw)], ranked: pred });
+}
+const labeledPracticePairs = practicePairs.filter((p) => p.gold.length);
+let conformalHits = 0;
+let conformalN = 0;
+let harnessInJudgeTop3 = 0;
+for (const vid of consensusVignetteIds) {
+  const pv = perVignette.get(vid);
+  const jm = judgeMajorityByVignette.get(vid);
+  const rep = (pv.respondents || []).find((r) => r.respondentIndex === pv.representativeIndex) || pv.respondents[0];
+  if (rep && Array.isArray(rep.conformal) && jm && jm.label) {
+    conformalN++;
+    if (rep.conformal.indexOf(jm.label) !== -1) conformalHits++;
+  }
+  const majorityJudge = (labelsByVignette.get(vid) || []).find((r) => Array.isArray(r.rankedTop3) && r.rankedTop3[0] === jm.label);
+  if (majorityJudge && pv.aggregateMappedLabel && majorityJudge.rankedTop3.indexOf(pv.aggregateMappedLabel) !== -1) {
+    harnessInJudgeTop3++;
+  }
+}
+const rq4 = {
+  note: "RQ4' — conformal set contains the judge-majority harness (nominal 1-α = 0.80 at conformalAlpha 0.2).",
+  n: conformalN,
+  hits: conformalHits,
+  coverage: conformalN ? round(conformalHits / conformalN) : null,
+  nominal: 0.8,
+};
+const rq6 = {
+  note: "RQ6' — shipped harness is in the majority judge's rankedTop3. Compared to runner-up-credit (b43) as the T17-era floor proxy; a frozen pre-cutover T17 number was not checked in.",
+  n: consensusVignetteIds.length,
+  hits: harnessInJudgeTop3,
+  rate: consensusVignetteIds.length ? round(harnessInJudgeTop3 / consensusVignetteIds.length) : null,
+};
+
+const gPractice = {
+  note: labeledPracticePairs.length
+    ? "Scored against judge best-worst 'most' labels (union per vignette)."
+    : "Frozen labels.json has no bestWorst yet (T13 re-run pending). Metrics below are engine overlay prevalence only.",
+  labeledVignettes: labeledPracticePairs.length,
+  engine: labeledPracticePairs.length
+    ? scoreMultiLabel(labeledPracticePairs, practiceUniverse)
+    : null,
+  prevalenceBaseline: prevalenceBaseline(labeledPracticePairs.map((p) => p.gold), 5),
+  perPracticeMajority: perLabelMajority(labeledPracticePairs.map((p) => p.gold), practiceUniverse),
+  engineOverlayPrevalence: (() => {
+    const counts = {};
+    for (const p of practicePairs) {
+      for (const id of p.pred) counts[id] = (counts[id] || 0) + 1;
+    }
+    return Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]));
+  })(),
+};
+
 const partE = {
   method: "Offline re-score of frozen answers/labels under first-match vs weighted selection. No new panel.",
   shippedSelection: api.SETTINGS && api.SETTINGS.selection,
   firstMatchKappa: round(firstMatchKappa),
   weightedKappa: round(weightedKappa),
+  utilityKappa: round(utilityKappa),
   delta: round((weightedKappa == null || firstMatchKappa == null) ? null : weightedKappa - firstMatchKappa),
-  note: "Positive delta means weighted scoring agrees more with the frozen judge majority than first-match-wins.",
+  note: "Positive delta means weighted scoring agrees more with the frozen judge majority than first-match-wins. utilityKappa is the shipped EXT-SELECT scorer.",
 };
 
 const partD = {
@@ -895,21 +1054,10 @@ const partD = {
 
 const rq1AccuracyGapVsConstant = round((b42.top1Accuracy - b5.constantOpenspec.accuracy) * 100); // percentage points
 const rq1Criteria = {
-  cohenKappaAtLeast040: b42.cohenKappa != null && b42.cohenKappa >= 0.4,
-  beatsConstantByAtLeast15pp: rq1AccuracyGapVsConstant >= 15,
-  beatsBestStub: b42.top1Accuracy > b5.bestSingleQuestionStub.accuracy,
+  withdrawn: true,
+  note: "RQ1 (base top-1 vs constant-openspec +15pp) is withdrawn by EXT-SELECT §8.5. Replacement criteria RQ1'–RQ6' apply after S1 labels exist.",
 };
-const rq1AllCriteriaMet = Object.values(rq1Criteria).every(Boolean);
-// Pre-registered cascade: if the oracle itself is unusable (Fleiss < 0.20),
-// abandon RQ1 correctness claims regardless of what the raw numbers say.
-const rq1Verdict =
-  oracleVerdict === "UNUSABLE"
-    ? "NOT_ASSERTABLE (oracle unusable — no stable ground truth to test RQ1 against)"
-    : oracleVerdict === "WEAKLY_USABLE_GRAY_ZONE"
-      ? `QUALIFIED (oracle only weakly usable, kappa=${b41.kappa} — criteria met: ${rq1AllCriteriaMet})`
-      : rq1AllCriteriaMet
-        ? "PASS"
-        : "FAIL";
+const rq1Verdict = "UNSTATED (RQ1 withdrawn — EXT-SELECT §8.5; harness top-1 is reported, not gated)";
 
 const rq2Criteria = {
   atLeast60PctQuestionsNonZeroInfluence: rq2a.pass,
@@ -957,7 +1105,12 @@ const report = {
     note: "This report's numbers are ONLY as meaningful as the underlying vignettes/answers/labels — see each file's generatorModel/model fields. Under the mock LLM provider (no ANTHROPIC_API_KEY/OPENAI_API_KEY), this is a pipeline-validation run, not a real Part B/C/D result (docs/QC-EXPERIMENT.md §11).",
   },
   b41_fleissKappa: b41,
-  b42_engineVsMajority: b42,
+  b42_engineVsMajority: {
+    ...b42,
+    top1AccuracyCI95: top1Ci,
+    oracleCeiling: oracleCeiling,
+    mcnemarVsConstantOpenspec: mcnemarVsConstant,
+  },
   headroom,
   b43_runnerUpCredit: b43,
   b44_cautionPrecisionRecall: b44,
@@ -968,6 +1121,9 @@ const report = {
   rq2a_questionInfluenceCoverage: rq2a,
   partD_thresholdCalibration: partD,
   partE_weightedScoring: partE,
+  gPractice,
+  rq4_conformalCoverage: rq4,
+  rq6_harnessInJudgeTop3: rq6,
   verdicts,
 };
 

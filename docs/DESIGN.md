@@ -3,14 +3,15 @@
 | Field | Value |
 |---|---|
 | Status | Draft — awaiting review |
-| Version | 0.5.1 |
+| Version | 0.6.0 |
 | Owner | Amin Rashidi |
-| Last updated | 2026-09-18 |
-| Source material | *Modern Agentic Spec-Driven Development Frameworks* (`docs/archive/Agentic Spec-Driven Development Frameworks.md`), Appendix: "Team Diagnostic & SDD Model Selection Decision System"; *Finance Tech Team & Project Diagnostic Questionnaire* (the instrument) |
+| Last updated | 2026-09-19 |
+| Source material | *Modern Agentic Spec-Driven Development Frameworks*, Appendix: "Team Diagnostic & SDD Model Selection Decision System" (local research brief, not in this repo); *Finance Tech Team & Project Diagnostic Questionnaire* (the instrument). Corrected claims are in §8 and §11. |
 | Evidence date | 2026-09-16 (see Appendix A for method) |
 
 **Changelog**
 
+- **0.6.0** — Practice-selection engine (EXT-SELECT). Finance-tech ships `settings.selection: utility`: a framework is a pre-bundled practice set plus adoption cost, scored by a shared 14-axis utility. Feasibility (runtime / watch) is a veto, not a penalty. Report shows harness acceptability, a conformal set, and per-practice inclusion probabilities. Instrument: q16 is seven independent severities; q3 is overlap hours; q21 is a CI-artifact checklist with derived `ciMaturity`; q5 approximate sums normalize; `q4_tenure` and `q11_cycle_time` are `reportOnly`. First-match and weighted remain available for other packs. Weights are a prior centered on 0.5.1 hand scores until an S4 fit lands. See `docs/archive/DESIGN-EXT-SELECTION.md`.
 - **0.5.1** — QC-driven rule/engine fixes, no new questions. (1) Weighted selection now skips a base rule whose `when` gate fails (D23); signals never elect a framework the rule itself says does not apply. (2) Spec Kitty is a selectable base (`base-6`) for structured requirements plus zero-tolerance precision. (3) Empty `runtimes` remains unrestricted at the Tier 0 candidate filter, but is no longer a scoring exemption (D24); BMAD and Tessl now document `claude_code`.
 - **0.5.0** — Base combination rule is weighted scoring (`settings.selection: weighted`) with soft Tier 0 runtime penalties and a confidence/insufficient-signal path. Tessl is reachable as a watch-penalized base (`base-5`).
 - **0.4.1** — Two QC-driven rule/engine fixes, no new questions. (1) Tier 0 treats an empty framework `runtimes` array as “no runtime restriction” rather than “supports nothing,” so answering `q20_runtimes` no longer drops BMAD (or any other unrestricted framework) from the candidate set; `watch` status is still excluded. (2) Base rule 1 is narrowed to `nonRoadmapShare ≥ 40` only — the architecture-only arm (`q10 ∈ {monolith, hybrid, batch_data}`) was dropped so more-specific later rules can fire. Source appendix order is unchanged (D1): OpenSpec remains first as the brownfield catch, then Spec Kit / BMAD / compact-team. Architecture still drives overlay E, not the base.
@@ -79,7 +80,7 @@ This design adds a third tier:
 | F3 | Exactly one base framework is recommended for any valid, complete answer set. |
 | F4 | Every overlay whose trigger fires is listed; overlays already provided by the base are shown as "included in base" rather than as additional adoptions. |
 | F5 | The report includes, per base and overlay: name, rationale, artifacts, commands, and an **enforcement class** (§9.2). |
-| F6 | The report includes a Bottleneck Resolution Matrix mapping each ranked Q16 bottleneck to the practice addressing it, and explicitly names bottlenecks the stack does *not* address. |
+| F6 | The report includes a Bottleneck Resolution Matrix mapping each rated Q16 bottleneck (severity) to the practice addressing it, and explicitly names bottlenecks the stack does *not* address. |
 | F7 | The report includes a suggested repository directory layout harmonizing the selected tools. |
 | F8 | A "Copy as Markdown" action copies the full report to the clipboard. |
 | F9 | Answers serialize into the URL fragment; loading a URL with a fragment restores form state. |
@@ -190,10 +191,10 @@ type Answers = {
   q1_domain?:             'ledger' | 'reporting_compliance' | 'treasury'
                           | 'data_pipeline' | 'internal_platform' | 'other';
   q2_team?:               TeamMakeup;                   // size + roles
-  q3_distribution?:       'colocated' | 'regional' | 'global_timezones';
+  q3_distribution?:       'more_than_6' | '3_to_6' | 'fewer_than_3';
   q4_tenure?:             'forming' | '3_12_months' | 'over_1_year';
   q4_domain_familiarity?: 'high' | 'medium' | 'low';
-  q5_work_breakdown?:     WorkBreakdown;                // five percents, sum = 100
+  q5_work_breakdown?:     WorkBreakdown;                // five percents; approximate sums are normalized to 100
   q6_volatility?:         'very_low' | 'moderate' | 'high' | 'interrupt_driven';
   q7_requirements?:       'structured' | 'high_level' | 'vague';
   q8_compliance?:         'sox_tier1' | 'internal_governance'
@@ -207,14 +208,14 @@ type Answers = {
   q13_branching?:         'trunk_based' | 'gitflow' | 'adhoc';
   q14_release_autonomy?:  'autonomous' | 'coupled' | 'heavy' | 'vendor';
   q15_governance?:        'automated' | 'lightweight_review' | 'cab';
-  q16_bottlenecks?:       Array<BottleneckId>;          // ordered, top 3, unique
+  q16_bottlenecks?:       Record<BottleneckId, 'none' | 'minor' | 'major' | 'blocking'>;
   q17_process_mismatch?:  string;                       // report-only; ≤500 chars
 
   // ── Added in v0.2.0; renumbered in v0.3.0 (§9.3) ──
   q18_token_budget?:      'unmetered' | 'team_plan' | 'individual_pro' | 'strict';
   q19_change_volume?:     'many_small' | 'balanced' | 'few_large';
   q20_runtimes?:          Array<RuntimeId>;
-  q21_ci_maturity?:       'none' | 'tests_only' | 'tests_plus_static' | 'contracts_runtime';
+  q21_ci_maturity?:       Array<'unit_tests' | 'static_analysis' | 'contract_tests' | 'runtime_checks' | 'required_status'>;
 };
 
 type TeamMakeup = {
@@ -232,7 +233,7 @@ type WorkBreakdown = {
   bugs: number;                                         // production fixes / incidents
   regulatory: number;                                   // mandates / audit-driven
   tech_debt: number;
-};                                                      // each 0–100; five must sum to 100
+};                                                      // each 0–100; if sumToMode is normalize, rescale onto 100
 
 type QualityGateId =
   | 'unit_coverage' | 'integration_contract' | 'e2e'
@@ -488,7 +489,7 @@ Mapping the source appendix's rules against the **real instrument** (§7.1):
 |---|---|---|
 | Q1 functional domain | No | Collected and reported (D19). No evidence-backed split by domain. |
 | Q2 team makeup | Base rules 3, 4; C8 | Size is `q2.total`. Role presence is derived (D14). SWE and data-engineer counts are report-only. |
-| Q3 distribution | Overlay C | Unchanged. |
+| Q3 distribution | `concurrencyIsolation` demand | Behavioural: overlapping working hours (`more_than_6 \| 3_to_6 \| fewer_than_3`). |
 | Q4a tenure | No | Collected and reported (D19). |
 | Q4b domain familiarity | Overlay D | Unchanged. |
 | Q5 work breakdown | Base rules 1, 2, 6; C1 | Five percents. Rules read `derived.nonRoadmapShare` and `q5.roadmap` (D13). |
@@ -499,16 +500,16 @@ Mapping the source appendix's rules against the **real instrument** (§7.1):
 | Q10 architecture | Base rule 2; Overlay E | `streaming` is in the form; it is not brownfield and not Spec Kit's microservices path (D22). Architecture no longer selects OpenSpec as a base (0.4.1). |
 | Q11a deploy cadence | Base rule 4 | Instrument's "once or twice per sprint" is `sprint` (was `weekly`). |
 | Q11b cycle time | No | Collected and reported (D19). |
-| Q12 quality gates | Rule-4 split (D3′); report note on overlay B | Multi-select. `coverageLevel` is derived (D17). |
+| Q12 quality gates | `verificationStrength` demand | Multi-select. `coverageLevel` is derived (D17). Globally influential under utility (no question edit). |
 | Q13 branching | No | Collected and reported (D19). Previously omitted. |
-| Q14 release autonomy | Base rule 4; Overlay C; C13 | `coupled` and `heavy` fire C; `vendor` fires C13, not C (D18). |
+| Q14 release autonomy | `concurrencyIsolation`; C13 as constraint | `vendor` zeros `concurrencyIsolation` demand (D28). `coupled`/`heavy` still raise isolation demand. |
 | Q15 governance | Overlay A | Unchanged. |
-| Q16 bottlenecks | Overlays B, D; matrix (F6) | Seven instrument options. Only `test_fear` and `ambiguous_or_shifting` trigger overlays. Overlay C `resolves` `cross_team_approvals` when C fires. |
+| Q16 bottlenecks | Several axes; matrix (F6) | Seven independent `none \| minor \| major \| blocking` ratings (D27). Magnitudes feed demand; no rank cutoffs. |
 | Q17 process mismatch | No | Open text; Markdown report only (D20). |
-| Q18 token budget | Rule-4 split; C3 | Design addition. |
+| Q18 token budget | `tokenBudget` demand and `mu` | Design addition. Globally influential under utility (no question edit). |
 | Q19 change volume | Overlay G; C7 | Design addition. |
 | Q20 runtimes | Tier 0 | Design addition. |
-| Q21 CI maturity | Overlay F | Design addition. |
+| Q21 CI maturity | `deterministicEnforcement` demand | Checklist of CI artifacts; derived ordinal `ciMaturity` (same pattern as `coverageLevel`). |
 
 **Q6 (requirement volatility) was collected by the source appendix and then ignored**, despite being the dimension on which the frameworks differ most sharply. Spec Kit's documented weakness is mid-implementation spec change; OpenSpec has `/opsx:update` precisely for it; BMAD has `bmad-correct-course`; GSD Core supports phase editing after roadmap approval. A team with high or interrupt-driven volatility should be steered away from Spec Kit, and the source rules provide no path for that. Divergence V5 (§11) adds it.
 
@@ -539,19 +540,20 @@ The ERP field report's arithmetic — roughly one session per 2,000 LOC unit, a 
 **Q20 — Agent runtimes in use.** multi-select over `claude_code | cursor | codex | copilot | gemini_cli | windsurf | opencode | other`
 Portability varies widely (§8). A team standardized on a runtime a framework does not document is buying an integration project. Filters candidate frameworks before other rules apply.
 
-**Q21 — Existing CI enforcement maturity.** `none | tests_only | tests_plus_static | contracts_runtime`
-Since the strongest governance mechanisms in these frameworks are `advisory`, real enforcement has to come from CI. A team at `contracts_runtime` already has the backstop; a team at `none` with SOX requirements has a gap no framework choice closes. Drives overlay F.
+**Q21 — Existing CI artifacts on every PR.** Checklist `unit_tests | static_analysis | contract_tests | runtime_checks | required_status`. Derived `ciMaturity` buckets the count: `none`, `tests_only`, `tests_plus_static`, `contracts_runtime`. Since the strongest governance mechanisms in these frameworks are `advisory`, real enforcement has to come from CI. A team at `contracts_runtime` already has the backstop; a team at `none` with SOX requirements has a gap no framework choice closes. Drives `deterministicEnforcement` demand.
 
 
 ## 10. Decision logic
 
-### 10.1 Tier 0 — runtime feasibility filter
+### 10.1 Tier 0 — runtime feasibility veto
 
-Before base selection, any framework that documents a **non-empty** runtime list and does not overlap `q20_runtimes` is removed from the candidate set in hard Tier 0 mode. An empty `runtimes` array still means no runtime restriction at the **candidate filter** — the framework stays in the set (0.4.1). In **weighted scoring**, empty is not a documented overlap: the runtime-mismatch penalty applies when the user named runtimes (D24). Shipped finance-tech uses soft Tier 0 (`mode: soft`): every catalog framework stays a candidate and mismatches are score-penalized. If `q20` is unanswered, no runtime penalty applies. If hard filtering empties the candidate set, the engine reports "no framework documents support for your runtimes" and lists the closest matches rather than falling through to a default.
+Before scoring, any framework that documents a **non-empty** runtime list and does not overlap `q20_runtimes` is removed from the candidate set. An empty `runtimes` array still means no runtime restriction. Finance-tech utility mode treats this as a **hard veto**, not a score penalty (D25): exclusions are reported as their own sentence. `watch` frameworks are vetoed as harnesses the same way. First-match / weighted packs may still use soft Tier 0 penalties. If hard filtering empties the candidate set, the engine reports "no framework documents support for your runtimes" and lists the closest matches rather than falling through to a default.
 
-### 10.2 Tier 1 — base selection
+### 10.2 Tier 1 — harness selection (utility)
 
-Finance-tech ships `settings.selection: weighted`. A rule whose `when` gate is false is **ineligible** and is not scored (D23). Eligible rules accumulate signal weights, take runtime/watch penalties, and the highest positive score wins; the next distinct framework is the runner-up (F13). A low top score or thin margin is reported as insufficient signal rather than a silent fallback. First-match-wins remains available for other packs (`settings.selection` omitted or `first-match`).
+Finance-tech ships `settings.selection: utility`. A framework is a pre-bundled set of practices plus an adoption cost. Demand is a 14-axis vector with `(q, p)` ramps. Coverage uses enforcement-class `kappa` plus a `gamma` backstop. The engine enumerates feasible added-practice bundles (cap `k`, default 5) and picks `(harness, set)` maximizing `U`. First-match and weighted remain available for other packs.
+
+The historical first-match rule table is retained below as the 0.5.1 editorial prior — utility weights were centered on those signals, not as live gates:
 
 | # | Base | Predicate (`when` gate) |
 |---|---|---|
@@ -644,7 +646,12 @@ Predicates may read the answers, derived views, and the partial result. Rendered
 | D21 | Should Q1 domain steer SOX or ledger-specific overlays? | Display only. | A domain split without primary-source evidence would be speculation. |
 | D22 | Where does event-driven streaming sit in base selection? | Not in rule 1's brownfield set and not in rule 2's `microservices` conjunct. Streaming teams fall through unless another rule matches. | Streaming is modern, not a monolith/legacy signal, and Spec Kit's greenfield path is documented around services, not Kafka topologies. |
 | D23 | In weighted selection, what does a failed `when` gate mean? | The rule is ineligible — skip it. Signals never override the gate. | `when` is the documented eligibility predicate. Scoring a rule whose gate is false lets additive signals elect a framework the rule itself says does not apply. Skip matches first-match intent. |
-| D24 | Empty framework `runtimes` vs. the runtime-mismatch penalty. | Candidate filter: empty still means unrestricted (0.4.1). Weighted score: empty is not a documented overlap — apply the penalty when the user named runtimes. Document the actual runtimes (BMAD and Tessl: `claude_code`). | An exemption for empty lists rewards frameworks that omit runtime evidence and penalizes those that document it honestly. |
+| D24 | Empty framework `runtimes` vs. the runtime-mismatch penalty. | Candidate filter: empty still means unrestricted (0.4.1). Weighted score: empty is not a documented overlap — apply the penalty when the user named runtimes. Document the actual runtimes (BMAD and Tessl: `claude_code`). | An exemption for empty lists rewards frameworks that omit runtime evidence and penalizes those that document it honestly. **Superseded for utility packs by D25.** |
+| D25 | Runtime / watch as score penalties vs vetoes. | Utility mode: hard veto. Report the exclusion. Empty `runtimes` stays unrestricted. | A penalty still ranks an unrunnable harness. Replaces D24 for `selection: utility`. |
+| D26 | Base as first-match / weighted rules vs practice utility. | Framework = bundle + cost; same `U` scores harnesses and added practices. | Practices are where answers land (EXT-SELECT §2). D1, D3′, D5 become byproducts. |
+| D27 | Forced q16 ranking vs independent severities. | Seven independent none/minor/major/blocking ratings. | Rank position is not magnitude. Supersedes D7 for finance-tech. |
+| D28 | C8 / C13 as cautions vs constraints. | C8 → `requiresWhen teamSize >= 3` on lane-worktrees. C13 → `demandScopes` zeros `concurrencyIsolation` when `q14 = vendor`. | A caution the user cannot act on is a constraint. |
+| D29 | Fitted weights vs editorial ratings (D11). | Capabilities authored; `theta`/`lambda`/`mu` prior-centered on 0.5.1 weights until S4 fit. No coefficient is a `FrameworkId`. | D11 still holds for display ratings; fitted axis weights are the decision parameters. |
 
 ## 11. Divergences from the source document
 
@@ -666,6 +673,8 @@ Recorded so a reviewer can check each independently.
 | **V12** | Superpowers presented as the flagship, highest-adoption choice. | Largest star count, but zero commits in the 30 days before the evidence date while peers posted 100+. | Status `viable` not `recommended`; caution C10. |
 | **V13** | Source appendix treats "compact, <5 engineers" as Q1 and never publishes the instrument's options. | The Finance Tech instrument's Q1 is functional domain; team size and roles are Q2; Q5 has five percents; Q6 has interrupt-driven; Q8 has internal governance; Q12 is check-all-that-apply; Q13 exists; Q14 has heavy and vendor; Q16 has seven bottlenecks. | Answers replaced (§7.1); derived views (§7.6); D12–D22; C12, C13. |
 
+v0.6.0 resolves several of these structurally rather than by another boolean rule (T62): V1/V4/V7 via enforcement-class `kappa` and derived `enforcement_gap` cautions; V5 via the `midFlightChange` axis; V9 via `tokenBudget` + `mu`; V10 via uncovered `brownfield` demand on a Spec Kit harness; V8/C8 via the `requiresWhen` constraint on `lane-worktrees`.
+
 ## 12. User interface
 
 *Superseded in part by `docs/archive/DESIGN-EXT-UI.md` (EXT-UI): the form is rendered from generic field kinds rather than per-question renderers (§12.2), and the profile and process-mismatch sections move to the Markdown export only (§12.3). Layout and accessibility below stand.*
@@ -677,7 +686,7 @@ Two-column at ≥ 900 px (form left, sticky report right); single column stacked
 ### 12.2 Form
 
 - One `<fieldset>` per instrument item (Q4, Q5, Q2, and Q11 are compound: one fieldset with a legend, multiple labeled controls inside). Helper line explaining what the question influences, or "Shown in the report; does not change the recommendation" for D19 fields.
-- Single-choice → radios. Multi-choice (Q12, Q20) → checkboxes. Q2 → number inputs for counts plus Dedicated/Shared/None radios for PO and Scrum Master. Q5 → five number inputs with live sum indicator and inline error when ≠ 100. Q16 → three `<select>`s labeled 1st/2nd/3rd with duplicates prevented. Q17 → `<textarea maxlength="500">`.
+- Single-choice → radios. Multi-choice (Q12, Q20, Q21) → checkboxes. Q2 → number inputs for counts plus Dedicated/Shared/None radios for PO and Scrum Master. Q5 → five number inputs with a live sum; approximate totals are normalized to 100. Q16 → seven independent severity radios. Q17 → `<textarea maxlength="500">`.
 - Inputs named by answer field ID; `readAnswers()` is a generic `FormData` walk driven by `QUESTIONS`, not hand-written per field.
 - Q18–Q21 are grouped under a "Constraints" section so the original diagnostic ordering stays recognizable.
 - "Reset" clears the form and the URL hash.
@@ -744,7 +753,7 @@ Minimum fixture coverage:
 - One fixture per overlay, positive and negative, including F and G.
 - Overlay A does **not** fire on `q8 = internal_governance` (D16).
 - Overlay C fires on `q14 = heavy`; does **not** fire on `q14 = vendor` (D18).
-- Overlay D: `ambiguous_or_shifting` at rank 1 fires; at rank 2 does not.
+- Overlay D (legacy first-match packs): `ambiguous_or_shifting` at rank 1 fires; at rank 2 does not. Utility packs read severity magnitude instead.
 - Overlay G fires on `interrupt_driven` as well as `high`.
 - Overlay B still fires when `financial_reconciliation ∈ q12` and `q9 = zero_tolerance`; the note about existing reconciliation tests is present.
 - Overlay dedupe: base Spec Kit + `q8 = sox_tier1` → overlay A `includedInBase` (D5).
@@ -752,7 +761,7 @@ Minimum fixture coverage:
 - C6 renders as a positive note, not a warning.
 - C12 fires only when `q6 = interrupt_driven` and the base is Spec Kit, Superpowers, or BMAD.
 - C13 fires on `q14 = vendor` and overlay C does not.
-- Q16 rank sensitivity: `test_fear` at rank 2 fires overlay B; at rank 3 does not.
+- Q16 severity: `test_fear = major|blocking` raises `verificationStrength` demand; `none` does not.
 - Completeness: missing `q10` lists `q10` in `couldChangeResult`. Missing `q1_domain`, `q4_tenure`, `q11_cycle_time`, `q13_branching`, or `q17_process_mismatch` does **not** (D19, D20).
 - Determinism: evaluating the same answers twice yields deep-equal results. `derive()` is a pure function of answers.
 - Evidence staleness: a `verifiedOn` older than 180 days sets `evidenceAge.stale`.
@@ -761,10 +770,10 @@ Minimum fixture coverage:
 ### 14.2 UI checks (manual for v1)
 
 - Form renders every question from `QUESTIONS`; adding a question to the data array adds it to the form with no other change.
-- Q5 sum validation blocks evaluation of rules 1 and 2 until the sum is 100.
+- Q5 approximate totals are normalized to 100; an exact sum is not required to evaluate.
 - Q2 Dedicated/Shared/None radios and headcount inputs round-trip through the URL.
 - Q12 checkboxes include `financial_reconciliation` and `mostly_manual`.
-- Q16 selects cannot choose the same bottleneck twice; the seven instrument options are the only choices.
+- Q16 is seven independent severity radios (`none | minor | major | blocking`).
 - Q17 textarea is in the Markdown report and does not change the recommended base.
 - URL round-trip: fill → copy link → open in new tab → identical state and report.
 - Keyboard-only completion of the full questionnaire.

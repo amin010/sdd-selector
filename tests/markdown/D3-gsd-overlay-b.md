@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 9 · margin 9
+**Harness acceptability** (conformal set: Superpowers, OpenSpec, GitHub Spec Kit, GSD Core, BMAD Method, Spec Kitty):
+- Superpowers — 21%
+- OpenSpec — 21%
+- GitHub Spec Kit — 16%
+- GSD Core — 16%
+- BMAD Method — 15%
+- Spec Kitty — 11%
+
+Confidence: low · score -2.0604015384615386 · margin 0.40172500000000033
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q19_change_volume, q21_ci_maturity
@@ -12,23 +20,55 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: sprint; cycle time: —
 - Branching: —
 
-## Recommended base: GSD Core
-A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core.
+## Recommended base: OpenSpec
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `npx @opengsd/gsd-core`
-- Repo: `open-gsd/gsd-core`
-- Triggering answers: q2_team = {"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"}; q11_deploy_cadence = sprint; q14_release_autonomy = autonomous; q12_quality_gates = ["mostly_manual"]; q18_token_budget = strict
+- Install: `openspec init (+ openspec config profile for expanded)`
+- Repo: `Fission-AI/OpenSpec`
+- Triggering answers: verificationStrength demand 1.00; tokenBudget demand 1.00
+- Counterfactuals:
+  - Below 1 on q9_precision the harness flips to superpowers.
+  - Above 27 on derived.nonRoadmapShare the harness flips to superpowers.
+  - Above 0 on q6_volatility the harness flips to superpowers.
+- Axis contributions:
+  - tokenBudget: demand 1.00, coverage 0.00, unmet 0.65
+  - verificationStrength: demand 1.00, coverage 0.64, unmet 0.38
+  - ceremonyTolerance: demand 0.38, coverage 0.30, unmet 0.20
 - Enforcement:
-Agent gate — Plan-checker decision-coverage (Agent-executed check on plans.)
-Agent gate — Verify vs shipped code (Stronger than constitution.md; weaker than CI.)
-- Evidence: 9501 stars, 100 commits/30d, v1.14.0 (2026-09-14); verified 2026-09-16
+Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
+
+## Runner-up
+OpenSpec — Acceptability 21% vs 21% for OpenSpec.
 
 ## Practice overlays
-### Autonomous TDD verification
+### Low-ceremony fast path (included in base) — 49% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### TDD iron law — 43% inclusion
 Source: Superpowers
-Zero-tolerance precision or test-fear in the top 2 needs failing tests before production code. Not Tessl [@test] links.
+Failing tests before production code. Travels without Superpowers as the harness.
 Enforcement: Agent gate — TDD iron law (Production code before a failing test must be deleted.)
 Human gate — Brainstorming design approval (Blocks implementation until a design is approved.)
+Triggered by: derived view
+
+### Delta-only specs (included in base) — 36% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Change archive (included in base) — 23% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
 Triggered by: derived view
 
 ## Cautions
@@ -37,20 +77,8 @@ Superpowers' full loop is token-intensive by design; users under metered plans r
 Mitigation: Adopt TDD and code-review skills selectively rather than the full mandatory progression. Reserve brainstorming for genuinely ambiguous work.
 Source: Superpowers release notes and field reports; §8.6
 
-### C4 — medium
-The source material recommends Tessl [@test] anchors as fail-closed verification. They are not: check-spec-links.sh verifies that links point to existing files. The tile is watch-status and stale.
-Mitigation: Use Superpowers' TDD iron law. Borrow Tessl's one-question-at-a-time interview discipline without adopting the tile.
-Source: Tessl tile; Fowler; V4
-
-### C9 — medium
-Created 2026-05-22 — roughly four months old at the evidence date. Release cadence is high but there is little track record, and .planning/ is still evolving.
-Mitigation: Pin a version. Budget for migration between minor releases. Re-verify activity before committing a team to it.
-Source: Appendix A; V3
-
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -64,8 +92,7 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── .planning/{PROJECT,REQUIREMENTS,ROADMAP,STATE}.md    # Base: GSD Core
-├── .planning/phases/    # Base: GSD Core
-├── HANDOFF.json    # Base: GSD Core
-├── tests/    # Autonomous TDD verification
+├── openspec/specs/    # Base: OpenSpec
+├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
+├── tests/    # TDD iron law
 ```

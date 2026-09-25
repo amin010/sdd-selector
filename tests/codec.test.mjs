@@ -18,7 +18,8 @@ test("label-only change does not affect answer surface digest", () => {
   const surface = api.buildAnswerSurface(api.QUESTIONS);
   const questions2 = JSON.parse(JSON.stringify(api.QUESTIONS));
   const q16 = questions2.find((q) => q.id === "q16_bottlenecks");
-  q16.fields[0].options[0].label = "CHANGED LABEL ONLY";
+  const q16opts = q16.fields[0].options || (q16.fields[0].fields && q16.fields[0].fields[0].options);
+  q16opts[0].label = "CHANGED LABEL ONLY";
   const surface2 = api.buildAnswerSurface(questions2);
   assert.equal(surface, surface2);
   const compiled = api.compileFields(questions2);
@@ -40,13 +41,17 @@ test("round-trip encode/decode for each kind", () => {
       total: 8, swe: 5, data_engineers: 1, qa_sdet: 1,
       product_owner: "dedicated", scrum_master: "shared",
     },
-    q3_distribution: "colocated",
+    q3_distribution: "more_than_6",
     q4_tenure: "over_1_year",
     q4_domain_familiarity: "medium",
     q5_work_breakdown: { roadmap: 60, ops: 10, bugs: 10, regulatory: 10, tech_debt: 10 },
     q6_volatility: "moderate",
     q12_quality_gates: ["e2e", "unit_coverage", "mostly_manual"],
-    q16_bottlenecks: ["test_fear", "flaky_cicd", "legacy_tech_debt"],
+    q16_bottlenecks: {
+      test_fear: "blocking", flaky_cicd: "major", legacy_tech_debt: "minor",
+      ambiguous_or_shifting: "none", cross_team_approvals: "none",
+      interruptive_support: "none", compliance_overhead: "none",
+    },
     q17_process_mismatch: "slow CAB & reviews",
     q20_runtimes: ["cursor", "claude_code"],
   };
@@ -93,10 +98,10 @@ test("garbage decode never throws and yields only valid answers", () => {
 });
 
 test("legacy v=3 restores when digest matches", () => {
-  const dec = api.decodeHash("v=3&q1=ledger&q3=colocated");
+  const dec = api.decodeHash("v=3&q1=ledger&q3=more_than_6");
   assert.equal(dec.notice, null);
   assert.equal(dec.answers.q1_domain, "ledger");
-  assert.equal(dec.answers.q3_distribution, "colocated");
+  assert.equal(dec.answers.q3_distribution, "more_than_6");
 });
 
 test("v=2 is refused with notice mentioning digest/version", () => {

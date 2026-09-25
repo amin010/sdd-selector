@@ -265,28 +265,32 @@ function main() {
   }
 
   const self = args.has("--self");
+  const legacy = args.has("--legacy");
   const quick = args.has("--quick");
   const randomCount = quick ? 2_000 : 50_000;
 
   const golden = loadGolden({ now: PINNED_NOW });
-  const current = self ? golden : loadCurrent({ now: PINNED_NOW });
+  const current = loadCurrent({ now: PINNED_NOW });
+  const left = self ? golden : current;
+  const right = legacy ? golden : left;
+  const corpusApi = self || legacy ? golden : current;
 
-  // Warm enum cache from golden
-  const corpus = buildCorpus({ randomCount, api: golden });
+  const corpus = buildCorpus({ randomCount, api: corpusApi });
   const cases = flattenCorpus(corpus);
+  const label = self ? "golden↔golden" : legacy ? "current↔golden (retired)" : "current↔current";
 
   console.log(
-    `G-PARITY ${self ? "golden↔golden" : "current↔golden"}: ${cases.length} cases` +
+    `G-PARITY ${label}: ${cases.length} cases` +
     ` (doc=${corpus.documented.length} boundary=${corpus.boundary.length}` +
     ` random=${corpus.random.length} mal=${corpus.malformed.length})`,
   );
 
   const t0 = Date.now();
   const report = runParity({
-    leftApi: current,
-    rightApi: golden,
+    leftApi: left,
+    rightApi: right,
     cases,
-    label: self ? "self-parity" : "parity",
+    label: self ? "self-parity" : legacy ? "legacy-parity" : "parity",
     stopAt: 10,
   });
   const ms = Date.now() - t0;

@@ -1,6 +1,11 @@
 # SDD Selector report
 
-Confidence: high · score 7 · margin 7
+**Harness acceptability** (conformal set: GitHub Spec Kit, Spec Kitty, Superpowers):
+- GitHub Spec Kit — 40%
+- Spec Kitty — 32%
+- Superpowers — 28%
+
+Confidence: medium · score -0.8506192307692308 · margin 0.21064999999999978
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
@@ -13,25 +18,45 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Branching: —
 
 ## Recommended base: GitHub Spec Kit
-Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline.
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
 - Install: `uvx specify init`
 - Repo: `github/spec-kit`
-- Triggering answers: q5_work_breakdown = {"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5}; q10_architecture = microservices; q7_requirements = structured; q6_volatility = moderate
+- Triggering answers: —
+- Counterfactuals:
+  - Above 0 on q3_distribution the harness flips to speckitty.
+  - Above 0 on q8_compliance the harness flips to speckitty.
+  - Above 0 on q8_compliance the harness flips to speckitty.
+- Axis contributions:
+  - midFlightChange: demand 0.15, coverage 0.00, unmet 0.13
 - Enforcement:
 Advisory — constitution.md (Prompt context; not an independent gate.)
 Human gate — Phase reviews (Human advances each phase.)
 - Evidence: 137140 stars, 100 commits/30d, v1.0.7 (2026-09-15); verified 2026-09-16
 
+## Runner-up
+Spec Kitty — Acceptability 32% vs 40% for GitHub Spec Kit.
+
 ## Practice overlays
-_None._
+### Regulatory constitution (included in base) — 53% inclusion
+Source: GitHub Spec Kit
+Written invariants in the agent session. Advisory only — pair with CI.
+Enforcement: Advisory — constitution.md (Prompt context; not an independent gate.)
+Human gate — Phase reviews (Human advances each phase.)
+Triggered by: derived view
+
+### Spec Kit phase pipeline (included in base) — 40% inclusion
+Source: GitHub Spec Kit
+Seven-phase pipeline for structured greenfield work. The pipeline is the tool.
+Enforcement: Advisory — constitution.md (Prompt context; not an independent gate.)
+Human gate — Phase reviews (Human advances each phase.)
+Triggered by: derived view
+
 ## Cautions
 _None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate

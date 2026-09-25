@@ -1,13 +1,23 @@
 {
   "name": "sdd-selector",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "private": true,
-  "description": "Finance Tech Spec-Driven Development framework selector",
+  "license": "MIT",
+  "author": "Amin Rashidi <amin.rashidi@gmail.com>",
+  "description": "For finance-tech teams choosing a spec-driven development stack. A short diagnostic recommends one harness, the practices to add, and the cautions that still sit with the team.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amin010/sdd-selector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/amin010/sdd-selector/issues"
+  },
+  "homepage": "https://github.com/amin010/sdd-selector",
   "type": "module",
   "scripts": {
     "build": "node tools/build.mjs",
     "build:release": "node tools/build.mjs --strip-fixtures",
-    "test": "node tools/validate.mjs packs/finance-tech.json && node tools/validate.mjs packs/general-engineering.json && node tools/build.mjs && node --test tests/*.test.mjs && node tools/parity.mjs --self --quick && node tools/parity.mjs && node tools/parity.mjs --break-demo && node tools/lint-structure.mjs && node tools/build.mjs --pack packs/general-engineering.json --out /tmp/general-engineering.html && node tools/selftest-page.mjs /tmp/general-engineering.html && node tools/build.mjs && node tools/qc/sensitivity.mjs && node tools/qc/analyze.mjs",
+    "test": "node tools/validate.mjs packs/finance-tech.json && node tools/validate.mjs packs/general-engineering.json && node tools/build.mjs && node --test tests/*.test.mjs && node tools/parity.mjs --self --quick && node tools/parity.mjs --quick && node tools/parity.mjs --break-demo && node tools/lint-structure.mjs && node tools/build.mjs --pack packs/general-engineering.json --out /tmp/general-engineering.html && node tools/selftest-page.mjs /tmp/general-engineering.html && node tools/build.mjs && node tools/qc/sensitivity.mjs --quick && node tools/qc/analyze.mjs",
     "parity": "node tools/parity.mjs",
     "lint:structure": "node tools/lint-structure.mjs",
     "inline": "node tools/build.mjs",
@@ -18,7 +28,8 @@
     "qc:sensitivity": "node tools/qc/sensitivity.mjs",
     "qc:generate": "node tools/qc/personas.mjs && node tools/qc/respond.mjs",
     "qc:judge": "node tools/qc/judge.mjs",
-    "qc:analyze": "node tools/qc/analyze.mjs"
+    "qc:analyze": "node tools/qc/analyze.mjs",
+    "qc:fit": "node tools/qc/fit.mjs"
   },
   "engines": {
     "node": ">=18"
