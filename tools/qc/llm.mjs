@@ -5,8 +5,8 @@
  * No npm dependencies — this repo has zero runtime deps by design.
  *
  * Provider resolution (createClient({ provider }) omitted):
- *   1. process.env.ANTHROPIC_API_KEY set  -> "anthropic" (Messages API)
- *   2. process.env.OPENAI_API_KEY set     -> "openai"    (Chat Completions API)
+ *   1. process.env.OPENAI_API_KEY set     -> "openai"    (Chat Completions API)
+ *   2. process.env.ANTHROPIC_API_KEY set  -> "anthropic" (Messages API)
  *   3. otherwise                          -> "mock"       (no network, deterministic)
  *
  * Every call is content-addressed and cached to tools/qc/cache/<sha256>.json so
@@ -109,6 +109,31 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** Default on-disk cache location: tools/qc/cache/. */
 export const DEFAULT_CACHE_DIR = path.join(__dirname, "cache");
+
+/** Load repo-root .env into process.env without overriding variables already set. */
+function loadDotEnv() {
+  const envPath = path.resolve(__dirname, "../../.env");
+  if (!fs.existsSync(envPath)) return;
+  const text = fs.readFileSync(envPath, "utf8");
+  for (const line of text.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq <= 0) continue;
+    const key = trimmed.slice(0, eq).trim().replace(/^export\s+/, "");
+    if (!key || process.env[key]) continue;
+    let value = trimmed.slice(eq + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    process.env[key] = value;
+  }
+}
+
+loadDotEnv();
 
 /**
  * Fallback model ids used when the caller does not pass `model` explicitly.
@@ -345,8 +370,8 @@ function generateMockText({ system, messages, mockSchema, maxTokens }) {
 
 /** Auto-detect provider from environment API keys, falling back to "mock". */
 export function detectProvider() {
-  if (process.env.ANTHROPIC_API_KEY) return "anthropic";
   if (process.env.OPENAI_API_KEY) return "openai";
+  if (process.env.ANTHROPIC_API_KEY) return "anthropic";
   return "mock";
 }
 
@@ -463,6 +488,17 @@ const KNOWN_QUIRKS = [
       return next;
     },
   },
+  {
+    id: "reasoningEffortUnsupported",
+    matches(status, err) {
+      return status === 400 && !!err && err.param === "reasoning_effort";
+    },
+    apply(body) {
+      const next = { ...body };
+      delete next.reasoning_effort;
+      return next;
+    },
+  },
 ];
 
 /**
@@ -550,6 +586,9 @@ async function callOpenAI({ model, system, messages, temperature, maxTokens }) {
     // postChatCompletion() adapts the request body and retries — see
     // `KNOWN_QUIRKS` for the full, current list of handled cases.
     max_completion_tokens: maxTokens != null ? maxTokens : 1024,
+    // gpt-5.6 defaults to medium. These calls return short JSON, so low
+    // effort avoids billing a long hidden reasoning trace as output tokens.
+    reasoning_effort: "low",
     messages: chatMessages,
   });
   const data = await res.json();

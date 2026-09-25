@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: medium · score 9 · margin 2
+**Harness acceptability** (conformal set: Superpowers, Spec Kitty, OpenSpec, GitHub Spec Kit, GSD Core, BMAD Method):
+- Superpowers — 24%
+- Spec Kitty — 23%
+- OpenSpec — 15%
+- GitHub Spec Kit — 14%
+- GSD Core — 13%
+- BMAD Method — 11%
+
+Confidence: low · score -1.032986153846154 · margin 1.2682830769230768
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
@@ -12,39 +20,66 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: monthly; cycle time: —
 - Branching: —
 
-## Recommended base: GitHub Spec Kit
-Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline.
+## Recommended base: OpenSpec
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `uvx specify init`
-- Repo: `github/spec-kit`
-- Triggering answers: q5_work_breakdown = {"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5}; q10_architecture = microservices; q7_requirements = structured; q6_volatility = moderate; q9_precision = zero_tolerance
+- Install: `openspec init (+ openspec config profile for expanded)`
+- Repo: `Fission-AI/OpenSpec`
+- Triggering answers: verificationStrength demand 1.00; deterministicEnforcement demand 1.00
+- Counterfactuals:
+  - Below 0 on q9_precision the harness flips to superpowers.
+  - Above 48 on derived.nonRoadmapShare the harness flips to superpowers.
+- Axis contributions:
+  - verificationStrength: demand 1.00, coverage 0.85, unmet 0.16
+  - deterministicEnforcement: demand 1.00, coverage 1.00, unmet 0.00
 - Enforcement:
-Advisory — constitution.md (Prompt context; not an independent gate.)
-Human gate — Phase reviews (Human advances each phase.)
-- Evidence: 137140 stars, 100 commits/30d, v1.0.7 (2026-09-15); verified 2026-09-16
+Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
 
 ## Runner-up
-Spec Kitty — Scored 7 vs 9 for GitHub Spec Kit — structured greenfield services.
+Spec Kitty — Acceptability 23% vs 15% for OpenSpec.
 
 ## Practice overlays
-### Autonomous TDD verification
+### Deterministic CI enforcement — 51% inclusion
+Source: native CI
+Required status checks. Complements advisory constitutions (overlay-f as arithmetic).
+Enforcement: Hard gate — failing CI build.
+Triggered by: derived view
+
+### TDD iron law — 44% inclusion
 Source: Superpowers
-Zero-tolerance precision or test-fear in the top 2 needs failing tests before production code. Not Tessl [@test] links.
-Note: existing financial reconciliation tests are a related control already in place; TDD is a different control.
+Failing tests before production code. Travels without Superpowers as the harness.
 Enforcement: Agent gate — TDD iron law (Production code before a failing test must be deleted.)
 Human gate — Brainstorming design approval (Blocks implementation until a design is approved.)
-Triggered by: q9_precision = zero_tolerance
+Triggered by: derived view
+
+### Low-ceremony fast path (included in base) — 42% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Delta-only specs (included in base) — 31% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Change archive (included in base) — 19% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
 
 ## Cautions
-### C4 — medium
-The source material recommends Tessl [@test] anchors as fail-closed verification. They are not: check-spec-links.sh verifies that links point to existing files. The tile is watch-status and stale.
-Mitigation: Use Superpowers' TDD iron law. Borrow Tessl's one-question-at-a-time interview discipline without adopting the tile.
-Source: Tessl tile; Fowler; V4
+_None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -58,9 +93,8 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── constitution.md    # Base: GitHub Spec Kit
-├── spec.md    # Base: GitHub Spec Kit
-├── plan.md    # Base: GitHub Spec Kit
-├── tasks.md    # Base: GitHub Spec Kit
-├── tests/    # Autonomous TDD verification
+├── openspec/specs/    # Base: OpenSpec
+├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
+├── .github/workflows/spec-gates.yml    # Deterministic CI enforcement
+├── tests/    # TDD iron law
 ```

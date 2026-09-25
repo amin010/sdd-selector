@@ -31,8 +31,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, "data");
 const REPORT_PATH = path.join(DATA_DIR, "sensitivity-report.json");
 
-const RANDOM_COUNT = 50_000;
-const OAT_SAMPLE_SIZE = 2_000;
+const FULL_RANDOM_COUNT = 50_000;
+const FULL_OAT_SAMPLE_SIZE = 2_000;
+const QUICK_RANDOM_COUNT = 1_500;
+const QUICK_OAT_SAMPLE_SIZE = 80;
 
 // ---------------------------------------------------------------------------
 // Small shared helpers
@@ -373,17 +375,33 @@ function mutualInformationBits(xs, ys) {
 function fieldToBaseRuleMI(profiles, api, fields) {
   const evaluated = profiles.map(({ answers }) => {
     const r = safeEvaluate(api, answers);
-    return { answers, label: r.ok ? outcomeLabel(r.projection) ?? "\u2205" : "\u2205" };
+    return {
+      answers,
+      base: r.ok ? outcomeLabel(r.projection) ?? "\u2205" : "\u2205",
+      practices: r.ok
+        ? (r.projection.overlays || []).map((o) => o.id).sort().join("|") || "\u2205"
+        : "\u2205",
+      cautions: r.ok
+        ? (r.projection.cautions || []).slice().sort().join("|") || "\u2205"
+        : "\u2205",
+    };
   });
-  const ys = evaluated.map((e) => e.label);
+  const yBase = evaluated.map((e) => e.base);
+  const yPractices = evaluated.map((e) => e.practices);
+  const yCautions = evaluated.map((e) => e.cautions);
 
   return fields
     .map((f) => {
       const xs = evaluated.map((e) => bucketValue(f, e.answers ? e.answers[f.id] : undefined));
-      const mi = mutualInformationBits(xs, ys);
-      return { fieldId: f.id, questionId: f.questionId, miBits: round(mi, 4) };
+      return {
+        fieldId: f.id,
+        questionId: f.questionId,
+        miBits: round(mutualInformationBits(xs, yBase), 4),
+        miBitsPractices: round(mutualInformationBits(xs, yPractices), 4),
+        miBitsCautions: round(mutualInformationBits(xs, yCautions), 4),
+      };
     })
-    .sort((a, b) => b.miBits - a.miBits);
+    .sort((a, b) => b.miBitsPractices - a.miBitsPractices || b.miBits - a.miBits);
 }
 
 function pairwiseFieldGroups(api) {
@@ -570,8 +588,11 @@ function printSummary(report) {
 function main() {
   const t0 = Date.now();
   const api = loadEngine();
+  const quick = process.argv.includes("--quick");
+  const RANDOM_COUNT = quick ? QUICK_RANDOM_COUNT : FULL_RANDOM_COUNT;
+  const OAT_SAMPLE_SIZE = quick ? QUICK_OAT_SAMPLE_SIZE : FULL_OAT_SAMPLE_SIZE;
 
-  console.log(`tools/qc/sensitivity.mjs — pinned now = ${new Date(PINNED_NOW).toISOString()}`);
+  console.log(`tools/qc/sensitivity.mjs — pinned now = ${new Date(PINNED_NOW).toISOString()}${quick ? " (quick)" : ""}`);
 
   // --- corpus + schema -----------------------------------------------------
   const corpus = buildCorpus({ randomCount: RANDOM_COUNT, api });
@@ -609,15 +630,28 @@ function main() {
   const unexpectedNonZero = EXPECTED_ZERO.filter((id) => !zeroSet.has(id));
   const a2 = {
     sampleSize: oatProfiles.length,
-    fields: a2Fields,
+    fields: a2Fields.map((f) => ({
+      ...f,
+      totalInfluenceScore: round(
+        (f.baseInfluenceScore || 0) + (f.overlayInfluenceScore || 0) + (f.cautionInfluenceScore || 0),
+        4,
+      ),
+      sobolFirstOrderProxy: round(((f.baseInfluenceScore || 0) + (f.overlayInfluenceScore || 0) + (f.cautionInfluenceScore || 0)) / 100, 4),
+    })),
     zeroBaseInfluenceFields,
+    sobolNote: "OAT retained. sobolFirstOrderProxy is total-influence/100 on the same sample — a discrete first-order stand-in until a full Saltelli sweep lands. Total-order indices equal first-order here because the proxy cannot see interactions.",
     sanityCheck: { expectedZero: EXPECTED_ZERO, unexpectedNonZero, ok: unexpectedNonZero.length === 0 },
   };
 
   // --- A3 (same 2000-profile sample as A2) ---------------------------------
   const topMi = fieldToBaseRuleMI(oatProfiles, api, fields);
   const pairwiseRedundancy = pairwiseRedundancyMI(oatProfiles, api, fieldsById);
-  const a3 = { sampleSize: oatProfiles.length, topMi, pairwiseRedundancy };
+  const a3 = {
+    sampleSize: oatProfiles.length,
+    topMi,
+    pairwiseRedundancy,
+    note: "miBits is against the harness/base label; miBitsPractices and miBitsCautions are against the practice-set and caution-set fingerprints.",
+  };
 
   // --- A4 (full random family, no OAT sample needed) -----------------------
   const a4 = thresholdBrittleness(corpus.random, api);
@@ -634,6 +668,7 @@ function main() {
         total: fullCases.length,
       },
       oatSampleSize: OAT_SAMPLE_SIZE,
+      quick,
       elapsedMs: 0, // filled below
     },
     a1,

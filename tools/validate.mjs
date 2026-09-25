@@ -380,9 +380,16 @@ function collectFieldClosure(expr, fields, derivedExprs, out, seenDerived = new 
 
 function checkRules(pack, fields, derived, fwData, diagnostics) {
   const rankedValues = new Set();
+  const resolveTargets = new Set();
   for (const field of fields.values()) {
     if (field.kind === "ranked") for (const option of array(field.options)) rankedValues.add(option && option.value);
+    if (field.kind === "record") {
+      for (const [subId] of field.subfields || []) resolveTargets.add(subId);
+    }
   }
+  array(pack.practices).forEach((practice) => {
+    array(practice && practice.resolves).forEach((value) => resolveTargets.add(value));
+  });
   const derivedExprs = new Map();
   array(pack.derived).forEach((def) => {
     if (object(def) && typeof def.key === "string") derivedExprs.set(def.key, def.expr);
@@ -480,8 +487,8 @@ function checkRules(pack, fields, derived, fwData, diagnostics) {
         }
       }
       array(rule.resolves).forEach((value, ri) => {
-        if (!rankedValues.has(value)) {
-          diagnostics.push(diagnostic("E-RULE-062", `${path}.resolves[${ri}]`, "Unknown ranked option."));
+        if (!rankedValues.has(value) && !resolveTargets.has(value)) {
+          diagnostics.push(diagnostic("E-RULE-062", `${path}.resolves[${ri}]`, "Unknown ranked or bottleneck option."));
         }
       });
       if (Object.hasOwn(rule, "requires")) {
@@ -650,6 +657,31 @@ export function coverageReport(pack) {
 
   for (const expr of derivedExprs.values()) walkOptions(expr);
 
+  array(pack.axes).forEach((axis) => {
+    const spec = object(axis && axis.demand) ? axis.demand : {};
+    const terms = Array.isArray(spec.terms) ? spec.terms : [spec];
+    terms.forEach((term) => {
+      array(term && term.fields).forEach((id) => { if (fields.has(id)) fieldsRead.add(id); });
+      array(term && term.reads).forEach((read) => {
+        if (typeof read !== "string" || read.startsWith("derived.")) return;
+        const root = read.split(".")[0];
+        if (fields.has(root)) fieldsRead.add(root);
+      });
+      if (object(term && term.map)) {
+        Object.keys(term.map).forEach((key) => optionsMentioned.add(key));
+      }
+    });
+  });
+  array(pack.frameworks).forEach((fw) => {
+    if (array(fw && fw.bundle).length) noteFramework(fw.id);
+  });
+  array(pack.practices).forEach((practice) => {
+    array(practice && practice.sources).forEach(noteFramework);
+    array(practice && practice.resolves).forEach((value) => {
+      if (typeof value === "string") optionsMentioned.add(value);
+    });
+  });
+
   const tierRuntime = pack.settings && pack.settings.tierZero &&
     pack.settings.tierZero.runtimeField;
   if (typeof tierRuntime === "string" && fields.has(tierRuntime)) {
@@ -697,6 +729,129 @@ export function coverageReport(pack) {
     optionsMentioned: [...optionsMentioned].sort(),
     unreadOptions: unreadOptions.sort(),
   };
+}
+
+function checkSelectionModel(pack, fields, fwData, diagnostics) {
+  if (Object.hasOwn(pack, "axes") && !Array.isArray(pack.axes)) {
+    diagnostics.push(diagnostic("E-PACK-002", "axes", "axes must be an array."));
+    return;
+  }
+  if (Object.hasOwn(pack, "practices") && !Array.isArray(pack.practices)) {
+    diagnostics.push(diagnostic("E-PACK-002", "practices", "practices must be an array."));
+    return;
+  }
+  const axes = array(pack.axes);
+  const practices = array(pack.practices);
+  if (!axes.length && !practices.length) return;
+
+  const axisIds = new Set();
+  axes.forEach((axis, index) => {
+    const path = `axes[${index}]`;
+    if (!object(axis) || typeof axis.id !== "string") {
+      diagnostics.push(diagnostic("E-AXIS-080", `${path}.id`, "Axis needs an id."));
+      return;
+    }
+    if (axisIds.has(axis.id)) {
+      diagnostics.push(diagnostic("E-AXIS-080", `${path}.id`, `Duplicate axis id "${axis.id}".`));
+    }
+    axisIds.add(axis.id);
+    const spec = object(axis.demand) ? axis.demand : {};
+    const terms = Array.isArray(spec.terms) ? spec.terms : [spec];
+    terms.forEach((term, ti) => {
+      array(term && term.reads).forEach((read, ri) => {
+        if (typeof read !== "string") return;
+        if (read.startsWith("derived.")) return;
+        const root = read.split(".")[0];
+        if (!fields.has(root)) {
+          diagnostics.push(diagnostic("E-REF-040", `${path}.demand.terms[${ti}].reads[${ri}]`, `Unknown field "${root}".`));
+        }
+      });
+    });
+  });
+
+  const practiceIds = new Set();
+  practices.forEach((practice, index) => {
+    const path = `practices[${index}]`;
+    if (!object(practice) || typeof practice.id !== "string") {
+      diagnostics.push(diagnostic("E-PRAC-081", `${path}.id`, "Practice needs an id."));
+      return;
+    }
+    if (practiceIds.has(practice.id)) {
+      diagnostics.push(diagnostic("E-PRAC-081", `${path}.id`, `Duplicate practice id "${practice.id}".`));
+    }
+    practiceIds.add(practice.id);
+    if (practice.liftable === false && array(practice.sources).length === 0) {
+      diagnostics.push(diagnostic("E-PRAC-083", `${path}.sources`, "liftable:false requires a non-empty sources list."));
+    }
+    array(practice.sources).forEach((src, si) => {
+      if (!fwData.frameworks.has(src)) {
+        diagnostics.push(diagnostic("E-FW-050", `${path}.sources[${si}]`, `Unknown source framework "${src}".`));
+      }
+    });
+    if (object(practice.capability)) {
+      for (const key of Object.keys(practice.capability)) {
+        if (!axisIds.has(key)) {
+          diagnostics.push(diagnostic("E-PRAC-082", `${path}.capability.${key}`, `Capability key "${key}" is not an axis id.`));
+        }
+      }
+    }
+    if (object(practice.enforcement)) {
+      for (const key of Object.keys(practice.enforcement)) {
+        if (!axisIds.has(key)) {
+          diagnostics.push(diagnostic("E-PRAC-082", `${path}.enforcement.${key}`, `Enforcement key "${key}" is not an axis id.`));
+        }
+      }
+    }
+  });
+
+  function walkRequires(id, seen, stack) {
+    if (stack.has(id)) return true;
+    if (seen.has(id)) return false;
+    stack.add(id);
+    const practice = practices.find((item) => item && item.id === id);
+    for (const req of array(practice && practice.requires)) {
+      if (!practiceIds.has(req)) {
+        diagnostics.push(diagnostic("E-PRAC-084", `practices.${id}.requires`, `Unknown required practice "${req}".`));
+        continue;
+      }
+      if (walkRequires(req, seen, stack)) {
+        diagnostics.push(diagnostic("E-PRAC-085", `practices.${id}.requires`, "requires/excludes graph contains a cycle."));
+        return true;
+      }
+    }
+    stack.delete(id);
+    seen.add(id);
+    return false;
+  }
+  const seen = new Set();
+  practices.forEach((practice) => {
+    if (practice && practice.id) walkRequires(practice.id, seen, new Set());
+    array(practice && practice.excludes).forEach((id) => {
+      if (!practiceIds.has(id)) {
+        diagnostics.push(diagnostic("E-PRAC-084", `practices.${practice.id}.excludes`, `Unknown excluded practice "${id}".`));
+      }
+    });
+  });
+
+  array(pack.frameworks).forEach((fw, index) => {
+    array(fw && fw.bundle).forEach((id, bi) => {
+      if (!practiceIds.has(id)) {
+        diagnostics.push(diagnostic("E-PRAC-084", `frameworks[${index}].bundle[${bi}]`, `Unknown bundled practice "${id}".`));
+      }
+    });
+  });
+
+  if (object(pack.parameters)) {
+    for (const key of ["theta", "lambda"]) {
+      const vec = pack.parameters[key];
+      if (!object(vec)) continue;
+      for (const id of Object.keys(vec)) {
+        if (!axisIds.has(id)) {
+          diagnostics.push(diagnostic("E-FIT-090", `parameters.${key}.${id}`, `Fitted coefficient "${id}" is not an axis id (must not be a FrameworkId).`));
+        }
+      }
+    }
+  }
 }
 
 function emitCoverageWarnings(pack, diagnostics) {
@@ -792,8 +947,10 @@ export function validatePack(input) {
       diagnostics.push(diagnostic("E-PACK-002", "settings", "Top-level \"settings\" must be an object."));
     }
     if (object(pack.settings) && pack.settings.selection != null &&
-        pack.settings.selection !== "first-match" && pack.settings.selection !== "weighted") {
-      diagnostics.push(diagnostic("E-PACK-002", "settings.selection", "settings.selection must be \"first-match\" or \"weighted\"."));
+        pack.settings.selection !== "first-match" &&
+        pack.settings.selection !== "weighted" &&
+        pack.settings.selection !== "utility") {
+      diagnostics.push(diagnostic("E-PACK-002", "settings.selection", "settings.selection must be \"first-match\", \"weighted\", or \"utility\"."));
     }
     if (object(pack.settings) && object(pack.settings.tierZero) && pack.settings.tierZero.mode != null &&
         pack.settings.tierZero.mode !== "hard" && pack.settings.tierZero.mode !== "soft") {
@@ -806,6 +963,7 @@ export function validatePack(input) {
     const fields = collectFields(pack, diagnostics);
     const derived = checkDerived(pack, fields, diagnostics);
     const fwData = checkFrameworks(pack, diagnostics);
+    checkSelectionModel(pack, fields, fwData, diagnostics);
     checkRules(pack, fields, derived, fwData, diagnostics);
     emitCoverageWarnings(pack, diagnostics);
     checkReport(pack, fields, diagnostics);

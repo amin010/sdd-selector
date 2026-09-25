@@ -158,6 +158,52 @@ const RISK_TAXONOMY = [
 ];
 const RISK_TAG_IDS = RISK_TAXONOMY.map((r) => r.id);
 
+/**
+ * Practice catalogue shown to judges for best-worst sets (EXT-SELECT T13).
+ * Summaries are capability-facing, not engine-facing — no axis weights.
+ */
+const PRACTICE_CATALOG = [
+  { id: "delta-only-specs", label: "Delta-only specs", summary: "Write specs only for the change at hand." },
+  { id: "openspec-change-archive", label: "Change archive", summary: "Keep an archived folder per change as an audit artifact." },
+  { id: "regulatory-constitution", label: "Regulatory constitution", summary: "Written invariants in the agent session. Advisory, not a gate." },
+  { id: "speckit-phase-pipeline", label: "Spec Kit phase pipeline", summary: "Seven-phase specify/plan/tasks pipeline for greenfield work." },
+  { id: "tdd-iron-law", label: "TDD iron law", summary: "Failing tests before production code; rewrite if the order is inverted." },
+  { id: "two-stage-review", label: "Two-stage review", summary: "Adversarial or two-stage human review of the change." },
+  { id: "lane-worktrees", label: "Lane state machine and worktrees", summary: "Auditable work-package lanes with isolated worktrees." },
+  { id: "domain-recon", label: "Domain reconnaissance", summary: "Structured discovery before committing a spec." },
+  { id: "role-personas", label: "Role personas", summary: "Separate product, delivery, and QA voices in the workflow." },
+  { id: "ephemeral-subagent-waves", label: "Ephemeral subagent waves", summary: "Fresh-context agents per phase to fight context degradation." },
+  { id: "gsd-req-ids", label: "Requirement IDs", summary: "Trace requirement identifiers from spec through shipped code." },
+  { id: "deterministic-ci", label: "Deterministic CI enforcement", summary: "Required status checks and spec-to-test traceability in CI." },
+  { id: "low-ceremony-fast-path", label: "Low-ceremony fast path", summary: "A documented two-track policy beside any heavyweight pipeline." },
+  { id: "one-question-at-a-time", label: "One question at a time", summary: "Interview discipline: one clarifying question before the next." },
+];
+const PRACTICE_IDS = PRACTICE_CATALOG.map((p) => p.id);
+const BEST_WORST_SETS = 3;
+
+/** Deterministic four-practice set, shuffled per (vignette, judgeIndex, setIndex). */
+function shuffledPracticeSet(vignetteId, judgeIndex, setIndex) {
+  const seedHex = hashObject({ vignetteId, judgeIndex, setIndex, salt: "qc-practice-bw" });
+  const rng = mulberry32(parseInt(seedHex.slice(0, 8), 16));
+  const arr = [...PRACTICE_CATALOG];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  const offset = (setIndex * 4) % Math.max(1, arr.length - 3);
+  return arr.slice(offset, offset + 4);
+}
+
+function repairBestWorst(raw, presentedIds) {
+  if (!raw || typeof raw !== "object") return { ok: false };
+  const most = raw.most;
+  const least = raw.least;
+  if (!presentedIds.includes(most) || !presentedIds.includes(least) || most === least) {
+    return { ok: false };
+  }
+  return { ok: true, most, least, presented: presentedIds };
+}
+
 /** Deterministic per-(vignette, judgeIndex) shuffle of framework presentation order. */
 function shuffledFrameworkOrder(vignetteId, judgeIndex) {
   const seedHex = hashObject({ vignetteId, judgeIndex, salt: "qc-judge-shuffle" });
@@ -241,9 +287,23 @@ async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
     `Return your ranked top-3 framework picks (by id) for this team, best fit ` +
     `first, plus 1-3 sentences of reasoning, plus zero or more risk tags from ` +
     `this fixed taxonomy (use the ids only): ${RISK_TAXONOMY.map((r) => `${r.id}=${r.label}`).join("; ")}. ` +
+    `Also complete ${BEST_WORST_SETS} best-worst practice questions. For each set, ` +
+    `name the most and least valuable practice for this team (ids only). ` +
     `Respond with strict JSON: ` +
-    `{"rankedTop3": ["<id>", "<id>", "<id>"], "reasoning": "<text>", "riskTags": ["<C-id>", ...]}. No ` +
+    `{"rankedTop3": ["<id>", "<id>", "<id>"], "reasoning": "<text>", "riskTags": ["<C-id>", ...], ` +
+    `"bestWorst": [{"setIndex": 0, "most": "<id>", "least": "<id>"}, ...]}. No ` +
     `commentary outside the JSON.`;
+
+  const practiceSets = [];
+  for (let setIndex = 0; setIndex < BEST_WORST_SETS; setIndex++) {
+    practiceSets.push(shuffledPracticeSet(vignette.id, judgeIndex, setIndex));
+  }
+  const practiceText = practiceSets.map((set, i) => (
+    `Set ${i} (pick most and least valuable):\n` +
+    set.map((p, j) => `  ${j + 1}. ${p.label} (id: "${p.id}") — ${p.summary}`).join("\n")
+  )).join("\n\n");
+
+  const userWithPractices = `${user}\n\n--- PRACTICE SETS ---\n${practiceText}\n`;
 
   const mockSchema = {
     type: "object",
@@ -251,12 +311,25 @@ async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
       rankedTop3: { type: "array", items: { type: "string", enum: ALL_FRAMEWORK_IDS }, minItems: 3, maxItems: 3 },
       reasoning: { type: "string", minLength: 60, maxLength: 400 },
       riskTags: { type: "array", items: { type: "string", enum: RISK_TAG_IDS }, minItems: 0, maxItems: RISK_TAG_IDS.length },
+      bestWorst: {
+        type: "array",
+        minItems: BEST_WORST_SETS,
+        maxItems: BEST_WORST_SETS,
+        items: {
+          type: "object",
+          properties: {
+            setIndex: { type: "number", min: 0, max: BEST_WORST_SETS - 1, integer: true },
+            most: { type: "string", enum: PRACTICE_IDS },
+            least: { type: "string", enum: PRACTICE_IDS },
+          },
+        },
+      },
     },
   };
 
   const response = await client.complete({
     system,
-    messages: [{ role: "user", content: user }],
+    messages: [{ role: "user", content: userWithPractices }],
     temperature: 0.5,
     maxTokens: 4096,
     mockSchema,
@@ -266,7 +339,9 @@ async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
   let rankedTop3 = null;
   let reasoning = "";
   let riskTags = [];
+  let bestWorst = [];
   let parseFailure = false;
+  let bestWorstParseFailure = false;
   try {
     const parsed = parseJsonResponse(response.text);
     const repaired = repairRankedTop3(parsed.rankedTop3);
@@ -274,6 +349,17 @@ async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
     parseFailure = repaired.parseFailure;
     reasoning = typeof parsed.reasoning === "string" ? parsed.reasoning : "";
     riskTags = [...new Set((Array.isArray(parsed.riskTags) ? parsed.riskTags : []).filter((id) => RISK_TAG_IDS.includes(id)))];
+    const rawBW = Array.isArray(parsed.bestWorst) ? parsed.bestWorst : [];
+    for (let setIndex = 0; setIndex < practiceSets.length; setIndex++) {
+      const presented = practiceSets[setIndex].map((p) => p.id);
+      const row = rawBW.find((item) => item && item.setIndex === setIndex) || rawBW[setIndex];
+      const fixed = repairBestWorst(row, presented);
+      if (!fixed.ok) {
+        bestWorstParseFailure = true;
+        continue;
+      }
+      bestWorst.push({ setIndex, presented, most: fixed.most, least: fixed.least });
+    }
     if (parseFailure) {
       console.warn(`judge: ${vignette.id} judge ${judgeIndex} returned an incomplete ranking; recording parseFailure`);
     }
@@ -283,6 +369,8 @@ async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
     rankedTop3 = null;
     reasoning = "";
     riskTags = [];
+    bestWorst = [];
+    bestWorstParseFailure = true;
   }
 
   return {
@@ -292,7 +380,9 @@ async function judgeOnce(client, { vignette, judgeIndex, onCallComplete }) {
     rankedTop3,
     reasoning,
     riskTags,
+    bestWorst,
     parseFailure,
+    bestWorstParseFailure,
   };
 }
 
@@ -351,4 +441,4 @@ if (isMain) {
     });
 }
 
-export { FRAMEWORK_PROFILES, ALL_FRAMEWORK_IDS, RISK_TAXONOMY, RISK_TAG_IDS, shuffledFrameworkOrder, repairRankedTop3 };
+export { FRAMEWORK_PROFILES, ALL_FRAMEWORK_IDS, RISK_TAXONOMY, RISK_TAG_IDS, PRACTICE_CATALOG, PRACTICE_IDS, shuffledFrameworkOrder, shuffledPracticeSet, repairRankedTop3, repairBestWorst };

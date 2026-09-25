@@ -66,9 +66,38 @@ export function recordValid(value, constraints = {}) {
       if (!isFiniteNumber(item) || item < 0) return false;
       sum += item;
     }
+    if (constraints.sumToMode === "normalize") return sum > 0;
     if (sum !== constraints.sumTo) return false;
   }
   return true;
+}
+
+/** Scale a sumTo record onto its target. Returns a new object, or the input if it cannot be scaled. */
+export function normalizeRecord(value, constraints = {}) {
+  if (!recordValid(value, { ...constraints, sumToMode: "normalize" })) return value;
+  if (!own(constraints, "sumTo") || constraints.sumToMode !== "normalize") return value;
+  const required = Array.isArray(constraints.requiredKeys) ? constraints.requiredKeys : [];
+  let sum = 0;
+  for (const key of required) sum += value[key];
+  if (sum === constraints.sumTo) return value;
+  const out = { ...value };
+  for (const key of required) out[key] = value[key] * (constraints.sumTo / sum);
+  return out;
+}
+
+/** Normalize every sumTo-mode record on an answer object using FIELD_INDEX metadata. */
+export function normalizeAnswers(answers, fieldIndex) {
+  if (!answers || typeof answers !== "object") return answers || {};
+  const out = { ...answers };
+  const index = fieldIndex || {};
+  for (const id of Object.keys(index)) {
+    const meta = index[id];
+    if (!meta || meta.kind !== "record" || !meta.constraints) continue;
+    if (meta.constraints.sumToMode !== "normalize") continue;
+    if (out[id] == null) continue;
+    out[id] = normalizeRecord(out[id], meta.constraints);
+  }
+  return out;
 }
 
 function readAnswer(path, ctx) {
@@ -198,7 +227,8 @@ function evalNode(expr, state, depth) {
   if (op === "countSelected") {
     if (!raw || typeof raw !== "object") return 0;
     const value = readAnswer(raw.field, ctx);
-    if (!Array.isArray(value) || value.length === 0) return 0;
+    if (value == null) return null;
+    if (!Array.isArray(value)) return 0;
     const except = Array.isArray(raw.except) ? raw.except : [];
     return value.filter((item) => except.indexOf(item) === -1).length;
   }

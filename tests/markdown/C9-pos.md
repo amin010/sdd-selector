@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 9 · margin 9
+**Harness acceptability** (conformal set: OpenSpec, GSD Core, GitHub Spec Kit, Spec Kitty, BMAD Method, Superpowers):
+- OpenSpec — 25%
+- GSD Core — 19%
+- GitHub Spec Kit — 17%
+- Spec Kitty — 14%
+- BMAD Method — 13%
+- Superpowers — 12%
+
+Confidence: low · score -0.8621265384615384 · margin 0.279129230769231
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q19_change_volume, q21_ci_maturity
@@ -12,29 +20,53 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: sprint; cycle time: —
 - Branching: —
 
-## Recommended base: GSD Core
-A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core.
+## Recommended base: OpenSpec
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `npx @opengsd/gsd-core`
-- Repo: `open-gsd/gsd-core`
-- Triggering answers: q2_team = {"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"}; q11_deploy_cadence = sprint; q14_release_autonomy = autonomous; q12_quality_gates = ["unit_coverage","e2e","sast_dast"]; q18_token_budget = team_plan
+- Install: `openspec init (+ openspec config profile for expanded)`
+- Repo: `Fission-AI/OpenSpec`
+- Triggering answers: —
+- Counterfactuals:
+  - Above 1 on q10_architecture the harness flips to gsd.
+  - Above 1 on q8_compliance the harness flips to gsd.
+- Axis contributions:
+  - ceremonyTolerance: demand 0.38, coverage 0.30, unmet 0.20
+  - tokenBudget: demand 0.15, coverage 0.00, unmet 0.10
 - Enforcement:
-Agent gate — Plan-checker decision-coverage (Agent-executed check on plans.)
-Agent gate — Verify vs shipped code (Stronger than constitution.md; weaker than CI.)
-- Evidence: 9501 stars, 100 commits/30d, v1.14.0 (2026-09-14); verified 2026-09-16
+Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
+
+## Runner-up
+GSD Core — Acceptability 19% vs 25% for OpenSpec.
 
 ## Practice overlays
-_None._
+### Low-ceremony fast path (included in base) — 50% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Delta-only specs (included in base) — 41% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Change archive (included in base) — 26% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
 ## Cautions
-### C9 — medium
-Created 2026-05-22 — roughly four months old at the evidence date. Release cadence is high but there is little track record, and .planning/ is still evolving.
-Mitigation: Pin a version. Budget for migration between minor releases. Re-verify activity before committing a team to it.
-Source: Appendix A; V3
+_None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -48,7 +80,6 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── .planning/{PROJECT,REQUIREMENTS,ROADMAP,STATE}.md    # Base: GSD Core
-├── .planning/phases/    # Base: GSD Core
-├── HANDOFF.json    # Base: GSD Core
+├── openspec/specs/    # Base: OpenSpec
+├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
 ```

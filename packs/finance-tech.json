@@ -2,10 +2,10 @@
   "schema": 1,
   "meta": {
     "id": "finance-tech",
-    "version": "0.5.1",
+    "version": "0.6.0",
     "title": "Finance Tech SDD Selector",
     "description": "Spec-driven development framework selector for finance-tech teams.",
-    "updated": "2026-09-18"
+    "updated": "2026-09-19"
   },
   "settings": {
     "fallbackBase": "openspec",
@@ -17,12 +17,10 @@
         "watch"
       ],
       "onEmptyCandidates": "no_match",
-      "mode": "soft",
+      "mode": "hard",
       "unsureValues": [
         "unsure"
-      ],
-      "runtimeMismatchPenalty": 3,
-      "watchPenalty": 6
+      ]
     },
     "ratings": [
       {
@@ -98,10 +96,14 @@
         "description": "Requires human judgment to advance."
       }
     ],
-    "selection": "weighted",
+    "selection": "utility",
     "confidence": {
       "minScore": 1,
       "minMargin": 1
+    },
+    "utility": {
+      "k": 5,
+      "conformalAlpha": 0.2
     }
   },
   "frameworks": [
@@ -156,7 +158,17 @@
           "class": "human_gate",
           "note": "Human archives."
         }
-      ]
+      ],
+      "bundle": [
+        "delta-only-specs",
+        "openspec-change-archive",
+        "low-ceremony-fast-path"
+      ],
+      "cost": {
+        "ceremony": 0.15,
+        "tokens": 0.15,
+        "adoption": 0.15
+      }
     },
     {
       "id": "speckit",
@@ -210,7 +222,16 @@
           "class": "human_gate",
           "note": "Human advances each phase."
         }
-      ]
+      ],
+      "bundle": [
+        "regulatory-constitution",
+        "speckit-phase-pipeline"
+      ],
+      "cost": {
+        "ceremony": 0.45,
+        "tokens": 0.4,
+        "adoption": 0.35
+      }
     },
     {
       "id": "bmad",
@@ -261,7 +282,18 @@
           "class": "human_gate",
           "note": "Value depends on using the roles."
         }
-      ]
+      ],
+      "bundle": [
+        "domain-recon",
+        "role-personas",
+        "two-stage-review",
+        "low-ceremony-fast-path"
+      ],
+      "cost": {
+        "ceremony": 0.4,
+        "tokens": 0.45,
+        "adoption": 0.35
+      }
     },
     {
       "id": "gsd",
@@ -316,7 +348,16 @@
           "class": "agent_gate",
           "note": "Stronger than constitution.md; weaker than CI."
         }
-      ]
+      ],
+      "bundle": [
+        "ephemeral-subagent-waves",
+        "gsd-req-ids"
+      ],
+      "cost": {
+        "ceremony": 0.3,
+        "tokens": 0.3,
+        "adoption": 0.3
+      }
     },
     {
       "id": "superpowers",
@@ -370,7 +411,17 @@
           "class": "human_gate",
           "note": "Blocks implementation until a design is approved."
         }
-      ]
+      ],
+      "bundle": [
+        "tdd-iron-law",
+        "domain-recon",
+        "two-stage-review"
+      ],
+      "cost": {
+        "ceremony": 0.45,
+        "tokens": 0.65,
+        "adoption": 0.4
+      }
     },
     {
       "id": "speckitty",
@@ -424,7 +475,15 @@
           "class": "human_gate",
           "note": "Human review to advance."
         }
-      ]
+      ],
+      "bundle": [
+        "lane-worktrees"
+      ],
+      "cost": {
+        "ceremony": 0.5,
+        "tokens": 0.3,
+        "adoption": 0.4
+      }
     },
     {
       "id": "tessl",
@@ -471,7 +530,15 @@
           "note": "Human approves specs before code."
         }
       ],
-      "catalogRole": "watch"
+      "catalogRole": "watch",
+      "bundle": [
+        "one-question-at-a-time"
+      ],
+      "cost": {
+        "ceremony": 0.25,
+        "tokens": 0.25,
+        "adoption": 0.35
+      }
     }
   ],
   "sections": [
@@ -496,6 +563,7 @@
       "section": "profile",
       "legend": "What is your team's core functional domain?",
       "help": "Optional team profile. Shown in the Markdown report; does not change the recommendation.",
+      "why": "The report names the domain so a shared link describes which team this is for. Ledger, treasury, and platform teams are scored on the same constraints, so the domain itself does not change the recommendation.",
       "reportOnly": true,
       "fields": [
         {
@@ -537,6 +605,7 @@
       "section": "instrument",
       "legend": "Team size and makeup (FTE)",
       "help": "Total size and roles drive compact-team and BMAD routing. SWE and data-engineer counts are report-only.",
+      "why": "A harness built around a product owner, a delivery lead, and QA only fits a team that already has those roles. Headcount also decides whether a heavy concurrent-work tool is usable: it stays off below three people. Engineer counts are kept in the report and do not change the score.",
       "fields": [
         {
           "kind": "record",
@@ -637,8 +706,9 @@
       "id": "q3_distribution",
       "number": "Q3",
       "section": "instrument",
-      "legend": "Geographic and time-zone distribution",
-      "help": "Shapes overlays and cautions; does not pick the base framework by itself.",
+      "legend": "Daily overlapping working hours",
+      "help": "Hours of shared working day. Behavioural anchor for concurrency isolation; does not pick the harness by itself.",
+      "why": "People who share little of the working day cannot settle conflicts in conversation. Less overlap raises the need for isolated, written handoffs so several people can change the same system without stepping on each other.",
       "fields": [
         {
           "kind": "single",
@@ -646,16 +716,16 @@
           "hashKey": "q3",
           "options": [
             {
-              "value": "colocated",
-              "label": "Co-located in a single hub"
+              "value": "more_than_6",
+              "label": "More than 6 hours of overlap"
             },
             {
-              "value": "regional",
-              "label": "Distributed across 1–2 compatible time zones"
+              "value": "3_to_6",
+              "label": "3–6 hours of overlap"
             },
             {
-              "value": "global_timezones",
-              "label": "Highly distributed globally with <3 hours daily overlap"
+              "value": "fewer_than_3",
+              "label": "Fewer than 3 hours of overlap"
             }
           ]
         }
@@ -667,6 +737,7 @@
       "section": "instrument",
       "legend": "Team tenure and domain experience",
       "help": "Tenure is optional profile. Low finance-domain familiarity can trigger domain reconnaissance (overlay/caution only).",
+      "why": "How long the team has worked together is profile for the report. Familiarity with the finance domain is the part that scores: a team that does not yet know the domain needs a reconnaissance step before it writes specs, or the agent will invent the wrong system.",
       "fields": [
         {
           "kind": "single",
@@ -715,8 +786,9 @@
       "id": "q5_work_breakdown",
       "number": "Q5",
       "section": "instrument",
-      "legend": "Breakdown of incoming work (must total 100%)",
-      "help": "Non-roadmap share (ops + bugs + regulatory + tech debt) steers brownfield vs greenfield bases.",
+      "legend": "Breakdown of incoming work (approximate percentages are normalized to 100%)",
+      "help": "Non-roadmap share steers brownfield demand. Approximate sums are rescaled rather than rejected.",
+      "why": "Work that is not a planned roadmap item — operations, bugs, regulatory fixes, tech debt — is the brownfield signal. A team living in existing systems needs specs for the change at hand, rather than a greenfield pipeline that assumes a clean backlog.",
       "fields": [
         {
           "kind": "record",
@@ -730,7 +802,8 @@
               "bugs",
               "regulatory",
               "tech_debt"
-            ]
+            ],
+            "sumToMode": "normalize"
           },
           "fields": [
             {
@@ -778,6 +851,7 @@
       "section": "instrument",
       "legend": "How volatile are your business requirements?",
       "help": "High or interrupt-driven volatility blocks Spec Kit and adds a low-ceremony fast path.",
+      "why": "This is the split between frameworks that can revise a spec after work has started and frameworks that assume the spec stays still. High or interrupt-driven change needs a short path for small fixes. A stable roadmap can carry a heavier phased process.",
       "fields": [
         {
           "kind": "single",
@@ -810,6 +884,7 @@
       "section": "instrument",
       "legend": "How granular and clear are requirements when they reach engineers?",
       "help": "Structured stories favor Spec Kit; vague goals favor BMAD and reconnaissance.",
+      "why": "Structured stories can carry a phased spec workflow. A goal that is still a sentence needs a method that interviews and discovers the requirement before anyone writes code.",
       "fields": [
         {
           "kind": "single",
@@ -838,6 +913,7 @@
       "section": "instrument",
       "legend": "What level of financial regulatory oversight applies?",
       "help": "SOX Tier 1 boosts frameworks with enforced gates (Spec Kit, BMAD, Superpowers) and penalizes all-advisory stacks.",
+      "why": "A SOX Tier 1 team needs an audit trail and a gate that is more than a prompt the agent may ignore. Advisory-only stacks are called out for that tier, and a written constitution is added as a practice. Lighter compliance tiers need less of that.",
       "fields": [
         {
           "kind": "single",
@@ -870,6 +946,7 @@
       "section": "instrument",
       "legend": "Data accuracy and precision requirements",
       "help": "Zero-tolerance boosts Superpowers and Spec Kit (enforced TDD / review gates) and penalizes advisory-only stacks.",
+      "why": "When a wrong number is a control failure, a checklist in the prompt is not a control. Zero tolerance raises the need for enforced tests and gates that actually block a bad change.",
       "fields": [
         {
           "kind": "single",
@@ -898,6 +975,7 @@
       "section": "instrument",
       "legend": "Primary system architecture",
       "help": "Monolith, hybrid, and batch data favor OpenSpec. Streaming is not treated as brownfield or as Spec Kit microservices.",
+      "why": "A monolith or a hybrid estate is a large existing system. The agent needs a tight boundary so it stays inside the change. A microservice estate is the lighter case. Streaming is scored on its own, closer to services than to a monolith.",
       "fields": [
         {
           "kind": "single",
@@ -934,6 +1012,7 @@
       "section": "instrument",
       "legend": "Deployment frequency and production lead time",
       "help": "Cadence (with team size and autonomy) can select Superpowers or GSD Core. Cycle time is report-only.",
+      "why": "Shipping many times a day cannot absorb the same ceremony as a quarterly release. Cadence is how much process the recommendation is allowed to add. Time from commit to production is recorded in the report and does not change the score.",
       "fields": [
         {
           "kind": "single",
@@ -992,6 +1071,7 @@
       "section": "instrument",
       "legend": "Automated testing and quality gates (check all that run on every pull request)",
       "help": "Coverage level is derived from how many automated gates you check. Manual-only is low coverage.",
+      "why": "The recommendation looks at how many automated checks already run on every pull request. Thin or manual-only coverage raises the need for a stronger verification practice. A team that already gates merges on tests needs less of that from the harness.",
       "fields": [
         {
           "kind": "multi",
@@ -1032,6 +1112,7 @@
       "section": "profile",
       "legend": "Source control and branching strategy",
       "help": "Optional team profile. Shown in the Markdown report; does not change the recommendation.",
+      "why": "Branching strategy is part of the team profile in the Markdown report. It does not change which harness is recommended.",
       "reportOnly": true,
       "fields": [
         {
@@ -1061,6 +1142,7 @@
       "section": "instrument",
       "legend": "How dependent is your release cadence on external teams?",
       "help": "Coupled or heavy internal dependence can add Spec Kitty practices. Vendor dependence is a caution, not that overlay.",
+      "why": "Releases that wait on other internal teams need a way to isolate concurrent work. Dependence on a vendor is a different problem: it is named as a caution, because the constraint sits outside the team's workflow.",
       "fields": [
         {
           "kind": "single",
@@ -1093,6 +1175,7 @@
       "section": "instrument",
       "legend": "Approval gates and governance",
       "help": "Shapes overlays and cautions; does not pick the base framework by itself. CAB still adds a constitution overlay.",
+      "why": "A change-advisory board on every release raises the need for a written trail of what was approved and why. Peer review plus CI still matters, and it does not pick the harness on its own.",
       "fields": [
         {
           "kind": "single",
@@ -1119,48 +1202,175 @@
       "id": "q16_bottlenecks",
       "number": "Q16",
       "section": "instrument",
-      "legend": "Rank your team's top 3 productivity bottlenecks",
-      "help": "Shapes overlays and cautions; does not pick the base framework by itself. Ranked bottlenecks fill the resolution matrix.",
+      "legend": "How severe is each productivity bottleneck?",
+      "help": "Independent severity ratings. No forced ranking. Feeds demand as a magnitude.",
+      "why": "Each problem is rated on its own, from none to blocking. Severity is how hard that problem pulls a practice: shifting requirements, fear of breaking calculations, waiting on other teams, and interrupt-driven support each ask for something different. Flaky builds, compliance paperwork, and legacy debt show up in the report next to the practice that addresses them.",
       "fields": [
         {
-          "kind": "ranked",
+          "kind": "record",
           "id": "q16_bottlenecks",
           "hashKey": "q16",
-          "ranks": 3,
-          "unique": true,
-          "rankLabels": [
-            "1st (biggest)",
-            "2nd",
-            "3rd"
-          ],
-          "options": [
+          "fields": [
             {
-              "value": "ambiguous_or_shifting",
-              "label": "Ambiguous or shifting requirements"
+              "kind": "single",
+              "id": "ambiguous_or_shifting",
+              "label": "Ambiguous or shifting requirements",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "None"
+                },
+                {
+                  "value": "minor",
+                  "label": "Minor"
+                },
+                {
+                  "value": "major",
+                  "label": "Major"
+                },
+                {
+                  "value": "blocking",
+                  "label": "Blocking"
+                }
+              ]
             },
             {
-              "value": "flaky_cicd",
-              "label": "Flaky CI/CD pipelines or slow builds"
+              "kind": "single",
+              "id": "flaky_cicd",
+              "label": "Flaky CI/CD pipelines or slow builds",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "None"
+                },
+                {
+                  "value": "minor",
+                  "label": "Minor"
+                },
+                {
+                  "value": "major",
+                  "label": "Major"
+                },
+                {
+                  "value": "blocking",
+                  "label": "Blocking"
+                }
+              ]
             },
             {
-              "value": "cross_team_approvals",
-              "label": "Cross-team dependencies and waiting on approvals"
+              "kind": "single",
+              "id": "cross_team_approvals",
+              "label": "Cross-team dependencies and waiting on approvals",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "None"
+                },
+                {
+                  "value": "minor",
+                  "label": "Minor"
+                },
+                {
+                  "value": "major",
+                  "label": "Major"
+                },
+                {
+                  "value": "blocking",
+                  "label": "Blocking"
+                }
+              ]
             },
             {
-              "value": "test_fear",
-              "label": "Lack of test automation / fear of breaking financial calculations"
+              "kind": "single",
+              "id": "test_fear",
+              "label": "Lack of test automation / fear of breaking financial calculations",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "None"
+                },
+                {
+                  "value": "minor",
+                  "label": "Minor"
+                },
+                {
+                  "value": "major",
+                  "label": "Major"
+                },
+                {
+                  "value": "blocking",
+                  "label": "Blocking"
+                }
+              ]
             },
             {
-              "value": "interruptive_support",
-              "label": "High volume of interruptive support tickets/incidents"
+              "kind": "single",
+              "id": "interruptive_support",
+              "label": "High volume of interruptive support tickets/incidents",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "None"
+                },
+                {
+                  "value": "minor",
+                  "label": "Minor"
+                },
+                {
+                  "value": "major",
+                  "label": "Major"
+                },
+                {
+                  "value": "blocking",
+                  "label": "Blocking"
+                }
+              ]
             },
             {
-              "value": "compliance_overhead",
-              "label": "Complex compliance/audit documentation overhead"
+              "kind": "single",
+              "id": "compliance_overhead",
+              "label": "Complex compliance/audit documentation overhead",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "None"
+                },
+                {
+                  "value": "minor",
+                  "label": "Minor"
+                },
+                {
+                  "value": "major",
+                  "label": "Major"
+                },
+                {
+                  "value": "blocking",
+                  "label": "Blocking"
+                }
+              ]
             },
             {
-              "value": "legacy_tech_debt",
-              "label": "Technical debt in legacy codebases"
+              "kind": "single",
+              "id": "legacy_tech_debt",
+              "label": "Technical debt in legacy codebases",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "None"
+                },
+                {
+                  "value": "minor",
+                  "label": "Minor"
+                },
+                {
+                  "value": "major",
+                  "label": "Major"
+                },
+                {
+                  "value": "blocking",
+                  "label": "Blocking"
+                }
+              ]
             }
           ]
         }
@@ -1172,6 +1382,7 @@
       "section": "profile",
       "legend": "What currently feels mismatched about your development process or delivery cadence?",
       "help": "Optional team profile. Copied into the Markdown report. The engine never reads this text.",
+      "why": "This is copied into the Markdown report in your own words. The engine does not read it, so it cannot change the recommendation. It is there so the proposal still carries a mismatch the questionnaire did not ask about.",
       "reportOnly": true,
       "fields": [
         {
@@ -1188,6 +1399,7 @@
       "section": "constraints",
       "legend": "Token / plan budget",
       "help": "Metered budgets avoid Superpowers as a base when coverage is low.",
+      "why": "Some workflows spend many model tokens on purpose. A metered or rationed budget makes those options expensive to keep using, so they are discounted. An unmetered budget does not.",
       "fields": [
         {
           "kind": "single",
@@ -1220,6 +1432,7 @@
       "section": "constraints",
       "legend": "Change volume profile",
       "help": "Shapes overlays and cautions; does not pick the base framework by itself. Many-small still adds a documented fast path.",
+      "why": "A heavy process priced per change fails when the team ships many small changes. That raises the need for a short, low-ceremony path. A few large changes can carry more process.",
       "fields": [
         {
           "kind": "single",
@@ -1247,7 +1460,8 @@
       "number": "Q20",
       "section": "constraints",
       "legend": "Agent runtimes in use",
-      "help": "Soft preference: frameworks that do not list a selected runtime are score-penalized, not removed. Choose Unsure / any if you do not know.",
+      "help": "Hard veto: a framework that documents a non-empty runtime list with no overlap is excluded, not score-penalized. Choose Unsure / any if you do not know.",
+      "why": "A framework that documents which agents it supports, and lists none of yours, is removed before scoring. It cannot be voted back in by other signals. Choose Unsure if the runtime is not decided yet.",
       "fields": [
         {
           "kind": "multi",
@@ -1298,29 +1512,34 @@
       "id": "q21_ci_maturity",
       "number": "Q21",
       "section": "constraints",
-      "legend": "Existing CI enforcement maturity",
-      "help": "Shapes overlays and cautions; does not pick the base framework by itself. Weak CI with SOX or zero-tolerance still adds overlay F.",
+      "legend": "Which CI artifacts already run on every pull request?",
+      "help": "Checklist of concrete artifacts. An ordinal maturity is derived, the same pattern as coverageLevel.",
+      "why": "Most of the gates in these frameworks are instructions to the agent, rather than checks that block a merge. What already runs in CI is the real backstop. No CI plus a high compliance bar is a gap the framework choice does not close.",
       "fields": [
         {
-          "kind": "single",
+          "kind": "multi",
           "id": "q21_ci_maturity",
           "hashKey": "q21",
           "options": [
             {
-              "value": "none",
-              "label": "None"
+              "value": "unit_tests",
+              "label": "Unit tests run on every PR"
             },
             {
-              "value": "tests_only",
-              "label": "Tests only"
+              "value": "static_analysis",
+              "label": "Static analysis / linters as a required check"
             },
             {
-              "value": "tests_plus_static",
-              "label": "Tests plus static analysis"
+              "value": "contract_tests",
+              "label": "Contract or API schema tests"
             },
             {
-              "value": "contracts_runtime",
-              "label": "Contracts and runtime checks"
+              "value": "runtime_checks",
+              "label": "Runtime assertion or invariant checks in CI"
+            },
+            {
+              "value": "required_status",
+              "label": "Required status checks that block merge"
             }
           ]
         }
@@ -1437,6 +1656,33 @@
           },
           1
         ]
+      }
+    },
+    {
+      "key": "ciMaturity",
+      "expr": {
+        "bucket": {
+          "value": {
+            "countSelected": {
+              "field": "q21_ci_maturity"
+            }
+          },
+          "cuts": [
+            {
+              "lte": 0,
+              "then": "none"
+            },
+            {
+              "lte": 1,
+              "then": "tests_only"
+            },
+            {
+              "lte": 3,
+              "then": "tests_plus_static"
+            }
+          ],
+          "else": "contracts_runtime"
+        }
       }
     }
   ],
@@ -2208,11 +2454,15 @@
             ]
           },
           {
-            "rankAtMost": {
-              "field": "q16_bottlenecks",
-              "of": "test_fear",
-              "n": 2
-            }
+            "in": [
+              {
+                "answer": "q16_bottlenecks.test_fear"
+              },
+              [
+                "major",
+                "blocking"
+              ]
+            ]
           },
           {
             "flag": "force_tdd_overlay"
@@ -2277,7 +2527,7 @@
               {
                 "answer": "q3_distribution"
               },
-              "global_timezones"
+              "fewer_than_3"
             ]
           }
         ]
@@ -2329,11 +2579,15 @@
             ]
           },
           {
-            "rankAtMost": {
-              "field": "q16_bottlenecks",
-              "of": "ambiguous_or_shifting",
-              "n": 1
-            }
+            "in": [
+              {
+                "answer": "q16_bottlenecks.ambiguous_or_shifting"
+              },
+              [
+                "major",
+                "blocking"
+              ]
+            ]
           }
         ]
       },
@@ -2420,7 +2674,7 @@
           {
             "in": [
               {
-                "answer": "q21_ci_maturity"
+                "derived": "ciMaturity"
               },
               [
                 "none",
@@ -2518,6 +2772,13 @@
         "finding": "On legacy modules with no reachable owner, Spec Kit has been observed fabricating constitution mandates, inventing performance budgets, and tightening schemas in ways that break against existing data.",
         "mitigation": "Bound Spec Kit to architecturally novel work. Require a measured baseline before any performance claim. Review every schema change against production data shape.",
         "source": "ERP modernization field report; §8.3"
+      },
+      "derivedFrom": {
+        "condition": "uncovered_demand",
+        "axis": "brownfield",
+        "harness": "speckit",
+        "demandMin": 0.45,
+        "coverageMax": 0.55
       }
     },
     {
@@ -2554,6 +2815,12 @@
         "finding": "constitution.md is prompt context, not a control. Nothing outside the agent re-reads it or blocks a violating change. It will not satisfy an auditor asking what prevents a violation.",
         "mitigation": "Pair with overlay F. Treat the constitution as documentation of intent and CI as the enforcement. If segregation of duties must be provable, prefer Spec Kitty's lane state machine.",
         "source": "Spec Kit README; §8.3; V1"
+      },
+      "derivedFrom": {
+        "condition": "enforcement_gap",
+        "axis": "auditTrail",
+        "practice": "regulatory-constitution",
+        "demandMin": 0.55
       }
     },
     {
@@ -2605,6 +2872,12 @@
         "finding": "Superpowers' full loop is token-intensive by design; users under metered plans report slowdowns and reversion. Setup runs 10–20 minutes per feature.",
         "mitigation": "Adopt TDD and code-review skills selectively rather than the full mandatory progression. Reserve brainstorming for genuinely ambiguous work.",
         "source": "Superpowers release notes and field reports; §8.6"
+      },
+      "derivedFrom": {
+        "condition": "cost_mismatch",
+        "axis": "tokenBudget",
+        "demandMin": 0.55,
+        "costMin": 0.3
       }
     },
     {
@@ -2627,6 +2900,10 @@
         "finding": "The source material recommends Tessl [@test] anchors as fail-closed verification. They are not: check-spec-links.sh verifies that links point to existing files. The tile is watch-status and stale.",
         "mitigation": "Use Superpowers' TDD iron law. Borrow Tessl's one-question-at-a-time interview discipline without adopting the tile.",
         "source": "Tessl tile; Fowler; V4"
+      },
+      "derivedFrom": {
+        "retired": "dropped",
+        "note": "Tessl [@test] is not a recommended practice; one-question-at-a-time replaced it."
       }
     },
     {
@@ -2661,6 +2938,12 @@
         "finding": "/opsx:verify exists only in the expanded profile and must be configured explicitly. Even then it flags issues without blocking archiving.",
         "mitigation": "Run openspec config profile to enable expanded. Add overlay F so the actual gate is CI.",
         "source": "OpenSpec docs; V7"
+      },
+      "derivedFrom": {
+        "condition": "enforcement_gap",
+        "axis": "verificationStrength",
+        "harness": "openspec",
+        "demandMin": 0.7
       }
     },
     {
@@ -2697,6 +2980,13 @@
         "finding": "Spec Kitty's lane machine permits exactly 27 transitions and requires implementation evidence to reach for_review; overrides demand actor and reason. This is a stronger audit artifact than Markdown-based governance.",
         "mitigation": "Treat Spec Kitty's status log as an audit record. Protect append-only log merges in review — conflict resolution can lose events.",
         "source": "Spec Kitty architecture; V8"
+      },
+      "derivedFrom": {
+        "condition": "enforcement_strength",
+        "axis": "auditTrail",
+        "practice": "lane-worktrees",
+        "demandMin": 0.55,
+        "coverageMin": 0.6
       }
     },
     {
@@ -2735,6 +3025,12 @@
         "finding": "Per-change ceremony dominates at high change volume. Field measurement puts Spec Kit at roughly one full session per ~2,000 LOC unit.",
         "mitigation": "Adopt overlay G's two-track policy and hold the heavyweight pipeline for architecturally novel work only.",
         "source": "ERP field report; §8.3"
+      },
+      "derivedFrom": {
+        "condition": "cost_mismatch",
+        "axis": "ceremonyTolerance",
+        "demandMin": 0.55,
+        "costMin": 0.35
       }
     },
     {
@@ -2771,6 +3067,10 @@
         "finding": "Spec Kitty's worktree model pays off through concurrency. Below three concurrent workers it adds sync and rebase friction without the benefit. Isolation is partial: full checkouts with ownership metadata.",
         "mitigation": "Use plain git worktrees or Superpowers' using-git-worktrees skill instead of Spec Kitty's full mission model.",
         "source": "Spec Kitty architecture; C8"
+      },
+      "derivedFrom": {
+        "retired": "constraint",
+        "note": "Became requiresWhen teamSize >= 3 on lane-worktrees."
       }
     },
     {
@@ -2791,6 +3091,13 @@
         "finding": "Created 2026-05-22 — roughly four months old at the evidence date. Release cadence is high but there is little track record, and .planning/ is still evolving.",
         "mitigation": "Pin a version. Budget for migration between minor releases. Re-verify activity before committing a team to it.",
         "source": "Appendix A; V3"
+      },
+      "derivedFrom": {
+        "condition": "attribute_risk",
+        "harness": "gsd",
+        "evidence": {
+          "any": true
+        }
       }
     },
     {
@@ -2811,6 +3118,13 @@
         "finding": "No commits on main in the 30 days before the evidence date (v6.3.0, 2026-08-12), while comparable projects posted 100+. Star count reflects historical popularity.",
         "mitigation": "Check current repository activity before adopting. The methodology is portable, so a pause is survivable — do not assume active upstream support.",
         "source": "Appendix A; V12"
+      },
+      "derivedFrom": {
+        "condition": "attribute_risk",
+        "harness": "superpowers",
+        "evidence": {
+          "zeroCommits": true
+        }
       }
     },
     {
@@ -2831,6 +3145,13 @@
         "finding": "The GitHub API reports a non-standard license (NOASSERTION) where comparable projects are MIT.",
         "mitigation": "Have legal review the license terms before enterprise adoption.",
         "source": "GitHub API; §8.4"
+      },
+      "derivedFrom": {
+        "condition": "attribute_risk",
+        "harness": "bmad",
+        "evidence": {
+          "nonMitLicense": true
+        }
       }
     },
     {
@@ -2869,6 +3190,12 @@
         "finding": "Interrupt-driven work arrives in real time. Spec Kit, Superpowers' mandatory progression, and BMAD's full method price a session per change that the queue will not wait for.",
         "mitigation": "Prefer OpenSpec (or BMAD Quick Flow if BMAD is already the base) as the daily path. Do not run the full Spec Kit or Superpowers pipeline on interrupt tickets.",
         "source": "D15; V5"
+      },
+      "derivedFrom": {
+        "condition": "cost_mismatch",
+        "axis": "midFlightChange",
+        "demandMin": 0.7,
+        "costMin": 0.3
       }
     },
     {
@@ -2891,6 +3218,10 @@
         "finding": "Core delivery waits on an external vendor release train. No SDD framework removes that blocker.",
         "mitigation": "Keep the selected stack for work this team owns. Treat vendor-gated work as out of scope for the SDD recommendation rather than overlaying Spec Kitty.",
         "source": "D18"
+      },
+      "derivedFrom": {
+        "retired": "constraint",
+        "note": "Vendor zeros concurrencyIsolation demand via demandScopes."
       }
     },
     {
@@ -2925,6 +3256,13 @@
         "finding": "A large share of work is unplanned (ops + bugs). Spec Kit's phase pipeline prices a session per change that interrupt and defect work will not wait for.",
         "mitigation": "Keep Spec Kit for architecturally novel roadmap work. Route unplanned work through OpenSpec or a documented fast path.",
         "source": "QC experiment; unplannedShare derived view"
+      },
+      "derivedFrom": {
+        "condition": "uncovered_demand",
+        "axis": "brownfield",
+        "harness": "speckit",
+        "demandMin": 0.5,
+        "coverageMax": 0.5
       }
     },
     {
@@ -2940,6 +3278,10 @@
         "finding": "The recommended framework does not document the agent runtimes you selected. Runtime match is a soft preference: the framework stayed in consideration and was score-penalized instead of being deleted.",
         "mitigation": "If you are unsure which runtimes you use, choose Unsure / any. Confirm the recommended framework actually supports your agent before adopting it.",
         "source": "QC experiment; q20 danger quadrant"
+      },
+      "derivedFrom": {
+        "retired": "veto",
+        "note": "Runtime mismatch is a veto, reported as its own sentence."
       }
     },
     {
@@ -2960,6 +3302,10 @@
         "finding": "Tessl SDD Tile is status watch: small, stale, and its [@test] anchors are not a fail-closed gate. It was reachable only because watch is a score penalty, not a hard exclusion.",
         "mitigation": "Do not treat Tessl as a production default. Prefer OpenSpec or GSD Core unless you explicitly want the interview technique.",
         "source": "DESIGN.md §8.8; QC catalog honesty"
+      },
+      "derivedFrom": {
+        "retired": "veto",
+        "note": "Watch-status harnesses are excluded before scoring."
       }
     }
   ],
@@ -3004,7 +3350,8 @@
     "freeTextFields": [
       "q17_process_mismatch"
     ],
-    "unaddressedBottlenecks": "auto"
+    "unaddressedBottlenecks": "auto",
+    "bottleneckField": "q16_bottlenecks"
   },
   "fixtures": [
     {
@@ -3038,7 +3385,20 @@
       },
       "expect": {
         "base": "openspec",
-        "fallback": false
+        "fallback": false,
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3071,8 +3431,21 @@
         ]
       },
       "expect": {
-        "base": "speckit",
-        "fallback": false
+        "base": "openspec",
+        "fallback": false,
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3105,8 +3478,23 @@
         ]
       },
       "expect": {
-        "base": "bmad",
-        "fallback": false
+        "base": "openspec",
+        "fallback": false,
+        "overlays": [
+          "delta-only-specs",
+          "domain-recon",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "role-personas"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -3142,8 +3530,24 @@
         ]
       },
       "expect": {
-        "base": "bmad",
-        "fallback": false
+        "base": "openspec",
+        "fallback": false,
+        "overlays": [
+          "delta-only-specs",
+          "domain-recon",
+          "ephemeral-subagent-waves",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "role-personas"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3175,8 +3579,24 @@
         "q18_token_budget": "unmetered"
       },
       "expect": {
-        "base": "superpowers",
-        "fallback": false
+        "base": "openspec",
+        "fallback": false,
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "tdd-iron-law"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [
+          "C7"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-superpowers"
       }
     },
     {
@@ -3212,7 +3632,22 @@
       },
       "expect": {
         "base": "speckitty",
-        "fallback": false
+        "fallback": false,
+        "overlays": [
+          "delta-only-specs",
+          "deterministic-ci",
+          "gsd-req-ids",
+          "lane-worktrees",
+          "tdd-iron-law"
+        ],
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "cautions": [
+          "C6"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -3245,8 +3680,23 @@
         ]
       },
       "expect": {
-        "base": "gsd",
-        "runnerUp": "base-1"
+        "base": "openspec",
+        "runnerUp": "harness-gsd",
+        "overlays": [
+          "delta-only-specs",
+          "ephemeral-subagent-waves",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [
+          "C7"
+        ],
+        "noRuntimeMatch": false
       }
     },
     {
@@ -3279,8 +3729,21 @@
         ]
       },
       "expect": {
-        "base": null,
-        "fallback": false
+        "base": "openspec",
+        "fallback": false,
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3312,7 +3775,21 @@
         "q18_token_budget": "unmetered"
       },
       "expect": {
-        "base": "superpowers"
+        "base": "openspec",
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "tdd-iron-law"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -3344,10 +3821,23 @@
         "q18_token_budget": "strict"
       },
       "expect": {
-        "base": "gsd",
+        "base": "openspec",
         "overlays": [
-          "overlay-b"
-        ]
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "tdd-iron-law"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [
+          "C3"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -3381,7 +3871,20 @@
         "q18_token_budget": "unmetered"
       },
       "expect": {
-        "base": "gsd"
+        "base": "openspec",
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3414,7 +3917,20 @@
         ]
       },
       "expect": {
-        "base": "openspec"
+        "base": "openspec",
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3447,7 +3963,20 @@
         ]
       },
       "expect": {
-        "base": "openspec"
+        "base": "openspec",
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3480,7 +4009,20 @@
         ]
       },
       "expect": {
-        "base": "openspec"
+        "base": "openspec",
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3513,8 +4055,21 @@
         ]
       },
       "expect": {
-        "base": null,
-        "fallback": false
+        "base": "openspec",
+        "fallback": false,
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3550,7 +4105,18 @@
         ]
       },
       "expect": {
-        "base": "speckit"
+        "base": "speckit",
+        "overlays": [
+          "regulatory-constitution",
+          "speckit-phase-pipeline"
+        ],
+        "overlaysIncludedInBase": [
+          "regulatory-constitution",
+          "speckit-phase-pipeline"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-speckitty"
       }
     },
     {
@@ -3586,8 +4152,11 @@
         ]
       },
       "expect": {
-        "noRuntimeMatch": false,
-        "base": "speckit"
+        "noRuntimeMatch": true,
+        "base": null,
+        "overlays": [],
+        "overlaysIncludedInBase": [],
+        "cautions": []
       }
     },
     {
@@ -3622,9 +4191,19 @@
       },
       "expect": {
         "overlays": [
-          "overlay-a"
+          "deterministic-ci",
+          "gsd-req-ids",
+          "lane-worktrees"
         ],
-        "base": "speckit"
+        "base": "speckitty",
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "cautions": [
+          "C6"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3659,8 +4238,20 @@
         "q15_governance": "lightweight_review"
       },
       "expect": {
-        "overlays": [],
-        "base": "speckit"
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3694,8 +4285,16 @@
         "q8_compliance": "internal_governance"
       },
       "expect": {
-        "overlays": [],
-        "base": "speckit"
+        "overlays": [
+          "lane-worktrees"
+        ],
+        "base": "speckitty",
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -3730,9 +4329,21 @@
       },
       "expect": {
         "overlays": [
-          "overlay-b"
+          "delta-only-specs",
+          "deterministic-ci",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "tdd-iron-law"
         ],
-        "base": "speckit"
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-speckitty"
       }
     },
     {
@@ -3764,13 +4375,31 @@
           "e2e"
         ],
         "q9_precision": "standard",
-        "q16_bottlenecks": [
-          "flaky_cicd"
-        ]
+        "q16_bottlenecks": {
+          "ambiguous_or_shifting": "none",
+          "flaky_cicd": "blocking",
+          "cross_team_approvals": "none",
+          "test_fear": "none",
+          "interruptive_support": "none",
+          "compliance_overhead": "none",
+          "legacy_tech_debt": "none"
+        }
       },
       "expect": {
-        "overlays": [],
-        "base": "speckit"
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3804,9 +4433,15 @@
       },
       "expect": {
         "overlays": [
-          "overlay-c"
+          "lane-worktrees"
         ],
-        "base": "speckit"
+        "base": "speckitty",
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -3839,8 +4474,20 @@
         ]
       },
       "expect": {
-        "overlays": [],
-        "base": "speckit"
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3871,17 +4518,32 @@
           "integration_contract",
           "e2e"
         ],
-        "q16_bottlenecks": [
-          "ambiguous_or_shifting",
-          "flaky_cicd",
-          "test_fear"
-        ]
+        "q16_bottlenecks": {
+          "ambiguous_or_shifting": "blocking",
+          "flaky_cicd": "major",
+          "cross_team_approvals": "none",
+          "test_fear": "minor",
+          "interruptive_support": "none",
+          "compliance_overhead": "none",
+          "legacy_tech_debt": "none"
+        }
       },
       "expect": {
         "overlays": [
-          "overlay-d"
+          "delta-only-specs",
+          "domain-recon",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
         ],
-        "base": "speckit"
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-superpowers"
       }
     },
     {
@@ -3912,16 +4574,33 @@
           "integration_contract",
           "e2e"
         ],
-        "q16_bottlenecks": [
-          "flaky_cicd",
-          "ambiguous_or_shifting",
-          "test_fear"
-        ],
+        "q16_bottlenecks": {
+          "ambiguous_or_shifting": "major",
+          "flaky_cicd": "blocking",
+          "cross_team_approvals": "none",
+          "test_fear": "minor",
+          "interruptive_support": "none",
+          "compliance_overhead": "none",
+          "legacy_tech_debt": "none"
+        },
         "q4_domain_familiarity": "high"
       },
       "expect": {
-        "overlays": [],
-        "base": "speckit"
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "one-question-at-a-time",
+          "openspec-change-archive"
+        ],
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-speckit"
       }
     },
     {
@@ -3955,9 +4634,20 @@
       },
       "expect": {
         "overlays": [
-          "overlay-e"
+          "delta-only-specs",
+          "ephemeral-subagent-waves",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
         ],
-        "base": "openspec"
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -3990,8 +4680,20 @@
         ]
       },
       "expect": {
-        "overlays": [],
-        "base": "speckit"
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4023,14 +4725,23 @@
           "e2e"
         ],
         "q8_compliance": "sox_tier1",
-        "q21_ci_maturity": "none"
+        "q21_ci_maturity": []
       },
       "expect": {
         "overlays": [
-          "overlay-a",
-          "overlay-f"
+          "deterministic-ci",
+          "gsd-req-ids",
+          "lane-worktrees"
         ],
-        "base": "speckit"
+        "base": "speckitty",
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "cautions": [
+          "C6"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4062,13 +4773,28 @@
           "e2e"
         ],
         "q8_compliance": "sox_tier1",
-        "q21_ci_maturity": "contracts_runtime"
+        "q21_ci_maturity": [
+          "unit_tests",
+          "static_analysis",
+          "contract_tests",
+          "runtime_checks"
+        ]
       },
       "expect": {
         "overlays": [
-          "overlay-a"
+          "deterministic-ci",
+          "gsd-req-ids",
+          "lane-worktrees"
         ],
-        "base": "speckit"
+        "base": "speckitty",
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "cautions": [
+          "C6"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4103,9 +4829,19 @@
       },
       "expect": {
         "overlays": [
-          "overlay-g"
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
         ],
-        "base": "speckit"
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-bmad"
       }
     },
     {
@@ -4139,9 +4875,19 @@
       },
       "expect": {
         "overlays": [
-          "overlay-g"
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
         ],
-        "base": "openspec"
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4175,9 +4921,19 @@
       },
       "expect": {
         "overlays": [
-          "overlay-g"
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
         ],
-        "base": "openspec"
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4211,8 +4967,20 @@
         "q19_change_volume": "balanced"
       },
       "expect": {
-        "overlays": [],
-        "base": "speckit"
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4245,9 +5013,21 @@
       },
       "expect": {
         "overlays": [
-          "overlay-b"
+          "delta-only-specs",
+          "deterministic-ci",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "tdd-iron-law"
         ],
-        "base": "speckit"
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-speckitty"
       }
     },
     {
@@ -4281,13 +5061,20 @@
         "q8_compliance": "sox_tier1"
       },
       "expect": {
-        "base": "speckit",
+        "base": "speckitty",
         "overlays": [
-          "overlay-a"
+          "deterministic-ci",
+          "gsd-req-ids",
+          "lane-worktrees"
         ],
         "overlaysIncludedInBase": [
-          "overlay-a"
-        ]
+          "lane-worktrees"
+        ],
+        "cautions": [
+          "C6"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4319,16 +5106,32 @@
           "e2e"
         ],
         "q9_precision": "standard",
-        "q16_bottlenecks": [
-          "flaky_cicd",
-          "test_fear",
-          "legacy_tech_debt"
-        ]
+        "q16_bottlenecks": {
+          "ambiguous_or_shifting": "none",
+          "flaky_cicd": "blocking",
+          "cross_team_approvals": "none",
+          "test_fear": "major",
+          "interruptive_support": "none",
+          "compliance_overhead": "none",
+          "legacy_tech_debt": "minor"
+        }
       },
       "expect": {
         "overlays": [
-          "overlay-b"
-        ]
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "tdd-iron-law"
+        ],
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-superpowers"
       }
     },
     {
@@ -4360,14 +5163,31 @@
           "e2e"
         ],
         "q9_precision": "standard",
-        "q16_bottlenecks": [
-          "flaky_cicd",
-          "legacy_tech_debt",
-          "test_fear"
-        ]
+        "q16_bottlenecks": {
+          "ambiguous_or_shifting": "none",
+          "flaky_cicd": "blocking",
+          "cross_team_approvals": "none",
+          "test_fear": "minor",
+          "interruptive_support": "none",
+          "compliance_overhead": "none",
+          "legacy_tech_debt": "major"
+        }
       },
       "expect": {
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4400,11 +5220,20 @@
         ]
       },
       "expect": {
-        "base": "speckit",
-        "cautions": [
-          "C1"
+        "base": "openspec",
+        "cautions": [],
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
         ],
-        "overlays": []
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4437,9 +5266,20 @@
         ]
       },
       "expect": {
-        "base": "speckit",
+        "base": "openspec",
         "cautions": [],
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4473,13 +5313,20 @@
         "q8_compliance": "sox_tier1"
       },
       "expect": {
-        "base": "speckit",
+        "base": "speckitty",
         "cautions": [
-          "C2"
+          "C6"
         ],
         "overlays": [
-          "overlay-a"
-        ]
+          "deterministic-ci",
+          "gsd-req-ids",
+          "lane-worktrees"
+        ],
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4514,11 +5361,19 @@
         "q15_governance": "cab"
       },
       "expect": {
-        "base": "speckit",
-        "cautions": [],
+        "base": "speckitty",
+        "cautions": [
+          "C6"
+        ],
         "overlays": [
-          "overlay-a"
-        ]
+          "gsd-req-ids",
+          "lane-worktrees"
+        ],
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4553,14 +5408,24 @@
         "q18_token_budget": "strict"
       },
       "expect": {
-        "base": "speckit",
+        "base": "openspec",
         "cautions": [
-          "C3",
-          "C4"
+          "C3"
         ],
         "overlays": [
-          "overlay-b"
-        ]
+          "delta-only-specs",
+          "deterministic-ci",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "tdd-iron-law"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-speckitty"
       }
     },
     {
@@ -4595,9 +5460,20 @@
         "q18_token_budget": "unmetered"
       },
       "expect": {
-        "base": "speckit",
+        "base": "openspec",
         "cautions": [],
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4631,13 +5507,22 @@
         "q9_precision": "zero_tolerance"
       },
       "expect": {
-        "base": "speckit",
-        "cautions": [
-          "C4"
-        ],
+        "base": "openspec",
+        "cautions": [],
         "overlays": [
-          "overlay-b"
-        ]
+          "delta-only-specs",
+          "deterministic-ci",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "tdd-iron-law"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-speckitty"
       }
     },
     {
@@ -4671,9 +5556,20 @@
         "q9_precision": "standard"
       },
       "expect": {
-        "base": "speckit",
+        "base": "openspec",
         "cautions": [],
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4708,13 +5604,22 @@
       },
       "expect": {
         "base": "openspec",
-        "cautions": [
-          "C4",
-          "C5"
-        ],
+        "cautions": [],
         "overlays": [
-          "overlay-b"
-        ]
+          "delta-only-specs",
+          "deterministic-ci",
+          "low-ceremony-fast-path",
+          "one-question-at-a-time",
+          "openspec-change-archive",
+          "tdd-iron-law"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -4750,7 +5655,18 @@
       "expect": {
         "base": "openspec",
         "cautions": [],
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4784,15 +5700,20 @@
         "q8_compliance": "sox_tier1"
       },
       "expect": {
-        "base": "speckit",
+        "base": "speckitty",
         "cautions": [
-          "C2",
           "C6"
         ],
         "overlays": [
-          "overlay-a",
-          "overlay-c"
-        ]
+          "deterministic-ci",
+          "gsd-req-ids",
+          "lane-worktrees"
+        ],
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4826,11 +5747,16 @@
         "q8_compliance": "standard_enterprise"
       },
       "expect": {
-        "base": "speckit",
+        "base": "speckitty",
         "cautions": [],
         "overlays": [
-          "overlay-c"
-        ]
+          "lane-worktrees"
+        ],
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -4864,13 +5790,20 @@
         "q19_change_volume": "many_small"
       },
       "expect": {
-        "base": "speckit",
-        "cautions": [
-          "C7"
-        ],
+        "base": "openspec",
+        "cautions": [],
         "overlays": [
-          "overlay-g"
-        ]
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-bmad"
       }
     },
     {
@@ -4904,9 +5837,20 @@
         "q19_change_volume": "balanced"
       },
       "expect": {
-        "base": "speckit",
+        "base": "openspec",
         "cautions": [],
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -4939,13 +5883,12 @@
         ]
       },
       "expect": {
-        "base": "speckit",
-        "cautions": [
-          "C8"
-        ],
-        "overlays": [
-          "overlay-c"
-        ]
+        "base": "speckitty",
+        "cautions": [],
+        "overlays": [],
+        "overlaysIncludedInBase": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -4978,11 +5921,16 @@
         ]
       },
       "expect": {
-        "base": "speckit",
+        "base": "speckitty",
         "cautions": [],
         "overlays": [
-          "overlay-c"
-        ]
+          "lane-worktrees"
+        ],
+        "overlaysIncludedInBase": [
+          "lane-worktrees"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -5016,11 +5964,20 @@
         "q18_token_budget": "team_plan"
       },
       "expect": {
-        "base": "gsd",
-        "cautions": [
-          "C9"
+        "base": "openspec",
+        "cautions": [],
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
         ],
-        "overlays": []
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5053,9 +6010,20 @@
         ]
       },
       "expect": {
-        "base": "speckit",
+        "base": "openspec",
         "cautions": [],
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5087,11 +6055,21 @@
         "q18_token_budget": "unmetered"
       },
       "expect": {
-        "base": "superpowers",
-        "cautions": [
-          "C10"
+        "base": "openspec",
+        "cautions": [],
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "tdd-iron-law"
         ],
-        "overlays": []
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -5124,9 +6102,20 @@
         ]
       },
       "expect": {
-        "base": "speckit",
+        "base": "openspec",
         "cautions": [],
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5159,13 +6148,22 @@
         ]
       },
       "expect": {
-        "base": "bmad",
-        "cautions": [
-          "C11"
-        ],
+        "base": "openspec",
+        "cautions": [],
         "overlays": [
-          "overlay-d"
-        ]
+          "delta-only-specs",
+          "domain-recon",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "role-personas"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -5198,9 +6196,20 @@
         ]
       },
       "expect": {
-        "base": "speckit",
+        "base": "openspec",
         "cautions": [],
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5233,15 +6242,24 @@
         ]
       },
       "expect": {
-        "base": "bmad",
+        "base": "openspec",
         "cautions": [
-          "C11",
           "C12"
         ],
         "overlays": [
-          "overlay-d",
-          "overlay-g"
-        ]
+          "delta-only-specs",
+          "domain-recon",
+          "low-ceremony-fast-path",
+          "openspec-change-archive",
+          "role-personas"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -5277,8 +6295,17 @@
         "base": "openspec",
         "cautions": [],
         "overlays": [
-          "overlay-g"
-        ]
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5311,11 +6338,20 @@
         ]
       },
       "expect": {
-        "base": "speckit",
-        "cautions": [
-          "C13"
+        "base": "openspec",
+        "cautions": [],
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
         ],
-        "overlays": []
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5348,9 +6384,20 @@
         ]
       },
       "expect": {
-        "base": "speckit",
+        "base": "openspec",
         "cautions": [],
-        "overlays": []
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5383,11 +6430,20 @@
         ]
       },
       "expect": {
-        "overlays": [],
-        "cautions": [
-          "C13"
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
         ],
-        "base": "speckit"
+        "cautions": [],
+        "base": "openspec",
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5398,7 +6454,21 @@
       "expect": {
         "derived": {
           "volatilityIsHigh": true
-        }
+        },
+        "base": "openspec",
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-speckitty"
       }
     },
     {
@@ -5418,7 +6488,21 @@
           "hasProductOwner": false,
           "hasScrumMaster": false,
           "hasQaSdet": false
-        }
+        },
+        "base": "openspec",
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5436,7 +6520,21 @@
       "expect": {
         "derived": {
           "hasProductOwner": true
-        }
+        },
+        "base": "openspec",
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
       }
     },
     {
@@ -5449,7 +6547,15 @@
       "expect": {
         "derived": {
           "coverageLevel": "low"
-        }
+        },
+        "base": "speckitty",
+        "overlays": [
+          "tdd-iron-law"
+        ],
+        "overlaysIncludedInBase": [],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-superpowers"
       }
     },
     {
@@ -5460,7 +6566,15 @@
       "expect": {
         "derived": {
           "coverageLevel": "low"
-        }
+        },
+        "base": "speckitty",
+        "overlays": [
+          "tdd-iron-law"
+        ],
+        "overlaysIncludedInBase": [],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-superpowers"
       }
     },
     {
@@ -5474,7 +6588,13 @@
       "expect": {
         "derived": {
           "coverageLevel": "partial"
-        }
+        },
+        "base": "speckitty",
+        "overlays": [],
+        "overlaysIncludedInBase": [],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -5489,7 +6609,13 @@
       "expect": {
         "derived": {
           "coverageLevel": "high"
-        }
+        },
+        "base": "speckitty",
+        "overlays": [],
+        "overlaysIncludedInBase": [],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-openspec"
       }
     },
     {
@@ -5532,8 +6658,1125 @@
           "q18_token_budget",
           "q19_change_volume",
           "q21_ci_maturity"
+        ],
+        "base": "openspec",
+        "overlays": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "overlaysIncludedInBase": [
+          "delta-only-specs",
+          "low-ceremony-fast-path",
+          "openspec-change-archive"
+        ],
+        "cautions": [],
+        "noRuntimeMatch": false,
+        "runnerUp": "harness-gsd"
+      }
+    }
+  ],
+  "axes": [
+    {
+      "id": "brownfield",
+      "label": "Brownfield / non-roadmap load",
+      "demand": {
+        "combine": "max",
+        "terms": [
+          {
+            "reads": [
+              "derived.nonRoadmapShare"
+            ],
+            "fields": [
+              "q5_work_breakdown"
+            ],
+            "q": 25,
+            "p": 55,
+            "scale": 1
+          },
+          {
+            "reads": [
+              "q10_architecture"
+            ],
+            "fields": [
+              "q10_architecture"
+            ],
+            "map": {
+              "monolith": 0.85,
+              "hybrid": 0.7,
+              "batch_data": 0.55,
+              "microservices": 0.1,
+              "streaming": 0.15
+            },
+            "q": 0.2,
+            "p": 0.8
+          }
         ]
       }
+    },
+    {
+      "id": "midFlightChange",
+      "label": "Mid-flight change pressure",
+      "demand": {
+        "terms": [
+          {
+            "reads": [
+              "q6_volatility"
+            ],
+            "fields": [
+              "q6_volatility"
+            ],
+            "map": {
+              "very_low": 0,
+              "moderate": 0.25,
+              "high": 0.85,
+              "interrupt_driven": 1
+            },
+            "q": 0.15,
+            "p": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguityHandling",
+      "label": "Ambiguity handling",
+      "demand": {
+        "combine": "max",
+        "terms": [
+          {
+            "reads": [
+              "q7_requirements"
+            ],
+            "fields": [
+              "q7_requirements"
+            ],
+            "map": {
+              "structured": 0,
+              "high_level": 0.55,
+              "vague": 1
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "q4_domain_familiarity"
+            ],
+            "fields": [
+              "q4_domain_familiarity"
+            ],
+            "map": {
+              "high": 0,
+              "medium": 0.35,
+              "low": 1
+            },
+            "q": 0.2,
+            "p": 0.8
+          },
+          {
+            "reads": [
+              "q16_bottlenecks.ambiguous_or_shifting"
+            ],
+            "fields": [
+              "q16_bottlenecks"
+            ],
+            "map": {
+              "none": 0,
+              "minor": 0.33,
+              "major": 0.67,
+              "blocking": 1
+            },
+            "q": 0.2,
+            "p": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "id": "verificationStrength",
+      "label": "Verification strength",
+      "demand": {
+        "combine": "max",
+        "terms": [
+          {
+            "reads": [
+              "q9_precision"
+            ],
+            "fields": [
+              "q9_precision"
+            ],
+            "map": {
+              "standard": 0.15,
+              "analytics": 0.4,
+              "zero_tolerance": 1
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "derived.coverageLevel"
+            ],
+            "fields": [
+              "q12_quality_gates"
+            ],
+            "map": {
+              "low": 0.9,
+              "partial": 0.45,
+              "high": 0.1
+            },
+            "q": 0.15,
+            "p": 0.8
+          },
+          {
+            "reads": [
+              "q16_bottlenecks.test_fear"
+            ],
+            "fields": [
+              "q16_bottlenecks"
+            ],
+            "map": {
+              "none": 0,
+              "minor": 0.33,
+              "major": 0.67,
+              "blocking": 1
+            },
+            "q": 0.2,
+            "p": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "id": "deterministicEnforcement",
+      "label": "Deterministic enforcement",
+      "demand": {
+        "combine": "max",
+        "terms": [
+          {
+            "reads": [
+              "q8_compliance"
+            ],
+            "fields": [
+              "q8_compliance"
+            ],
+            "map": {
+              "sox_tier1": 1,
+              "internal_governance": 0.45,
+              "standard_enterprise": 0.2,
+              "low_nonfinancial": 0
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "q9_precision"
+            ],
+            "fields": [
+              "q9_precision"
+            ],
+            "map": {
+              "zero_tolerance": 0.9,
+              "analytics": 0.3,
+              "standard": 0.1
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "derived.ciMaturity"
+            ],
+            "fields": [
+              "q21_ci_maturity"
+            ],
+            "map": {
+              "none": 1,
+              "tests_only": 0.7,
+              "tests_plus_static": 0.35,
+              "contracts_runtime": 0.1
+            },
+            "q": 0.15,
+            "p": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "id": "auditTrail",
+      "label": "Audit trail",
+      "demand": {
+        "combine": "max",
+        "terms": [
+          {
+            "reads": [
+              "q8_compliance"
+            ],
+            "fields": [
+              "q8_compliance"
+            ],
+            "map": {
+              "sox_tier1": 1,
+              "internal_governance": 0.5,
+              "standard_enterprise": 0.2,
+              "low_nonfinancial": 0
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "q15_governance"
+            ],
+            "fields": [
+              "q15_governance"
+            ],
+            "map": {
+              "cab": 1,
+              "lightweight_review": 0.3,
+              "automated": 0.1
+            },
+            "q": 0.2,
+            "p": 0.85
+          }
+        ]
+      }
+    },
+    {
+      "id": "roleSeparation",
+      "label": "Role separation",
+      "demand": {
+        "combine": "mean",
+        "terms": [
+          {
+            "reads": [
+              "derived.hasProductOwner"
+            ],
+            "fields": [
+              "q2_team"
+            ],
+            "map": {
+              "true": 1,
+              "false": 0
+            },
+            "q": 0,
+            "p": 1
+          },
+          {
+            "reads": [
+              "derived.hasScrumMaster"
+            ],
+            "fields": [
+              "q2_team"
+            ],
+            "map": {
+              "true": 1,
+              "false": 0
+            },
+            "q": 0,
+            "p": 1
+          },
+          {
+            "reads": [
+              "derived.hasQaSdet"
+            ],
+            "fields": [
+              "q2_team"
+            ],
+            "map": {
+              "true": 1,
+              "false": 0
+            },
+            "q": 0,
+            "p": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "concurrencyIsolation",
+      "label": "Concurrency isolation",
+      "demand": {
+        "combine": "max",
+        "terms": [
+          {
+            "reads": [
+              "q3_distribution"
+            ],
+            "fields": [
+              "q3_distribution"
+            ],
+            "map": {
+              "more_than_6": 0.1,
+              "3_to_6": 0.45,
+              "fewer_than_3": 1
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "q14_release_autonomy"
+            ],
+            "fields": [
+              "q14_release_autonomy"
+            ],
+            "map": {
+              "autonomous": 0.1,
+              "coupled": 0.75,
+              "heavy": 1,
+              "vendor": 0
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "q16_bottlenecks.cross_team_approvals"
+            ],
+            "fields": [
+              "q16_bottlenecks"
+            ],
+            "map": {
+              "none": 0,
+              "minor": 0.33,
+              "major": 0.67,
+              "blocking": 1
+            },
+            "q": 0.2,
+            "p": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "id": "contextHygiene",
+      "label": "Context hygiene",
+      "demand": {
+        "terms": [
+          {
+            "reads": [
+              "q10_architecture"
+            ],
+            "fields": [
+              "q10_architecture"
+            ],
+            "map": {
+              "monolith": 0.85,
+              "hybrid": 0.4,
+              "batch_data": 0.25,
+              "microservices": 0.1,
+              "streaming": 0.15
+            },
+            "q": 0.2,
+            "p": 0.85
+          }
+        ]
+      }
+    },
+    {
+      "id": "traceability",
+      "label": "Traceability",
+      "demand": {
+        "combine": "max",
+        "terms": [
+          {
+            "reads": [
+              "q8_compliance"
+            ],
+            "fields": [
+              "q8_compliance"
+            ],
+            "map": {
+              "sox_tier1": 0.8,
+              "internal_governance": 0.4,
+              "standard_enterprise": 0.15,
+              "low_nonfinancial": 0
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "q15_governance"
+            ],
+            "fields": [
+              "q15_governance"
+            ],
+            "map": {
+              "cab": 0.7,
+              "lightweight_review": 0.25,
+              "automated": 0.15
+            },
+            "q": 0.2,
+            "p": 0.85
+          }
+        ]
+      }
+    },
+    {
+      "id": "fastPath",
+      "label": "Low-ceremony fast path",
+      "demand": {
+        "combine": "max",
+        "terms": [
+          {
+            "reads": [
+              "q19_change_volume"
+            ],
+            "fields": [
+              "q19_change_volume"
+            ],
+            "map": {
+              "many_small": 1,
+              "balanced": 0.3,
+              "few_large": 0.05
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "q6_volatility"
+            ],
+            "fields": [
+              "q6_volatility"
+            ],
+            "map": {
+              "very_low": 0,
+              "moderate": 0.2,
+              "high": 0.75,
+              "interrupt_driven": 1
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "q16_bottlenecks.interruptive_support"
+            ],
+            "fields": [
+              "q16_bottlenecks"
+            ],
+            "map": {
+              "none": 0,
+              "minor": 0.33,
+              "major": 0.67,
+              "blocking": 1
+            },
+            "q": 0.2,
+            "p": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "id": "ceremonyTolerance",
+      "label": "Need for low ceremony",
+      "demand": {
+        "combine": "max",
+        "terms": [
+          {
+            "reads": [
+              "q19_change_volume"
+            ],
+            "fields": [
+              "q19_change_volume"
+            ],
+            "map": {
+              "many_small": 1,
+              "balanced": 0.35,
+              "few_large": 0.05
+            },
+            "q": 0.2,
+            "p": 0.85
+          },
+          {
+            "reads": [
+              "q11_deploy_cadence"
+            ],
+            "fields": [
+              "q11_deploy_cadence"
+            ],
+            "map": {
+              "continuous": 0.85,
+              "sprint": 0.45,
+              "monthly": 0.2,
+              "quarterly": 0.05
+            },
+            "q": 0.2,
+            "p": 0.85
+          }
+        ]
+      }
+    },
+    {
+      "id": "tokenBudget",
+      "label": "Token-budget tightness",
+      "demand": {
+        "terms": [
+          {
+            "reads": [
+              "q18_token_budget"
+            ],
+            "fields": [
+              "q18_token_budget"
+            ],
+            "map": {
+              "unmetered": 0,
+              "team_plan": 0.25,
+              "individual_pro": 0.7,
+              "strict": 1
+            },
+            "q": 0.15,
+            "p": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "id": "specDebt",
+      "label": "Existing spec / doc debt",
+      "demand": {
+        "terms": [
+          {
+            "reads": [],
+            "q": 0,
+            "p": 1
+          }
+        ]
+      }
+    }
+  ],
+  "practices": [
+    {
+      "id": "delta-only-specs",
+      "label": "Delta-only specs",
+      "capability": {
+        "brownfield": 0.95,
+        "midFlightChange": 0.85,
+        "ceremonyTolerance": 0.7,
+        "fastPath": 0.55
+      },
+      "enforcement": {
+        "brownfield": "human_gate",
+        "midFlightChange": "human_gate"
+      },
+      "cost": {
+        "ceremony": 0.2,
+        "tokens": 0.2
+      },
+      "sources": [
+        "openspec"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        "openspec/specs/",
+        "openspec/changes/<name>/{proposal,design,tasks,spec}.md"
+      ],
+      "commands": [
+        "/opsx:explore",
+        "/opsx:propose",
+        "/opsx:apply",
+        "/opsx:archive"
+      ],
+      "rationale": "Write specs only for the change at hand. Strongest brownfield fit in the catalogue.",
+      "resolves": [
+        "legacy_tech_debt"
+      ]
+    },
+    {
+      "id": "openspec-change-archive",
+      "label": "Change archive",
+      "capability": {
+        "auditTrail": 0.45,
+        "traceability": 0.4
+      },
+      "enforcement": {
+        "auditTrail": "advisory",
+        "traceability": "advisory"
+      },
+      "cost": {
+        "ceremony": 0.15,
+        "tokens": 0.1
+      },
+      "sources": [
+        "openspec"
+      ],
+      "liftable": true,
+      "requires": [
+        "delta-only-specs"
+      ],
+      "excludes": [],
+      "artifacts": [
+        "openspec/changes/"
+      ],
+      "commands": [
+        "/opsx:archive"
+      ],
+      "rationale": "Archived change folders are an audit artifact, but /opsx:verify does not block archive.",
+      "resolves": []
+    },
+    {
+      "id": "regulatory-constitution",
+      "label": "Regulatory constitution",
+      "capability": {
+        "auditTrail": 0.7,
+        "traceability": 0.55,
+        "deterministicEnforcement": 0.25
+      },
+      "enforcement": {
+        "auditTrail": "advisory",
+        "traceability": "advisory",
+        "deterministicEnforcement": "advisory"
+      },
+      "cost": {
+        "ceremony": 0.25,
+        "tokens": 0.2
+      },
+      "sources": [
+        "speckit"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        "constitution.md"
+      ],
+      "commands": [
+        "/speckit.constitution"
+      ],
+      "rationale": "Written invariants in the agent session. Advisory only — pair with CI.",
+      "resolves": [
+        "compliance_overhead"
+      ]
+    },
+    {
+      "id": "speckit-phase-pipeline",
+      "label": "Spec Kit phase pipeline",
+      "capability": {
+        "traceability": 0.6,
+        "ambiguityHandling": 0.25,
+        "verificationStrength": 0.3
+      },
+      "enforcement": {
+        "traceability": "human_gate"
+      },
+      "cost": {
+        "ceremony": 0.7,
+        "tokens": 0.55
+      },
+      "sources": [
+        "speckit"
+      ],
+      "liftable": false,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        "spec.md",
+        "plan.md",
+        "tasks.md"
+      ],
+      "commands": [
+        "/speckit.specify",
+        "/speckit.plan",
+        "/speckit.tasks",
+        "/speckit.implement"
+      ],
+      "rationale": "Seven-phase pipeline for structured greenfield work. The pipeline is the tool.",
+      "resolves": []
+    },
+    {
+      "id": "tdd-iron-law",
+      "label": "TDD iron law",
+      "capability": {
+        "verificationStrength": 0.95,
+        "deterministicEnforcement": 0.4
+      },
+      "enforcement": {
+        "verificationStrength": "agent_gate",
+        "deterministicEnforcement": "agent_gate"
+      },
+      "cost": {
+        "ceremony": 0.45,
+        "tokens": 0.6
+      },
+      "sources": [
+        "superpowers"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        "tests/"
+      ],
+      "commands": [
+        "test-driven-development"
+      ],
+      "rationale": "Failing tests before production code. Travels without Superpowers as the harness.",
+      "resolves": [
+        "test_fear"
+      ]
+    },
+    {
+      "id": "two-stage-review",
+      "label": "Two-stage review",
+      "capability": {
+        "verificationStrength": 0.55,
+        "auditTrail": 0.35
+      },
+      "enforcement": {
+        "verificationStrength": "human_gate"
+      },
+      "cost": {
+        "ceremony": 0.35,
+        "tokens": 0.35
+      },
+      "sources": [
+        "superpowers",
+        "bmad"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        "review notes"
+      ],
+      "commands": [
+        "requesting-code-review"
+      ],
+      "rationale": "Adversarial or two-stage review. BMAD QA persona and Superpowers review skill are the same node.",
+      "resolves": []
+    },
+    {
+      "id": "lane-worktrees",
+      "label": "Lane state machine and worktrees",
+      "capability": {
+        "concurrencyIsolation": 0.95,
+        "auditTrail": 0.85,
+        "deterministicEnforcement": 0.7
+      },
+      "enforcement": {
+        "concurrencyIsolation": "hard_gate",
+        "auditTrail": "hard_gate",
+        "deterministicEnforcement": "hard_gate"
+      },
+      "cost": {
+        "ceremony": 0.65,
+        "tokens": 0.4
+      },
+      "sources": [
+        "speckitty"
+      ],
+      "liftable": false,
+      "requires": [],
+      "excludes": [],
+      "requiresWhen": {
+        "gte": [
+          {
+            "derived": "teamSize"
+          },
+          3
+        ]
+      },
+      "artifacts": [
+        "kitty-specs/",
+        ".worktrees/",
+        "append-only status log"
+      ],
+      "commands": [
+        "spec-kitty agent tasks move-task",
+        "spec-kitty sync workspace"
+      ],
+      "rationale": "27-transition lane machine. It is the tool, so it is not liftable.",
+      "resolves": [
+        "cross_team_approvals"
+      ]
+    },
+    {
+      "id": "domain-recon",
+      "label": "Domain reconnaissance",
+      "capability": {
+        "ambiguityHandling": 0.9
+      },
+      "enforcement": {
+        "ambiguityHandling": "advisory"
+      },
+      "cost": {
+        "ceremony": 0.35,
+        "tokens": 0.45
+      },
+      "sources": [
+        "bmad",
+        "superpowers"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        "research notes",
+        "PRD.md"
+      ],
+      "commands": [
+        "bmad-deep-recon",
+        "brainstorming"
+      ],
+      "rationale": "Discovery before implementation when the domain or the ask is still vague.",
+      "resolves": [
+        "ambiguous_or_shifting"
+      ]
+    },
+    {
+      "id": "role-personas",
+      "label": "Role personas",
+      "capability": {
+        "roleSeparation": 0.95,
+        "ambiguityHandling": 0.35
+      },
+      "enforcement": {
+        "roleSeparation": "human_gate"
+      },
+      "cost": {
+        "ceremony": 0.5,
+        "tokens": 0.5
+      },
+      "sources": [
+        "bmad"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        "_bmad/",
+        "PRD.md",
+        "sprint-status.yaml"
+      ],
+      "commands": [
+        "bmad-prd",
+        "bmad-architecture",
+        "bmad-build"
+      ],
+      "rationale": "PO, Scrum Master, and QA personas pay off when those roles exist.",
+      "resolves": []
+    },
+    {
+      "id": "ephemeral-subagent-waves",
+      "label": "Ephemeral subagent waves",
+      "capability": {
+        "contextHygiene": 0.95
+      },
+      "enforcement": {
+        "contextHygiene": "agent_gate"
+      },
+      "cost": {
+        "ceremony": 0.35,
+        "tokens": 0.4
+      },
+      "sources": [
+        "gsd"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        ".planning/phases/"
+      ],
+      "commands": [
+        "/gsd:execute-phase"
+      ],
+      "rationale": "Fresh-context executor waves for broad file spans.",
+      "resolves": []
+    },
+    {
+      "id": "gsd-req-ids",
+      "label": "GSD REQ-id traceability",
+      "capability": {
+        "traceability": 0.8,
+        "auditTrail": 0.35
+      },
+      "enforcement": {
+        "traceability": "agent_gate"
+      },
+      "cost": {
+        "ceremony": 0.3,
+        "tokens": 0.25
+      },
+      "sources": [
+        "gsd"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        ".planning/REQUIREMENTS.md"
+      ],
+      "commands": [
+        "/gsd:plan-phase"
+      ],
+      "rationale": "Requirement ids in .planning/ are GSD Core's traceability offer.",
+      "resolves": []
+    },
+    {
+      "id": "deterministic-ci",
+      "label": "Deterministic CI enforcement",
+      "capability": {
+        "deterministicEnforcement": 1,
+        "verificationStrength": 0.55,
+        "auditTrail": 0.35
+      },
+      "enforcement": {
+        "deterministicEnforcement": "hard_gate",
+        "verificationStrength": "hard_gate"
+      },
+      "cost": {
+        "ceremony": 0.3,
+        "tokens": 0.15
+      },
+      "sources": [],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        ".github/workflows/spec-gates.yml"
+      ],
+      "commands": [],
+      "rationale": "Required status checks. Complements advisory constitutions (overlay-f as arithmetic).",
+      "resolves": [
+        "flaky_cicd"
+      ]
+    },
+    {
+      "id": "low-ceremony-fast-path",
+      "label": "Low-ceremony fast path",
+      "capability": {
+        "fastPath": 0.95,
+        "ceremonyTolerance": 0.9,
+        "midFlightChange": 0.45
+      },
+      "enforcement": {
+        "fastPath": "advisory",
+        "ceremonyTolerance": "advisory"
+      },
+      "cost": {
+        "ceremony": 0.1,
+        "tokens": 0.15
+      },
+      "sources": [
+        "openspec",
+        "bmad"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [
+        "written scope rule for when not to run the full pipeline"
+      ],
+      "commands": [
+        "bmad-quick-spec",
+        "/opsx:propose"
+      ],
+      "rationale": "A documented two-track policy beside any heavyweight pipeline.",
+      "resolves": [
+        "interruptive_support"
+      ]
+    },
+    {
+      "id": "one-question-at-a-time",
+      "label": "One question at a time",
+      "capability": {
+        "ambiguityHandling": 0.55
+      },
+      "enforcement": {
+        "ambiguityHandling": "advisory"
+      },
+      "cost": {
+        "ceremony": 0.15,
+        "tokens": 0.15
+      },
+      "sources": [
+        "tessl"
+      ],
+      "liftable": true,
+      "requires": [],
+      "excludes": [],
+      "artifacts": [],
+      "commands": [
+        "requirement-gathering"
+      ],
+      "rationale": "Tessl's interview discipline, recommendable while Tessl stays vetoed as a harness.",
+      "resolves": []
+    }
+  ],
+  "parameters": {
+    "tier": "prior",
+    "note": "Prior mean centered on 0.5.1 hand weights. Replace with a fitted vector after S4.",
+    "theta": {
+      "brownfield": 1.2,
+      "midFlightChange": 0.85,
+      "ambiguityHandling": 0.95,
+      "verificationStrength": 1.05,
+      "deterministicEnforcement": 1.1,
+      "auditTrail": 0.9,
+      "roleSeparation": 1,
+      "concurrencyIsolation": 0.75,
+      "contextHygiene": 0.65,
+      "traceability": 0.7,
+      "fastPath": 0.85,
+      "ceremonyTolerance": 0.75,
+      "tokenBudget": 0.65,
+      "specDebt": 0
+    },
+    "lambda": {
+      "brownfield": 0.15,
+      "midFlightChange": 0.12,
+      "ambiguityHandling": 0.18,
+      "verificationStrength": 0.15,
+      "deterministicEnforcement": 0.2,
+      "auditTrail": 0.15,
+      "roleSeparation": 0.25,
+      "concurrencyIsolation": 0.2,
+      "contextHygiene": 0.12,
+      "traceability": 0.12,
+      "fastPath": 0.1,
+      "ceremonyTolerance": 0.1,
+      "tokenBudget": 0.08,
+      "specDebt": 0
+    },
+    "mu": {
+      "ceremony": 0.18,
+      "tokens": 0.22,
+      "adoption": 0.28
+    },
+    "kappa": {
+      "hard_gate": 1,
+      "agent_gate": 0.67,
+      "human_gate": 0.5,
+      "advisory": 0.33
+    },
+    "gamma": 0.4,
+    "conformal": {
+      "score": "oneMinusShare",
+      "alpha": 0.2,
+      "qhat": 0.8981181747942855
+    }
+  },
+  "demandScopes": [
+    {
+      "when": {
+        "eq": [
+          {
+            "answer": "q14_release_autonomy"
+          },
+          "vendor"
+        ]
+      },
+      "zero": [
+        "concurrencyIsolation"
+      ]
     }
   ]
 }

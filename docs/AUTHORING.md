@@ -9,8 +9,9 @@ A pack is a single JSON file under `packs/` with `schema: 1`. Top-level keys:
 | Key | Role |
 |---|---|
 | `meta` | `id` (slug), `version` (semver), title, description, `updated` |
-| `settings` | Fallback base, stale days, Tier 0 runtime filter (`mode: hard|soft`), `selection: first-match|weighted`, rating/status vocabularies |
-| `frameworks` | Candidate bases and overlay sources (evidence, runtimes, enforcement). An empty `runtimes` array still means no runtime restriction at the Tier 0 candidate filter, but in weighted scoring it is **not** a documented overlap — the runtime-mismatch penalty applies when the user named runtimes. Document the actual runtimes rather than leaving the list empty. |
+| `settings` | Fallback base, stale days, Tier 0 runtime filter (`mode: hard|soft`), `selection: first-match\|weighted\|utility`, rating/status vocabularies. Utility packs add `settings.utility.k` and `conformalAlpha`. |
+| `frameworks` | Candidate harnesses. Utility packs add `bundle` (practice ids) and `cost` `{ceremony, tokens, adoption}`. Empty `runtimes` means no restriction at the veto. |
+| `axes` / `practices` / `parameters` | Utility selection model: 14-axis demand, practice catalogue, prior or fitted `theta`/`lambda`/`mu`/`kappa`/`gamma` |
 | `sections` / `questions` | Questionnaire: questions group **fields** of six kinds |
 | `derived` | Named scalar views (`key` + expression) |
 | `baseRules` / `overlays` / `cautions` | Ordered rules with expression `when` predicates. Base rules may add `signals: [{ when, weight, label }]` used when `settings.selection` is `weighted` |
@@ -47,6 +48,9 @@ Errors fail `validate` / `build`. Warnings print but do not block (unless you tr
 | `E-FW-050`…`054` | error | Framework / status / evidence / fallback |
 | `E-RULE-060`…`062` | error | Rule shape, duplicate ids, bad `resolves` |
 | `E-HASH-070` | error | Bad or duplicate `hashKey` |
+| `E-AXIS-080` | error | Axis id missing or duplicate |
+| `E-PRAC-081`…`085` | error | Practice id, capability keys, `liftable:false` sources, `requires`/`excludes` refs or cycles |
+| `E-FIT-090` | error | Fitted coefficient is not an AxisId (must not be a FrameworkId) |
 | `W-RULE-100` | warning | Statically unsatisfiable predicate |
 | `W-FLAG-101` | warning | Flag set/read mismatch |
 | `W-RULE-102` | warning | Authored `requires` ≠ computed closure |
@@ -93,31 +97,33 @@ node tools/selftest-page.mjs /tmp/general-engineering.html
 
 Shipped `index.html` remains `finance-tech`.
 
-## Finance-tech: change a threshold
+## Finance-tech: change demand or cost
 
-Rule 1 fires when non-roadmap work is ≥ 40%. To move it to 35%, edit `packs/finance-tech.json` — find the `nonRoadmapShare` `gte` in `baseRules` and change `40` to `35`. Then:
+Finance-tech ships `settings.selection: utility`. To make brownfield demand rise sooner, edit the `brownfield` axis `(q, p)` pair or the `theta.brownfield` prior. Then:
 
 ```bash
 node tools/validate.mjs packs/finance-tech.json
 npm run build
+node tools/qc/fit.mjs
 open 'index.html?selftest'
 ```
 
-Fixtures and G-PARITY will show what else moved. That is intentional: you learn the blast radius before shipping.
+G-STABILITY (`tests/select.test.mjs`) must stay green: removing a framework must not flip the remaining harness order.
 
 ## Finance-tech: add a framework
 
-1. Append a framework object to `frameworks` (id, evidence, runtimes, ratings, install, commands, artifacts, enforcement).
-2. Add a `baseRules` entry (or overlay) whose `adopt.framework` names that id, with a `when` expression that can actually fire.
-3. Validate with `--report` — the new id must leave the “frameworks no rule can select” list.
-4. Add at least one fixture under `fixtures` that expects the new base.
-5. `npm run build` and `?selftest`.
+1. Append a framework object to `frameworks` (id, evidence, runtimes, ratings, install, commands, artifacts, enforcement, **`bundle`**, **`cost`**).
+2. Harvest its practices into `practices` (capability, enforcement, sources, `liftable`). Deduplicate against existing nodes (same capability → one practice, multiple `sources`).
+3. Validate with `--report` — capability keys must be axis ids; `requires`/`excludes` acyclic; `liftable: false` needs sources.
+4. Add at least one fixture that expects the new harness (or that it stays out when vetoed).
+5. `npm run build`, `?selftest`, and re-run G-STABILITY.
 
-Base rules are **first-match wins** when `settings.selection` is omitted or `first-match`. Finance-tech ships `weighted`: a rule whose `when` gate fails is skipped (D23), every matching signal on an eligible rule adds its weight, candidates are ranked, and a low top score or near-zero margin is reported as insufficient signal instead of a silent OpenSpec fallback.
+`general-engineering` still ships `first-match` as a format proof. First-match / weighted authoring is unchanged for those packs.
 
 ## See also
 
-- `docs/DESIGN.md` — product design and rules
+- `docs/DESIGN.md` — product design and rules (v0.6.0 utility cutover)
+- `docs/archive/DESIGN-EXT-SELECTION.md` — practice-selection design this release implements
 - `docs/archive/DESIGN-EXT-CONFIG.md` — pack schema, operators, null semantics, security
 - `docs/archive/DESIGN-EXT-UI.md` — generic form and report (no pack editor in the page)
 - `docs/archive/IMPLEMENTATION-PLAN.md` — how the migration reached pack-based v0.4.0

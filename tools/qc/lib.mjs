@@ -128,6 +128,77 @@ export function questionSchema(api) {
  * api.SETTINGS.statuses (the pack has no per-framework selectableAsBase
  * field — it is derived from the framework's status).
  */
+/** Deterministic mulberry32 used when the corpus helper is not imported. */
+function mulberry32(a) {
+  return function () {
+    let t = (a += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Cluster bootstrap at the vignette level (EXT-SELECT T6).
+ * `statisticFn(ids)` receives a resampled list of vignette ids and returns a number.
+ */
+export function clusterBootstrap(vignetteIds, statisticFn, { n = 400, seed = 0x51ec7, alpha = 0.05 } = {}) {
+  const rng = mulberry32(seed);
+  const values = [];
+  for (let i = 0; i < n; i++) {
+    const sample = [];
+    for (let j = 0; j < vignetteIds.length; j++) {
+      sample.push(vignetteIds[Math.floor(rng() * vignetteIds.length)]);
+    }
+    const v = statisticFn(sample);
+    if (typeof v === "number" && Number.isFinite(v)) values.push(v);
+  }
+  values.sort((a, b) => a - b);
+  const lo = values[Math.floor(alpha / 2 * values.length)] ?? null;
+  const hi = values[Math.min(values.length - 1, Math.floor((1 - alpha / 2) * values.length))] ?? null;
+  const mean = values.length ? values.reduce((s, x) => s + x, 0) / values.length : null;
+  return { mean, lo, hi, n: values.length };
+}
+
+/** McNemar's test on paired [engineCorrect, baselineCorrect] booleans (T7). */
+export function mcnemar(pairs) {
+  let b = 0;
+  let c = 0;
+  for (const [eng, base] of pairs) {
+    if (eng && !base) b++;
+    if (!eng && base) c++;
+  }
+  const denom = b + c;
+  const stat = denom ? ((Math.abs(b - c) - 1) ** 2) / denom : 0;
+  return { b, c, chi2: stat, nDiscordant: denom };
+}
+
+/**
+ * Single-judge-versus-majority accuracy — the oracle ceiling (T8).
+ * `judgesByVignette` is Map<vignetteId, string[] top-1 labels>.
+ */
+export function singleJudgeVsMajority(judgesByVignette) {
+  let agree = 0;
+  let n = 0;
+  for (const labels of judgesByVignette.values()) {
+    if (!labels || labels.length < 2) continue;
+    const counts = new Map();
+    for (const lab of labels) counts.set(lab, (counts.get(lab) || 0) + 1);
+    let majority = null;
+    let best = -1;
+    for (const [lab, c] of counts) {
+      if (c > best || (c === best && lab < majority)) {
+        majority = lab;
+        best = c;
+      }
+    }
+    if (best < 2) continue;
+    n += labels.length;
+    for (const lab of labels) if (lab === majority) agree++;
+  }
+  return { accuracy: n ? agree / n : null, n, agree };
+}
+
 export function frameworkCatalog(api) {
   const statuses = (api.SETTINGS && api.SETTINGS.statuses) || [];
   const statusById = new Map(statuses.map((s) => [s.id, s]));

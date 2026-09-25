@@ -1,9 +1,17 @@
 # SDD Selector report
 
-**Insufficient signal** — the top score is below the confidence floor or the top two are too close to call.
+**Harness acceptability** (conformal set: OpenSpec, GSD Core, GitHub Spec Kit, Spec Kitty, Superpowers, BMAD Method):
+- OpenSpec — 24%
+- GSD Core — 20%
+- GitHub Spec Kit — 18%
+- Spec Kitty — 14%
+- Superpowers — 13%
+- BMAD Method — 12%
+
+Confidence: low · score -0.5707611538461539 · margin 0.1820330769230769
 
 ## Completeness
-Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q5_work_breakdown, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
+Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
 
 ## Team profile
 - Domain: —
@@ -12,15 +20,50 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: monthly; cycle time: —
 - Branching: —
 
+## Recommended base: OpenSpec
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
+
+- Install: `openspec init (+ openspec config profile for expanded)`
+- Repo: `Fission-AI/OpenSpec`
+- Triggering answers: —
+- Counterfactuals:
+  - Above 0 on q10_architecture the harness flips to gsd.
+  - Above 1 on q8_compliance the harness flips to gsd.
+- Enforcement:
+Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
+
+## Runner-up
+GSD Core — Acceptability 20% vs 24% for OpenSpec.
+
 ## Practice overlays
-_None._
+### Low-ceremony fast path (included in base) — 47% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Delta-only specs (included in base) — 39% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Change archive (included in base) — 25% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
 ## Cautions
 _None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -33,5 +76,7 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 
 ## Suggested directory layout
 ```
-
+repo/
+├── openspec/specs/    # Base: OpenSpec
+├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
 ```

@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 7 · margin 7
+**Harness acceptability** (conformal set: OpenSpec, GSD Core, GitHub Spec Kit, Spec Kitty, Superpowers, BMAD Method):
+- OpenSpec — 24%
+- GSD Core — 20%
+- GitHub Spec Kit — 18%
+- Spec Kitty — 14%
+- Superpowers — 13%
+- BMAD Method — 12%
+
+Confidence: low · score -0.5707611538461539 · margin 0.1820330769230769
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
@@ -12,26 +20,50 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: monthly; cycle time: —
 - Branching: —
 
-## Recommended base: GitHub Spec Kit
-Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline.
+## Recommended base: OpenSpec
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `uvx specify init`
-- Repo: `github/spec-kit`
-- Triggering answers: q5_work_breakdown = {"roadmap":90,"ops":4,"bugs":3,"regulatory":2,"tech_debt":1}; q10_architecture = microservices; q7_requirements = structured; q6_volatility = moderate
+- Install: `openspec init (+ openspec config profile for expanded)`
+- Repo: `Fission-AI/OpenSpec`
+- Triggering answers: —
+- Counterfactuals:
+  - Above 0 on q10_architecture the harness flips to gsd.
+  - Above 1 on q8_compliance the harness flips to gsd.
 - Enforcement:
-Advisory — constitution.md (Prompt context; not an independent gate.)
-Human gate — Phase reviews (Human advances each phase.)
-- Evidence: 137140 stars, 100 commits/30d, v1.0.7 (2026-09-15); verified 2026-09-16
+Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
+
+## Runner-up
+GSD Core — Acceptability 20% vs 24% for OpenSpec.
 
 ## Practice overlays
-_None._
+### Low-ceremony fast path (included in base) — 47% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Delta-only specs (included in base) — 39% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Change archive (included in base) — 25% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
 ## Cautions
 _None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -45,8 +77,6 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── constitution.md    # Base: GitHub Spec Kit
-├── spec.md    # Base: GitHub Spec Kit
-├── plan.md    # Base: GitHub Spec Kit
-├── tasks.md    # Base: GitHub Spec Kit
+├── openspec/specs/    # Base: OpenSpec
+├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
 ```

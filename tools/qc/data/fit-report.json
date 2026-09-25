@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "generatedAt": "2026-09-25T01:16:37.786Z",
+    "pinnedNow": 1789560000000,
+    "trainCases": 94,
+    "bestWorstSets": 900
+  },
+  "fit": {
+    "tau": 2,
+    "trainLogLik": -1369.522968667736,
+    "coldStartLogLik": -1369.5234342678145,
+    "sameOptimum": true,
+    "shipped": false,
+    "holdout": {
+      "prior": {
+        "n": 15,
+        "top1": 0.3333333333333333,
+        "top3": 0.7333333333333333,
+        "top1Hits": 5,
+        "top3Hits": 11
+      },
+      "fitted": {
+        "n": 15,
+        "top1": 0.5333333333333333,
+        "top3": 0.8,
+        "top1Hits": 8,
+        "top3Hits": 12
+      }
+    },
+    "practice": {
+      "holdoutN": 20,
+      "priorMacroF1": 0.32777748567222253,
+      "fittedMacroF1": 0.27778408471772315,
+      "prevalenceMacroF1": 0.29102757728401535,
+      "deltaCi95": [
+        -0.08195455158350434,
+        0.02764793059114018
+      ],
+      "rq1": false,
+      "rq6": true,
+      "rq6Floor": 0.7528
+    },
+    "conformal": {
+      "alpha": 0.2,
+      "nCal": 11,
+      "qhat": 0.8984690141316437,
+      "calCoverage": 0.9090909090909091,
+      "testCoverage": 0.9166666666666666
+    },
+    "theta": {
+      "brownfield": 0.22667851421227167,
+      "midFlightChange": 1.2350362370762527,
+      "ambiguityHandling": 5.675555796304184,
+      "verificationStrength": 2.3595645633210793,
+      "deterministicEnforcement": 1.7469438817026057,
+      "auditTrail": 1.7816784892740893,
+      "roleSeparation": 5.7127115600402645,
+      "concurrencyIsolation": 0,
+      "contextHygiene": 1.1638951837163976,
+      "traceability": 3.8002132390373005,
+      "fastPath": 2.334654642511737,
+      "ceremonyTolerance": 3.370273502158072,
+      "tokenBudget": 0.6499999999999998,
+      "specDebt": 0
+    },
+    "lambda": {
+      "brownfield": 6.303732690502668,
+      "midFlightChange": 0,
+      "ambiguityHandling": 0,
+      "verificationStrength": 0,
+      "deterministicEnforcement": 0,
+      "auditTrail": 0.3729571076260262,
+      "roleSeparation": 0.45077835134073707,
+      "concurrencyIsolation": 0.890619157102315,
+      "contextHygiene": 0.31327136490892815,
+      "traceability": 0,
+      "fastPath": 0,
+      "ceremonyTolerance": 0,
+      "tokenBudget": 0.08,
+      "specDebt": 0
+    },
+    "mu": {
+      "ceremony": 2.5646929524138766,
+      "tokens": 1.6753873221622706,
+      "adoption": 0
+    }
+  },
+  "posterior": {
+    "n": 8,
+    "practiceShare": {
+      "lane-worktrees": 1,
+      "delta-only-specs": 1,
+      "deterministic-ci": 1,
+      "low-ceremony-fast-path": 1,
+      "one-question-at-a-time": 0.5,
+      "tdd-iron-law": 1,
+      "domain-recon": 0.5
+    },
+    "harnessShare": {
+      "speckitty": 1
+    },
+    "tier": "prior-laplace"
+  },
+  "note": "Joint L1+L2 fit. Weights ship only when holdout practice macro-F1 beats prevalence with a CI above zero and harness top-3 is at least 75.28%."
+}

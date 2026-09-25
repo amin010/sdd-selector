@@ -6,6 +6,7 @@ import {
   evalExpr,
   isOperator,
   recordValid,
+  normalizeRecord,
 } from "../src/expr.mjs";
 
 const fieldIndex = {
@@ -114,7 +115,7 @@ test("sumFields, count, and countSelected", () => {
   assert.equal(evalExpr({ sumFields: { field: "rec", keys: ["a", "b"] } }, c), 100);
   assert.equal(evalExpr({ count: ["a", "b", "c"] }, c), 3);
   assert.equal(evalExpr({ countSelected: { field: "multi", except: ["manual"] } }, c), 2);
-  assert.equal(evalExpr({ countSelected: { field: "missing" } }, c), 0);
+  assert.equal(evalExpr({ countSelected: { field: "missing" } }, c), null);
   assert.equal(evalExpr({ countSelected: { field: "multi" } }, ctx({ multi: [] })), 0);
 });
 
@@ -182,16 +183,23 @@ test("null table: bucket null and countSelected absent/empty", () => {
     evalExpr({ bucket: { value: { answer: "missing" }, cuts: [], else: "fallback" } }, ctx()),
     null,
   );
-  assert.equal(evalExpr({ countSelected: { field: "missing" } }, ctx()), 0);
+  assert.equal(evalExpr({ countSelected: { field: "missing" } }, ctx()), null);
   assert.equal(evalExpr({ countSelected: { field: "multi" } }, ctx({ multi: [] })), 0);
 });
 
 test("recordValid enforces required values and sumTo", () => {
   assert.equal(recordValid({ a: 40, b: 60 }, { sumTo: 100, requiredKeys: ["a", "b"] }), true);
+  assert.equal(recordValid({ a: 40, b: 55 }, { sumTo: 100, requiredKeys: ["a", "b"], sumToMode: "normalize" }), true);
   assert.equal(recordValid({ a: 40, b: -40 }, { sumTo: 0, requiredKeys: ["a", "b"] }), false);
   assert.equal(recordValid({ total: 0, owner: "shared" }, { requiredKeys: ["total", "owner"] }), true);
   assert.equal(recordValid({ total: NaN, owner: "shared" }, { requiredKeys: ["total", "owner"] }), false);
   assert.equal(recordValid({ total: 2, owner: "" }, { requiredKeys: ["total", "owner"] }), false);
+});
+
+test("normalizeRecord rescales approximate sums", () => {
+  const got = normalizeRecord({ a: 80, b: 10 }, { sumTo: 100, requiredKeys: ["a", "b"], sumToMode: "normalize" });
+  assert.equal(got.a + got.b, 100);
+  assert.ok(Math.abs(got.a - 80 * 100 / 90) < 1e-9);
 });
 
 test("depth and node limits return false without throwing", () => {

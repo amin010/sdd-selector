@@ -143,7 +143,10 @@ export function documentedFixtures() {
     { name: "ov-a-neg-internal", answers: A({ q8_compliance: "internal_governance" }) },
     { name: "ov-b-pos-zero", answers: A({ q9_precision: "zero_tolerance" }) },
     { name: "ov-b-neg", answers: A({
-      q9_precision: "standard", q16_bottlenecks: ["flaky_cicd"],
+      q9_precision: "standard", q16_bottlenecks: {
+        flaky_cicd: "major", ambiguous_or_shifting: "none", cross_team_approvals: "none",
+        test_fear: "none", interruptive_support: "none", compliance_overhead: "none", legacy_tech_debt: "none",
+      },
     }) },
     { name: "ov-b-recon-note", answers: A({
       q9_precision: "zero_tolerance",
@@ -152,10 +155,16 @@ export function documentedFixtures() {
     { name: "ov-c-pos", answers: A({ q14_release_autonomy: "heavy" }) },
     { name: "ov-c-neg-vendor", answers: A({ q14_release_autonomy: "vendor" }) },
     { name: "ov-d-pos", answers: A({
-      q16_bottlenecks: ["ambiguous_or_shifting", "flaky_cicd", "test_fear"],
+      q16_bottlenecks: {
+        ambiguous_or_shifting: "blocking", flaky_cicd: "major", test_fear: "minor",
+        cross_team_approvals: "none", interruptive_support: "none", compliance_overhead: "none", legacy_tech_debt: "none",
+      },
     }) },
     { name: "ov-d-neg", answers: A({
-      q16_bottlenecks: ["flaky_cicd", "ambiguous_or_shifting", "test_fear"],
+      q16_bottlenecks: {
+        flaky_cicd: "blocking", ambiguous_or_shifting: "major", test_fear: "minor",
+        cross_team_approvals: "none", interruptive_support: "none", compliance_overhead: "none", legacy_tech_debt: "none",
+      },
       q7_requirements: "structured", q4_domain_familiarity: "high",
     }) },
     { name: "ov-e-pos", answers: A({
@@ -163,9 +172,9 @@ export function documentedFixtures() {
       q5_work_breakdown: { roadmap: 20, ops: 20, bugs: 20, regulatory: 20, tech_debt: 20 },
     }) },
     { name: "ov-e-neg", answers: A({ q10_architecture: "microservices" }) },
-    { name: "ov-f-pos", answers: A({ q8_compliance: "sox_tier1", q21_ci_maturity: "none" }) },
+    { name: "ov-f-pos", answers: A({ q8_compliance: "sox_tier1", q21_ci_maturity: [] }) },
     { name: "ov-f-neg", answers: A({
-      q8_compliance: "sox_tier1", q21_ci_maturity: "contracts_runtime",
+      q8_compliance: "sox_tier1", q21_ci_maturity: ["unit_tests", "static_analysis", "contract_tests", "runtime_checks"],
     }) },
     { name: "ov-g-many-small", answers: A({ q19_change_volume: "many_small" }) },
     { name: "ov-g-high", answers: A({
@@ -182,11 +191,17 @@ export function documentedFixtures() {
     { name: "dedupe-a-included", answers: A({ q8_compliance: "sox_tier1" }) },
     { name: "q16-test-fear-rank2", answers: A({
       q9_precision: "standard",
-      q16_bottlenecks: ["flaky_cicd", "test_fear", "legacy_tech_debt"],
+      q16_bottlenecks: {
+        flaky_cicd: "blocking", test_fear: "major", legacy_tech_debt: "minor",
+        ambiguous_or_shifting: "none", cross_team_approvals: "none", interruptive_support: "none", compliance_overhead: "none",
+      },
     }) },
     { name: "q16-test-fear-rank3", answers: A({
       q9_precision: "standard",
-      q16_bottlenecks: ["flaky_cicd", "legacy_tech_debt", "test_fear"],
+      q16_bottlenecks: {
+        flaky_cicd: "blocking", legacy_tech_debt: "major", test_fear: "minor",
+        ambiguous_or_shifting: "none", cross_team_approvals: "none", interruptive_support: "none", compliance_overhead: "none",
+      },
     }) },
     { name: "C1-pos", answers: A({
       q5_work_breakdown: { roadmap: 70, ops: 10, bugs: 10, regulatory: 5, tech_debt: 5 },
@@ -388,7 +403,7 @@ export function fieldEnums(api) {
     "q1_domain", "q3_distribution", "q6_volatility", "q7_requirements",
     "q8_compliance", "q9_precision", "q10_architecture", "q13_branching",
     "q14_release_autonomy", "q15_governance", "q18_token_budget",
-    "q19_change_volume", "q21_ci_maturity",
+    "q19_change_volume",
     "q4_tenure", "q4_domain_familiarity", "q11_deploy_cadence", "q11_cycle_time",
   ];
 
@@ -447,9 +462,27 @@ function randomAnswers(rng, api) {
     a.q12_quality_gates = [];
   }
 
-  if (!maybe(rng, 0.35)) {
+  const q16meta = api && api.FIELD_INDEX && api.FIELD_INDEX.q16_bottlenecks;
+  if (q16meta && q16meta.kind === "record") {
+    if (!maybe(rng, 0.35)) {
+      const rec = {};
+      const sev = ["none", "minor", "major", "blocking"];
+      (q16meta.fields || []).forEach((sub) => {
+        rec[sub.id] = pick(rng, (sub.options || []).map((o) => o.value).length ? (sub.options || []).map((o) => o.value) : sev);
+      });
+      a.q16_bottlenecks = rec;
+    }
+  } else if (!maybe(rng, 0.35) && enums.q16_bottlenecks && enums.q16_bottlenecks.length) {
     const bots = [...enums.q16_bottlenecks].sort(() => rng() - 0.5).slice(0, 1 + Math.floor(rng() * 3));
     a.q16_bottlenecks = bots;
+  }
+
+  const q21meta = api && api.FIELD_INDEX && api.FIELD_INDEX.q21_ci_maturity;
+  if (q21meta && q21meta.kind === "multi") {
+    if (!maybe(rng, 0.3)) {
+      const opts = (q21meta.options || []).map((o) => o.value);
+      a.q21_ci_maturity = opts.filter(() => rng() < 0.35);
+    }
   }
 
   if (!maybe(rng, 0.3)) {

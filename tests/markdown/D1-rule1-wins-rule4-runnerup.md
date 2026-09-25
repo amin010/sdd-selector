@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: medium · score 9 · margin 1
+**Harness acceptability** (conformal set: OpenSpec, GSD Core, GitHub Spec Kit, BMAD Method):
+- OpenSpec — 38%
+- GSD Core — 21%
+- GitHub Spec Kit — 12%
+- BMAD Method — 10%
+- Spec Kitty — 10%
+- Superpowers — 8%
+
+Confidence: medium · score -2.014336153846154 · margin 0.8483530769230763
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
@@ -12,38 +20,63 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: continuous; cycle time: —
 - Branching: —
 
-## Recommended base: GSD Core
-A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core.
+## Recommended base: OpenSpec
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `npx @opengsd/gsd-core`
-- Repo: `open-gsd/gsd-core`
-- Triggering answers: q2_team = {"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"}; q11_deploy_cadence = continuous; q14_release_autonomy = autonomous; q12_quality_gates = ["unit_coverage","integration_contract","e2e"]
+- Install: `openspec init (+ openspec config profile for expanded)`
+- Repo: `Fission-AI/OpenSpec`
+- Triggering answers: brownfield demand 1.00; contextHygiene demand 1.00; ceremonyTolerance demand 1.00
+- Counterfactuals:
+  - Below 28 on derived.nonRoadmapShare the harness flips to gsd.
+- Axis contributions:
+  - brownfield: demand 1.00, coverage 0.47, unmet 0.63
+  - ceremonyTolerance: demand 1.00, coverage 0.30, unmet 0.53
+  - contextHygiene: demand 1.00, coverage 0.64, unmet 0.24
 - Enforcement:
-Agent gate — Plan-checker decision-coverage (Agent-executed check on plans.)
-Agent gate — Verify vs shipped code (Stronger than constitution.md; weaker than CI.)
-- Evidence: 9501 stars, 100 commits/30d, v1.14.0 (2026-09-14); verified 2026-09-16
+Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
 
 ## Runner-up
-OpenSpec — Scored 8 vs 9 for Compact autonomous team, frequent deploys.
+GSD Core — Acceptability 21% vs 38% for OpenSpec.
 
 ## Practice overlays
-### Ephemeral subagent waves (included in base)
+### Delta-only specs (included in base) — 61% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Low-ceremony fast path (included in base) — 57% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Ephemeral subagent waves — 48% inclusion
 Source: GSD Core
-A monolith with broad file spans benefits from GSD Core's clean-context parallel executors.
+Fresh-context executor waves for broad file spans.
 Enforcement: Agent gate — Plan-checker decision-coverage (Agent-executed check on plans.)
 Agent gate — Verify vs shipped code (Stronger than constitution.md; weaker than CI.)
-Triggered by: q10_architecture = monolith
+Triggered by: derived view
+
+### Change archive (included in base) — 38% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
 
 ## Cautions
-### C9 — medium
-Created 2026-05-22 — roughly four months old at the evidence date. Release cadence is high but there is little track record, and .planning/ is still evolving.
-Mitigation: Pin a version. Budget for migration between minor releases. Re-verify activity before committing a team to it.
-Source: Appendix A; V3
+### C7 — high
+Per-change ceremony dominates at high change volume. Field measurement puts Spec Kit at roughly one full session per ~2,000 LOC unit.
+Mitigation: Adopt overlay G's two-track policy and hold the heavyweight pipeline for architecturally novel work only.
+Source: ERP field report; §8.3
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -57,7 +90,7 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── .planning/{PROJECT,REQUIREMENTS,ROADMAP,STATE}.md    # Base: GSD Core
-├── .planning/phases/    # Base: GSD Core
-├── HANDOFF.json    # Base: GSD Core
+├── openspec/specs/    # Base: OpenSpec
+├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
+├── .planning/phases/    # Ephemeral subagent waves
 ```

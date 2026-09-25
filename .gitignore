@@ -1,5 +1,9 @@
 .idea/
 node_modules/
+.env
+.env.*
+!.env.example
 .DS_Store
 *.log
 tools/qc/cache/
+/archive/

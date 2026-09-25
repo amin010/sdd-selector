@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 9 · margin 9
+**Harness acceptability** (conformal set: Spec Kitty, GSD Core, GitHub Spec Kit, OpenSpec):
+- Spec Kitty — 40%
+- GSD Core — 15%
+- GitHub Spec Kit — 15%
+- OpenSpec — 14%
+- Superpowers — 9%
+- BMAD Method — 6%
+
+Confidence: medium · score -1.5120323076923077 · margin 1.3599299999999999
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
@@ -12,35 +20,54 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: monthly; cycle time: —
 - Branching: —
 
-## Recommended base: GitHub Spec Kit
-Roadmap-heavy, structured, low-volatility microservice work matches Spec Kit's phase pipeline.
+## Recommended base: Spec Kitty
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `uvx specify init`
-- Repo: `github/spec-kit`
-- Triggering answers: q5_work_breakdown = {"roadmap":80,"ops":5,"bugs":5,"regulatory":5,"tech_debt":5}; q10_architecture = microservices; q7_requirements = structured; q6_volatility = moderate; q8_compliance = sox_tier1
+- Install: `pip install spec-kitty-cli`
+- Repo: `spec-kitty/spec-kitty`
+- Triggering answers: deterministicEnforcement demand 1.00; auditTrail demand 1.00; traceability demand 0.92
+- Axis contributions:
+  - traceability: demand 0.92, coverage 0.54, unmet 0.30
+  - auditTrail: demand 1.00, coverage 0.85, unmet 0.14
+  - midFlightChange: demand 0.15, coverage 0.00, unmet 0.13
+  - deterministicEnforcement: demand 1.00, coverage 1.00, unmet 0.00
 - Enforcement:
-Advisory — constitution.md (Prompt context; not an independent gate.)
-Human gate — Phase reviews (Human advances each phase.)
-- Evidence: 137140 stars, 100 commits/30d, v1.0.7 (2026-09-15); verified 2026-09-16
+Hard gate — 27-transition lane machine (--force requires actor + reason.)
+Human gate — Decision Moments (Human review to advance.)
+- Evidence: 1627 stars, unknown commits/30d, —; verified 2026-09-16
+
+## Runner-up
+GSD Core — Acceptability 15% vs 40% for Spec Kitty.
 
 ## Practice overlays
-### Regulatory constitution (included in base)
-Source: GitHub Spec Kit
-SOX Tier 1 or CAB-on-every-release needs written invariants in the agent session. Advisory only — pair with CI.
-Enforcement: Advisory — constitution.md (Prompt context; not an independent gate.)
-Human gate — Phase reviews (Human advances each phase.)
-Triggered by: q8_compliance = sox_tier1
+### Lane state machine and worktrees (included in base) — 42% inclusion
+Source: Spec Kitty
+27-transition lane machine. It is the tool, so it is not liftable.
+Enforcement: Hard gate — 27-transition lane machine (--force requires actor + reason.)
+Human gate — Decision Moments (Human review to advance.)
+Triggered by: derived view
+
+### GSD REQ-id traceability — 39% inclusion
+Source: GSD Core
+Requirement ids in .planning/ are GSD Core's traceability offer.
+Enforcement: Agent gate — Plan-checker decision-coverage (Agent-executed check on plans.)
+Agent gate — Verify vs shipped code (Stronger than constitution.md; weaker than CI.)
+Triggered by: derived view
+
+### Deterministic CI enforcement — 37% inclusion
+Source: native CI
+Required status checks. Complements advisory constitutions (overlay-f as arithmetic).
+Enforcement: Hard gate — failing CI build.
+Triggered by: derived view
 
 ## Cautions
-### C2 — high
-constitution.md is prompt context, not a control. Nothing outside the agent re-reads it or blocks a violating change. It will not satisfy an auditor asking what prevents a violation.
-Mitigation: Pair with overlay F. Treat the constitution as documentation of intent and CI as the enforcement. If segregation of duties must be provable, prefer Spec Kitty's lane state machine.
-Source: Spec Kit README; §8.3; V1
+### C6 — Positive note
+Spec Kitty's lane machine permits exactly 27 transitions and requires implementation evidence to reach for_review; overrides demand actor and reason. This is a stronger audit artifact than Markdown-based governance.
+Mitigation: Treat Spec Kitty's status log as an audit record. Protect append-only log merges in review — conflict resolution can lose events.
+Source: Spec Kitty architecture; V8
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -54,8 +81,10 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── constitution.md    # Base: GitHub Spec Kit
-├── spec.md    # Base: GitHub Spec Kit
-├── plan.md    # Base: GitHub Spec Kit
-├── tasks.md    # Base: GitHub Spec Kit
+├── kitty-specs/    # Base: Spec Kitty
+├── .worktrees/    # Base: Spec Kitty
+├── .kittify/config.yaml    # Base: Spec Kitty
+├── append-only status log    # Base: Spec Kitty
+├── .planning/REQUIREMENTS.md    # GSD REQ-id traceability
+├── .github/workflows/spec-gates.yml    # Deterministic CI enforcement
 ```

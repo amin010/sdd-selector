@@ -1,103 +1,71 @@
 # SDD Selector
 
-A single-file diagnostic that recommends a **spec-driven development (SDD)** stack for a finance-tech team: one base framework, optional practice overlays, and cautions for known failure modes.
+A single HTML file that recommends a spec-driven development stack for a finance-tech team. Open `index.html` in a browser. There is no server, no account, and no install. Answers stay in the page; a link encodes them in the URL.
 
-Open `index.html` in a browser — no server, no runtime dependencies. Answers stay on the page; a shareable link encodes the questionnaire in the URL. The questionnaire and rules come from `packs/finance-tech.json`, inlined by `npm run build`.
+The questionnaire and the scoring pack live in `packs/finance-tech.json` and are inlined into the page by `npm run build`. Node is only for tests and that build.
 
-## What it does
+## What you get
 
-1. You answer the Finance Tech diagnostic (team shape, architecture, compliance, quality gates, bottlenecks, and related constraints).
-2. The engine ranks **base** candidates (OpenSpec, Spec Kit, BMAD, Spec Kitty, Superpowers, or GSD Core) with weighted signals, and says so when the signal is too weak to call.
-3. It layers **overlays** when specific triggers fire (for example SOX constitution practices, TDD, or a low-ceremony fast path).
-4. It surfaces **cautions** where the recommended stack is weak for this profile — especially enforcement gaps that matter for regulated teams.
-5. You can copy a Markdown report or a link that restores the same answers.
+1. A diagnostic covering team shape, architecture, compliance, quality gates, bottlenecks, and related constraints.
+2. A **harness** — OpenSpec, Spec Kit, BMAD, Spec Kitty, Superpowers, or GSD Core — scored as a pre-bundled set of practices plus an adoption cost. The report shows acceptability shares and a short set of acceptable harnesses. Tessl is not offered as a harness.
+3. **Practices** with inclusion probabilities, including a technique from a watch-status source when that technique can be adopted without the tool.
+4. **Cautions** where the chosen stack leaves a real gap, especially enforcement that a regulated team cannot treat as optional.
+5. A Markdown report and a link that restores the same answers.
 
-## Requirements
+Runtime and watch status are vetoes. A framework that does not document your runtimes is excluded and named, not quietly down-scored.
 
-| Use | Need |
-|---|---|
-| Run the tool | Any modern browser |
-| Run tests / tooling | [Node.js](https://nodejs.org/) 18+ |
-
-No `npm install` — the project uses Node’s built-in test runner and has no runtime package dependencies.
-
-## How to run the tool
+## Run
 
 ```bash
-# from the repo root — open in your default browser (macOS)
 open index.html
-
-# or open the file from Finder / Explorer / your editor’s Simple Browser
 ```
 
-Optional query flag:
+On Windows or Linux, open the file from the file manager. `?selftest` runs the in-page fixture suite and prints pass or fail.
 
-- `?selftest` — runs the in-page fixture suite and prints pass/fail on the page and in the console.
+## Develop
 
-## How to run tests
+Node.js 18 or newer. No `npm install`. The test runner is Node's built-in one.
 
 ```bash
 npm test
 ```
 
-That runs:
-
-- Pack validation and build
-- Unit / harness tests under `tests/`
-- **G-PARITY** — current engine vs the frozen v0.4.0 finance-tech page over a large answer corpus
-- **G-MARKDOWN** — Markdown export snapshots for documented fixtures
-- A deliberate break-demo (proves the parity gate can fail on a pack threshold edit)
-- Structural lint (hard-coded field / framework ids outside an allowlist)
-- Second-pack selftest (general-engineering built to a throwaway HTML)
-
-Useful individual commands:
+That validates both packs, rebuilds the page, runs `tests/`, checks the current page against itself on a quick answer corpus, proves the parity gate can fail, lints hard-coded ids, and builds the general-engineering pack as a format check.
 
 ```bash
-npm run parity              # full parity sweep
-node tools/parity.mjs --quick
-node tools/parity.mjs --self
-node --test tests/*.test.mjs
+npm run validate            # schema and references for finance-tech
+npm run build               # inline pack + src/ into index.html
+npm run build:release       # same, without fixtures
 npm run lint:structure
-npm run build               # inline pack + expr into index.html
-npm run validate            # pack schema checks
-node tools/validate.mjs --report packs/finance-tech.json
+node --test tests/*.test.mjs
 ```
 
-## Project layout
+Edit `packs/finance-tech.json`, then `npm run validate` and `npm run build`. The page you open is the built file, not the JSON. [docs/AUTHORING.md](docs/AUTHORING.md) is the pack guide: add a framework, harvest its practices, keep G-STABILITY green.
+
+The QC scripts under `tools/qc/` are offline measurement. They call a model only when you run `qc:generate` or `qc:judge`, and only if a key is present. Using the selector does not.
+
+## Layout
 
 | Path | Role |
 |---|---|
-| `index.html` | The product: UI + engine in one file (built from pack + `src/`) |
-| `packs/finance-tech.json` | Shipped rule pack (questions, rules, fixtures) |
-| `packs/general-engineering.json` | Second pack — format proof; CI artifact only |
-| `docs/` | Living design and authoring guide |
-| `docs/archive/` | Completed v0.4.0 design extensions, implementation plan, source research |
-| `docs/AUTHORING.md` | How to edit packs |
-| `tests/` | Automated tests and golden Markdown snapshots |
-| `tests/golden/index-v040.html` | Frozen finance-tech baseline for parity (filename historical; contents track 0.5.1) |
-| `tools/` | Build, validate, parity harness, corpus, lint, page loader |
-| `src/` | Source modules inlined into the page (`expr.mjs`) |
+| `index.html` | The product. UI and engine, built from the pack and `src/`. |
+| `packs/finance-tech.json` | Shipped pack: questions, frameworks, practices, prior weights, fixtures. |
+| `packs/general-engineering.json` | Second pack. Proves the format. Not a second product page. |
+| `src/expr.mjs` | Expression language inlined into the page. |
+| `src/select.mjs` | Practice-selection utility. |
+| `src/rules-expr.mjs` | Shared rule helpers. |
+| `docs/DESIGN.md` | Product design. |
+| `docs/AUTHORING.md` | How to change a pack. |
+| `docs/QC-EXPERIMENT.md` | Measurement protocol. |
+| `docs/qc-report.md` | Latest measurement write-up. |
+| `docs/archive/` | Superseded design notes, including the practice-selection extension. |
+| `tests/` | Unit tests and Markdown snapshots. |
+| `tools/` | Build, validate, parity, corpus, QC. |
 
-## Authoring / build
+## Status
 
-Edit the pack, then rebuild the page (Node is only for tools — the page still opens from disk with no runtime Node):
+Version **0.6.0**. Finance-tech selects with the practice utility. Axis weights in the pack are a prior centered on the 0.5.1 hand scores. A joint fit against the judge panel was run and not shipped: holdout practice macro-F1 did not beat the prevalence baseline. Harness top-3 on that same split did clear its floor. See [docs/qc-report.md](docs/qc-report.md) and `tools/qc/data/fit-report.json`.
 
-```bash
-npm run validate          # schema + referential checks
-npm run build             # inline pack + src/expr.mjs into index.html (keeps fixtures for ?selftest)
-npm run build:release     # same, but strips fixtures (~110 KB)
-```
+## License
 
-See [docs/AUTHORING.md](docs/AUTHORING.md) for the full loop, cookbook pointers, and how to change a threshold or add a framework.
-
-`?selftest` runs pack fixtures plus a few engine invariants.
-
-## Docs
-
-- [DESIGN.md](docs/DESIGN.md) — product design and rules
-- [AUTHORING.md](docs/AUTHORING.md) — pack authoring guide
-- [archive/](docs/archive/) — completed v0.4.0 design extensions, implementation plan, and source research
-
-## License / status
-
-Private / draft. Version **0.5.1** — weighted base selection with eligibility gates, Spec Kitty as a selectable base, and snapshot regression gates.
+MIT. See [LICENSE](LICENSE).

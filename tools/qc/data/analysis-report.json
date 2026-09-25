@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-09-18T00:38:19.104Z",
+    "generatedAt": "2026-09-19T21:09:17.276Z",
     "pinnedNow": 1789560000000,
     "counts": {
       "vignettes": 100,
@@ -40,84 +40,54 @@
     "labelReconciliation": {
       "note": "fallback_openspec is folded into openspec for this comparison; no_runtime_match is kept as its own always-a-miss bucket. See mapLabelForComparison() in this file."
     },
-    "top1Accuracy": 0.618,
-    "top1Matches": 55,
+    "top1Accuracy": 0.2022,
+    "top1Matches": 18,
     "n": 89,
-    "cohenKappa": 0.4459,
-    "cohenPo": 0.618,
-    "cohenPe": 0.3106,
+    "cohenKappa": 0.0533,
+    "cohenPo": 0.2022,
+    "cohenPe": 0.1573,
     "confusionMatrixCategories": [
       "bmad",
-      "gsd",
-      "insufficient_signal",
+      "no_runtime_match",
       "openspec",
       "speckit",
-      "speckitty",
-      "superpowers"
+      "speckitty"
     ],
     "confusionMatrix": [
       [
-        17,
         0,
         0,
+        0,
+        0,
+        0
+      ],
+      [
         4,
         0,
-        2,
-        0
-      ],
-      [
+        12,
         0,
-        0,
-        0,
-        6,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        8,
-        0,
-        0,
-        27,
-        0,
-        3,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        2,
-        0,
-        0
+        6
       ],
       [
         1,
         0,
+        10,
         0,
-        4,
-        4,
-        9,
         0
       ],
       [
         0,
         0,
         0,
-        1,
-        0,
         0,
         0
+      ],
+      [
+        21,
+        0,
+        20,
+        7,
+        8
       ]
     ],
     "confusion5x5Reachable": {
@@ -132,57 +102,57 @@
       ],
       "matrix": [
         [
-          27,
+          10,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          7,
+          21,
+          0,
           0,
           8,
-          0,
-          0,
-          3,
-          0
-        ],
-        [
-          0,
-          2,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          4,
-          0,
-          17,
-          0,
-          0,
-          2,
-          0
-        ],
-        [
-          1,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          6,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          4,
-          4,
-          1,
-          0,
-          0,
-          9,
           0
         ],
         [
@@ -200,29 +170,46 @@
       {
         "respondentIndex": 0,
         "n": 89,
-        "accuracy": 0.6292
+        "accuracy": 0.191
       },
       {
         "respondentIndex": 1,
         "n": 89,
-        "accuracy": 0.6067
+        "accuracy": 0.2135
       },
       {
         "respondentIndex": 2,
         "n": 89,
-        "accuracy": 0.6404
+        "accuracy": 0.191
       }
     ],
-    "aggregateMethod": "mode of the 3 respondents' mapped outcome label per vignette; ties broken lexicographically. representativeIndex = first respondent whose label equals the mode, reused for B4.3/B4.4/stub-fitting."
+    "aggregateMethod": "mode of the 3 respondents' mapped outcome label per vignette; ties broken lexicographically. representativeIndex = first respondent whose label equals the mode, reused for B4.3/B4.4/stub-fitting.",
+    "top1AccuracyCI95": {
+      "mean": 0.20022471910112408,
+      "lo": 0.12359550561797752,
+      "hi": 0.2808988764044944,
+      "n": 400
+    },
+    "oracleCeiling": {
+      "accuracy": 0.8614232209737828,
+      "n": 267,
+      "agree": 230
+    },
+    "mcnemarVsConstantOpenspec": {
+      "b": 8,
+      "c": 32,
+      "chi2": 13.225,
+      "nDiscordant": 40
+    }
   },
   "headroom": {
     "n": 89,
-    "modeOf3Accuracy": 0.618,
-    "bestOf3Accuracy": 0.6966,
-    "bestOf3Matches": 62,
-    "all3AgreeAndRightAccuracy": 0.5618,
-    "all3AgreeAndRight": 50,
-    "elicitationHeadroomPp": 7.8652,
+    "modeOf3Accuracy": 0.2022,
+    "bestOf3Accuracy": 0.2472,
+    "bestOf3Matches": 22,
+    "all3AgreeAndRightAccuracy": 0.1461,
+    "all3AgreeAndRight": 13,
+    "elicitationHeadroomPp": 4.4944,
     "labelReachabilityCeiling": 1,
     "unreachableGoldCount": 0,
     "unreachableGoldCounts": {},
@@ -242,9 +229,9 @@
   },
   "b43_runnerUpCredit": {
     "n": 89,
-    "baseOnlyAccuracy": 0.618,
-    "withRunnerUpCreditAccuracy": 0.7528,
-    "additionalMatchesFromRunnerUp": 12,
+    "baseOnlyAccuracy": 0.2022,
+    "withRunnerUpCreditAccuracy": 0.3034,
+    "additionalMatchesFromRunnerUp": 9,
     "note": "runner-up framework id is read from the raw evaluate() result (result.runnerUp.rule.adopt.framework) of the representative respondent, not reverse-engineered from projectOutcome's rule-id-shaped runnerUpId."
   },
   "b44_cautionPrecisionRecall": {
@@ -396,133 +383,303 @@
   },
   "c1_respondentAgreement": {
     "numericTolerance": 10,
-    "toleranceNote": "exact match for categorical/multi/ranked fields; ±10 tolerance for q5_work_breakdown percentages and q2_team headcounts (documented heuristic).",
+    "toleranceFields": [
+      "q5_work_breakdown",
+      "q2_team"
+    ],
+    "toleranceNote": "exact match for categorical/multi/ranked fields; ±10 tolerance for q5_work_breakdown percentages and q2_team headcounts (documented heuristic). Those ±10 fields are listed in toleranceFields so they are not read against exact-match scores.",
     "perField": [
       {
         "fieldId": "q17_process_mismatch",
         "n": 100,
-        "agreementScore": 0
+        "agreementScore": 0,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q20_runtimes",
         "n": 100,
-        "agreementScore": 0.37
+        "agreementScore": 0.37,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q12_quality_gates",
         "n": 100,
-        "agreementScore": 0.39
+        "agreementScore": 0.39,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q16_bottlenecks",
         "n": 100,
-        "agreementScore": 0.46
+        "agreementScore": 0.46,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q3_distribution",
         "n": 100,
-        "agreementScore": 0.54
+        "agreementScore": 0.54,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q21_ci_maturity",
         "n": 100,
-        "agreementScore": 0.59
+        "agreementScore": 0.59,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q2_team",
         "n": 100,
-        "agreementScore": 0.61
+        "agreementScore": 0.61,
+        "matchRule": "tolerance_pm_10"
       },
       {
         "fieldId": "q13_branching",
         "n": 100,
-        "agreementScore": 0.62
+        "agreementScore": 0.62,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q14_release_autonomy",
         "n": 100,
-        "agreementScore": 0.74
+        "agreementScore": 0.74,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q19_change_volume",
         "n": 100,
-        "agreementScore": 0.75
+        "agreementScore": 0.75,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q6_volatility",
         "n": 100,
-        "agreementScore": 0.78
+        "agreementScore": 0.78,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q7_requirements",
         "n": 100,
-        "agreementScore": 0.78
+        "agreementScore": 0.78,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q11_cycle_time",
         "n": 100,
-        "agreementScore": 0.78
+        "agreementScore": 0.78,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q15_governance",
         "n": 100,
-        "agreementScore": 0.8
+        "agreementScore": 0.8,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q8_compliance",
         "n": 100,
-        "agreementScore": 0.82
+        "agreementScore": 0.82,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q4_domain_familiarity",
         "n": 100,
-        "agreementScore": 0.84
+        "agreementScore": 0.84,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q10_architecture",
         "n": 100,
-        "agreementScore": 0.88
+        "agreementScore": 0.88,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q18_token_budget",
         "n": 100,
-        "agreementScore": 0.9
+        "agreementScore": 0.9,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q5_work_breakdown",
         "n": 100,
-        "agreementScore": 0.91
+        "agreementScore": 0.91,
+        "matchRule": "tolerance_pm_10"
       },
       {
         "fieldId": "q4_tenure",
         "n": 100,
-        "agreementScore": 0.92
+        "agreementScore": 0.92,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q9_precision",
         "n": 100,
-        "agreementScore": 0.92
+        "agreementScore": 0.92,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q1_domain",
         "n": 100,
-        "agreementScore": 0.96
+        "agreementScore": 0.96,
+        "matchRule": "exact"
       },
       {
         "fieldId": "q11_deploy_cadence",
         "n": 100,
-        "agreementScore": 0.96
+        "agreementScore": 0.96,
+        "matchRule": "exact"
       }
-    ]
+    ],
+    "determinability": {
+      "note": "Agreement overall vs on the subset where vignette prose contains a field cue (§7.3). Keyword heuristics; not an LLM pass.",
+      "perField": [
+        {
+          "fieldId": "q1_domain",
+          "agreementOverall": 0.96,
+          "agreementDeterminable": 0.96,
+          "determinableShare": 1
+        },
+        {
+          "fieldId": "q2_team",
+          "agreementOverall": 0.61,
+          "agreementDeterminable": 0.6196,
+          "determinableShare": 0.92
+        },
+        {
+          "fieldId": "q3_distribution",
+          "agreementOverall": 0.54,
+          "agreementDeterminable": 0.3333,
+          "determinableShare": 0.03
+        },
+        {
+          "fieldId": "q4_tenure",
+          "agreementOverall": 0.92,
+          "agreementDeterminable": 0.92,
+          "determinableShare": 1
+        },
+        {
+          "fieldId": "q4_domain_familiarity",
+          "agreementOverall": 0.84,
+          "agreementDeterminable": 0.84,
+          "determinableShare": 1
+        },
+        {
+          "fieldId": "q5_work_breakdown",
+          "agreementOverall": 0.91,
+          "agreementDeterminable": 0.9118,
+          "determinableShare": 0.34
+        },
+        {
+          "fieldId": "q6_volatility",
+          "agreementOverall": 0.78,
+          "agreementDeterminable": 0,
+          "determinableShare": 0.01
+        },
+        {
+          "fieldId": "q7_requirements",
+          "agreementOverall": 0.78,
+          "agreementDeterminable": 0.7636,
+          "determinableShare": 0.55
+        },
+        {
+          "fieldId": "q8_compliance",
+          "agreementOverall": 0.82,
+          "agreementDeterminable": 0.8316,
+          "determinableShare": 0.95
+        },
+        {
+          "fieldId": "q9_precision",
+          "agreementOverall": 0.92,
+          "agreementDeterminable": 0.9063,
+          "determinableShare": 0.64
+        },
+        {
+          "fieldId": "q10_architecture",
+          "agreementOverall": 0.88,
+          "agreementDeterminable": 0.8936,
+          "determinableShare": 0.47
+        },
+        {
+          "fieldId": "q11_deploy_cadence",
+          "agreementOverall": 0.96,
+          "agreementDeterminable": 0.96,
+          "determinableShare": 1
+        },
+        {
+          "fieldId": "q11_cycle_time",
+          "agreementOverall": 0.78,
+          "agreementDeterminable": 0.78,
+          "determinableShare": 1
+        },
+        {
+          "fieldId": "q12_quality_gates",
+          "agreementOverall": 0.39,
+          "agreementDeterminable": 0.5385,
+          "determinableShare": 0.13
+        },
+        {
+          "fieldId": "q13_branching",
+          "agreementOverall": 0.62,
+          "agreementDeterminable": 0.62,
+          "determinableShare": 1
+        },
+        {
+          "fieldId": "q14_release_autonomy",
+          "agreementOverall": 0.74,
+          "agreementDeterminable": 0.7895,
+          "determinableShare": 0.19
+        },
+        {
+          "fieldId": "q15_governance",
+          "agreementOverall": 0.8,
+          "agreementDeterminable": 0.8,
+          "determinableShare": 1
+        },
+        {
+          "fieldId": "q16_bottlenecks",
+          "agreementOverall": 0.46,
+          "agreementDeterminable": 0.4595,
+          "determinableShare": 0.74
+        },
+        {
+          "fieldId": "q17_process_mismatch",
+          "agreementOverall": 0,
+          "agreementDeterminable": 0,
+          "determinableShare": 1
+        },
+        {
+          "fieldId": "q18_token_budget",
+          "agreementOverall": 0.9,
+          "agreementDeterminable": 0.9091,
+          "determinableShare": 0.11
+        },
+        {
+          "fieldId": "q19_change_volume",
+          "agreementOverall": 0.75,
+          "agreementDeterminable": 1,
+          "determinableShare": 0.07
+        },
+        {
+          "fieldId": "q20_runtimes",
+          "agreementOverall": 0.37,
+          "agreementDeterminable": 1,
+          "determinableShare": 0.12
+        },
+        {
+          "fieldId": "q21_ci_maturity",
+          "agreementOverall": 0.59,
+          "agreementDeterminable": 0.5938,
+          "determinableShare": 0.96
+        }
+      ]
+    }
   },
   "c2_recommendationStability": {
     "n": 100,
-    "stableCount": 82,
-    "stability": 0.82,
+    "stableCount": 75,
+    "stability": 0.75,
     "note": "stable = all 3 respondents' raw outcome label (baseId, or fallback_openspec, or no_runtime_match) is identical for the same vignette."
   },
   "c3_dangerQuadrant": {
-    "rule": "base-influence > 5 (percentage points, from A2) AND respondent agreement < 0.60 (from C1)",
+    "rule": "total-influence (base+overlay+caution) > 5 (percentage points, from A2) AND respondent agreement < 0.60 (from C1)",
     "ruleInertFieldsExcluded": [
       "q1_domain",
       "q13_branching",
@@ -530,23 +687,60 @@
       "q4_tenure",
       "q11_cycle_time"
     ],
-    "fieldsInQuadrant": [],
-    "isEmpty": true
+    "fieldsInQuadrant": [
+      {
+        "fieldId": "q3_distribution",
+        "totalInfluenceScore": 10.204,
+        "baseInfluenceScore": 5.102,
+        "overlayInfluenceScore": 5.102,
+        "cautionInfluenceScore": 0,
+        "agreementScore": 0.54
+      },
+      {
+        "fieldId": "q12_quality_gates",
+        "totalInfluenceScore": 20.2084,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 19.1667,
+        "cautionInfluenceScore": 1.0417,
+        "agreementScore": 0.39
+      },
+      {
+        "fieldId": "q16_bottlenecks",
+        "totalInfluenceScore": 14.0787,
+        "baseInfluenceScore": 0.7764,
+        "overlayInfluenceScore": 13.1988,
+        "cautionInfluenceScore": 0.1035,
+        "agreementScore": 0.46
+      },
+      {
+        "fieldId": "q20_runtimes",
+        "totalInfluenceScore": 15.8333,
+        "baseInfluenceScore": 8.3333,
+        "overlayInfluenceScore": 5.8333,
+        "cautionInfluenceScore": 1.6667,
+        "agreementScore": 0.37
+      },
+      {
+        "fieldId": "q21_ci_maturity",
+        "totalInfluenceScore": 30,
+        "baseInfluenceScore": 0,
+        "overlayInfluenceScore": 30,
+        "cautionInfluenceScore": 0,
+        "agreementScore": 0.59
+      }
+    ],
+    "isEmpty": false,
+    "assertNonEmpty": true
   },
   "rq2a_questionInfluenceCoverage": {
     "totalFields": 23,
     "ruleInertFieldsExcluded": 5,
     "nonReportOnlyFieldsConsidered": 18,
-    "nonZeroBaseInfluenceCount": 12,
-    "fraction": 0.6667,
-    "fieldsWithZeroInfluence": [
-      "q3_distribution",
-      "q4_domain_familiarity",
-      "q15_governance",
-      "q16_bottlenecks",
-      "q19_change_volume",
-      "q21_ci_maturity"
-    ],
+    "nonZeroAnyInfluenceCount": 18,
+    "nonZeroBaseInfluenceCount": 10,
+    "fraction": 1,
+    "fieldsWithZeroInfluence": [],
+    "criterion": "non-zero influence on any output (base, overlay, or caution)",
     "passThreshold": 0.6,
     "pass": true
   },
@@ -566,38 +760,38 @@
       "points": [
         {
           "value": 25,
-          "kappa": 0.4416
+          "kappa": 0.0533
         },
         {
           "value": 30,
-          "kappa": 0.4416
+          "kappa": 0.0533
         },
         {
           "value": 35,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 40,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 45,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 50,
-          "kappa": 0.4339
+          "kappa": 0.0533
         },
         {
           "value": 55,
-          "kappa": 0.4222
+          "kappa": 0.0533
         }
       ],
       "peak": {
-        "value": 35,
-        "kappa": 0.4459
+        "value": 25,
+        "kappa": 0.0533
       },
-      "shippedKappa": 0.4459,
+      "shippedKappa": 0.0533,
       "verdict": "NEAR_PEAK",
       "deltaFromPeak": 0
     },
@@ -616,38 +810,38 @@
       "points": [
         {
           "value": 45,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 50,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 55,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 60,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 65,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 70,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 75,
-          "kappa": 0.4459
+          "kappa": 0.0533
         }
       ],
       "peak": {
         "value": 45,
-        "kappa": 0.4459
+        "kappa": 0.0533
       },
-      "shippedKappa": 0.4459,
+      "shippedKappa": 0.0533,
       "verdict": "NEAR_PEAK",
       "deltaFromPeak": 0
     },
@@ -664,41 +858,90 @@
       "points": [
         {
           "value": 3,
-          "kappa": 0.4774
+          "kappa": 0.0533
         },
         {
           "value": 4,
-          "kappa": 0.4787
+          "kappa": 0.0533
         },
         {
           "value": 5,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 6,
-          "kappa": 0.4459
+          "kappa": 0.0533
         },
         {
           "value": 7,
-          "kappa": 0.3746
+          "kappa": 0.0533
         }
       ],
       "peak": {
-        "value": 4,
-        "kappa": 0.4787
+        "value": 3,
+        "kappa": 0.0533
       },
-      "shippedKappa": 0.4459,
-      "verdict": "AWAY_FROM_PEAK",
-      "deltaFromPeak": 0.0328
+      "shippedKappa": 0.0533,
+      "verdict": "NEAR_PEAK",
+      "deltaFromPeak": 0
     }
   },
   "partE_weightedScoring": {
     "method": "Offline re-score of frozen answers/labels under first-match vs weighted selection. No new panel.",
-    "shippedSelection": "weighted",
-    "firstMatchKappa": 0.1611,
-    "weightedKappa": 0.4459,
-    "delta": 0.2848,
-    "note": "Positive delta means weighted scoring agrees more with the frozen judge majority than first-match-wins."
+    "shippedSelection": "utility",
+    "firstMatchKappa": 0.1067,
+    "weightedKappa": 0.1769,
+    "utilityKappa": 0.0533,
+    "delta": 0.0702,
+    "note": "Positive delta means weighted scoring agrees more with the frozen judge majority than first-match-wins. utilityKappa is the shipped EXT-SELECT scorer."
+  },
+  "gPractice": {
+    "note": "Frozen labels.json has no bestWorst yet (T13 re-run pending). Metrics below are engine overlay prevalence only.",
+    "labeledVignettes": 0,
+    "engine": null,
+    "prevalenceBaseline": [],
+    "perPracticeMajority": [
+      "delta-only-specs",
+      "openspec-change-archive",
+      "regulatory-constitution",
+      "speckit-phase-pipeline",
+      "tdd-iron-law",
+      "two-stage-review",
+      "lane-worktrees",
+      "domain-recon",
+      "role-personas",
+      "ephemeral-subagent-waves",
+      "gsd-req-ids",
+      "deterministic-ci",
+      "low-ceremony-fast-path",
+      "one-question-at-a-time"
+    ],
+    "engineOverlayPrevalence": {
+      "deterministic-ci": 70,
+      "delta-only-specs": 69,
+      "lane-worktrees": 59,
+      "tdd-iron-law": 47,
+      "low-ceremony-fast-path": 42,
+      "gsd-req-ids": 37,
+      "role-personas": 36,
+      "domain-recon": 29,
+      "openspec-change-archive": 14,
+      "ephemeral-subagent-waves": 7,
+      "one-question-at-a-time": 3
+    }
+  },
+  "rq4_conformalCoverage": {
+    "note": "RQ4' — conformal set contains the judge-majority harness (nominal 1-α = 0.80 at conformalAlpha 0.2).",
+    "n": 89,
+    "hits": 53,
+    "coverage": 0.5955,
+    "nominal": 0.8
+  },
+  "rq6_harnessInJudgeTop3": {
+    "note": "RQ6' — shipped harness is in the majority judge's rankedTop3. Compared to runner-up-credit (b43) as the T17-era floor proxy; a frozen pre-cutover T17 number was not checked in.",
+    "n": 89,
+    "hits": 63,
+    "rate": 0.7079
   },
   "verdicts": {
     "oracleUsable": {
@@ -711,32 +954,72 @@
       }
     },
     "engineRQ1": {
-      "verdict": "FAIL",
+      "verdict": "UNSTATED (RQ1 withdrawn — EXT-SELECT §8.5; harness top-1 is reported, not gated)",
       "criteria": {
-        "cohenKappaAtLeast040": true,
-        "beatsConstantByAtLeast15pp": false,
-        "beatsBestStub": true
+        "withdrawn": true,
+        "note": "RQ1 (base top-1 vs constant-openspec +15pp) is withdrawn by EXT-SELECT §8.5. Replacement criteria RQ1'–RQ6' apply after S1 labels exist."
       },
       "numbers": {
-        "cohenKappa": 0.4459,
-        "top1Accuracy": 0.618,
+        "cohenKappa": 0.0533,
+        "top1Accuracy": 0.2022,
         "constantOpenspecAccuracy": 0.4719,
-        "accuracyGapVsConstantPp": 14.61,
+        "accuracyGapVsConstantPp": -26.97,
         "bestStubAccuracy": 0.5393,
         "bestStubName": "q5_work_breakdown.roadmap>=60 -> speckit else openspec"
       }
     },
     "questionnaireRQ2": {
-      "verdict": "PASS",
+      "verdict": "FAIL",
       "criteria": {
         "atLeast60PctQuestionsNonZeroInfluence": true,
-        "noDangerQuadrantFields": true,
+        "noDangerQuadrantFields": false,
         "stabilityAtLeast070": true
       },
       "numbers": {
-        "nonZeroInfluenceFraction": 0.6667,
-        "dangerQuadrantFields": [],
-        "recommendationStability": 0.82
+        "nonZeroInfluenceFraction": 1,
+        "dangerQuadrantFields": [
+          {
+            "fieldId": "q3_distribution",
+            "totalInfluenceScore": 10.204,
+            "baseInfluenceScore": 5.102,
+            "overlayInfluenceScore": 5.102,
+            "cautionInfluenceScore": 0,
+            "agreementScore": 0.54
+          },
+          {
+            "fieldId": "q12_quality_gates",
+            "totalInfluenceScore": 20.2084,
+            "baseInfluenceScore": 0,
+            "overlayInfluenceScore": 19.1667,
+            "cautionInfluenceScore": 1.0417,
+            "agreementScore": 0.39
+          },
+          {
+            "fieldId": "q16_bottlenecks",
+            "totalInfluenceScore": 14.0787,
+            "baseInfluenceScore": 0.7764,
+            "overlayInfluenceScore": 13.1988,
+            "cautionInfluenceScore": 0.1035,
+            "agreementScore": 0.46
+          },
+          {
+            "fieldId": "q20_runtimes",
+            "totalInfluenceScore": 15.8333,
+            "baseInfluenceScore": 8.3333,
+            "overlayInfluenceScore": 5.8333,
+            "cautionInfluenceScore": 1.6667,
+            "agreementScore": 0.37
+          },
+          {
+            "fieldId": "q21_ci_maturity",
+            "totalInfluenceScore": 30,
+            "baseInfluenceScore": 0,
+            "overlayInfluenceScore": 30,
+            "cautionInfluenceScore": 0,
+            "agreementScore": 0.59
+          }
+        ],
+        "recommendationStability": 0.75
       }
     }
   }

@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 8 · margin 8
+**Harness acceptability** (conformal set: OpenSpec, GSD Core, GitHub Spec Kit, Spec Kitty):
+- OpenSpec — 33%
+- GSD Core — 24%
+- GitHub Spec Kit — 13%
+- Spec Kitty — 11%
+- Superpowers — 9%
+- BMAD Method — 9%
+
+Confidence: low · score -1.5167861538461542 · margin 0.5959030769230766
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q18_token_budget, q19_change_volume, q21_ci_maturity
@@ -13,31 +21,58 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Branching: —
 
 ## Recommended base: OpenSpec
-Non-roadmap work favors specs written only for the change at hand.
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
 - Install: `openspec init (+ openspec config profile for expanded)`
 - Repo: `Fission-AI/OpenSpec`
-- Triggering answers: q5_work_breakdown = {"roadmap":20,"ops":20,"bugs":20,"regulatory":20,"tech_debt":20}; q10_architecture = monolith; q6_volatility = moderate
+- Triggering answers: brownfield demand 1.00; contextHygiene demand 1.00
+- Counterfactuals:
+  - Below 39 on derived.nonRoadmapShare the harness flips to gsd.
+- Axis contributions:
+  - brownfield: demand 1.00, coverage 0.47, unmet 0.63
+  - contextHygiene: demand 1.00, coverage 0.64, unmet 0.24
 - Enforcement:
 Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
 Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
 - Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
 
+## Runner-up
+GSD Core — Acceptability 24% vs 33% for OpenSpec.
+
 ## Practice overlays
-### Ephemeral subagent waves
+### Delta-only specs (included in base) — 57% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Low-ceremony fast path (included in base) — 50% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Ephemeral subagent waves — 49% inclusion
 Source: GSD Core
-A monolith with broad file spans benefits from GSD Core's clean-context parallel executors.
+Fresh-context executor waves for broad file spans.
 Enforcement: Agent gate — Plan-checker decision-coverage (Agent-executed check on plans.)
 Agent gate — Verify vs shipped code (Stronger than constitution.md; weaker than CI.)
-Triggered by: q10_architecture = monolith
+Triggered by: derived view
+
+### Change archive (included in base) — 38% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
 
 ## Cautions
 _None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate

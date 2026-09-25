@@ -1,6 +1,14 @@
 # SDD Selector report
 
-Confidence: high · score 9 · margin 9
+**Harness acceptability** (conformal set: Superpowers, OpenSpec, GitHub Spec Kit, GSD Core, BMAD Method, Spec Kitty):
+- Superpowers — 21%
+- OpenSpec — 21%
+- GitHub Spec Kit — 16%
+- GSD Core — 16%
+- BMAD Method — 15%
+- Spec Kitty — 11%
+
+Confidence: low · score -1.4104015384615387 · margin 0.4017250000000001
 
 ## Completeness
 Unanswered questions that could change this result: q3_distribution, q4_domain_familiarity, q8_compliance, q9_precision, q15_governance, q16_bottlenecks, q19_change_volume, q21_ci_maturity
@@ -12,29 +20,61 @@ Unanswered questions that could change this result: q3_distribution, q4_domain_f
 - Deploy cadence: sprint; cycle time: —
 - Branching: —
 
-## Recommended base: Superpowers
-A small autonomous team shipping often needs a light harness; coverage and budget split Superpowers vs GSD Core.
+## Recommended base: OpenSpec
+Selected as the harness whose native bundle plus added practices minimises unmet demand.
 
-- Install: `/plugin install superpowers@claude-plugins-official`
-- Repo: `obra/superpowers`
-- Triggering answers: q2_team = {"total":3,"swe":3,"data_engineers":0,"qa_sdet":0,"product_owner":"none","scrum_master":"none"}; q11_deploy_cadence = sprint; q14_release_autonomy = autonomous; q12_quality_gates = ["mostly_manual"]; q18_token_budget = unmetered
+- Install: `openspec init (+ openspec config profile for expanded)`
+- Repo: `Fission-AI/OpenSpec`
+- Triggering answers: verificationStrength demand 1.00
+- Counterfactuals:
+  - Below 1 on q9_precision the harness flips to superpowers.
+  - Above 27 on derived.nonRoadmapShare the harness flips to superpowers.
+  - Above 0 on q6_volatility the harness flips to superpowers.
+- Axis contributions:
+  - verificationStrength: demand 1.00, coverage 0.64, unmet 0.38
+  - ceremonyTolerance: demand 0.38, coverage 0.30, unmet 0.20
 - Enforcement:
-Agent gate — TDD iron law (Production code before a failing test must be deleted.)
-Human gate — Brainstorming design approval (Blocks implementation until a design is approved.)
-- Evidence: 287303 stars, 0 commits/30d, v6.3.0 (2026-08-12); verified 2026-09-16
+Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+- Evidence: 68430 stars, 66 commits/30d, v1.13.0 (2026-09-09); verified 2026-09-16
+
+## Runner-up
+OpenSpec — Acceptability 21% vs 21% for OpenSpec.
 
 ## Practice overlays
-_None._
+### Low-ceremony fast path (included in base) — 49% inclusion
+Source: OpenSpec
+A documented two-track policy beside any heavyweight pipeline.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### TDD iron law — 43% inclusion
+Source: Superpowers
+Failing tests before production code. Travels without Superpowers as the harness.
+Enforcement: Agent gate — TDD iron law (Production code before a failing test must be deleted.)
+Human gate — Brainstorming design approval (Blocks implementation until a design is approved.)
+Triggered by: derived view
+
+### Delta-only specs (included in base) — 36% inclusion
+Source: OpenSpec
+Write specs only for the change at hand. Strongest brownfield fit in the catalogue.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
+### Change archive (included in base) — 23% inclusion
+Source: OpenSpec
+Archived change folders are an audit artifact, but /opsx:verify does not block archive.
+Enforcement: Advisory — /opsx:verify (expanded profile) (Does not block archiving.)
+Human gate — Delta specs ADDED/MODIFIED/REMOVED (Human archives.)
+Triggered by: derived view
+
 ## Cautions
-### C10 — medium
-No commits on main in the 30 days before the evidence date (v6.3.0, 2026-08-12), while comparable projects posted 100+. Star count reflects historical popularity.
-Mitigation: Check current repository activity before adopting. The methodology is portable, so a pause is survivable — do not assume active upstream support.
-Source: Appendix A; V12
+_None._
 
 ## Bottleneck resolution
-_No bottlenecks ranked._
-
-Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; High volume of interruptive support tickets/incidents; Complex compliance/audit documentation overhead; Technical debt in legacy codebases.
+_No bottlenecks rated._
 
 ## Framework catalog
 - **OpenSpec** (`openspec`, recommended) — base candidate
@@ -48,7 +88,7 @@ Overlays in this revision do not address: Flaky CI/CD pipelines or slow builds; 
 ## Suggested directory layout
 ```
 repo/
-├── design docs    # Base: Superpowers
-├── implementation plans    # Base: Superpowers
-├── git worktrees    # Base: Superpowers
+├── openspec/specs/    # Base: OpenSpec
+├── openspec/changes/<name>/{proposal,design,tasks,spec}.md    # Base: OpenSpec
+├── tests/    # TDD iron law
 ```
