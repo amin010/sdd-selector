@@ -1,0 +1,10 @@
+title: SDD Selector
+description: A diagnostic that recommends a spec-driven development stack for a finance-tech team.
+theme: minima
+exclude:
+  - packs
+  - tests
+  - tools
+  - src
+  - docs
+  - node_modules
