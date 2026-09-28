@@ -124,14 +124,28 @@ test("completeness HTML uses question numbers; Markdown keeps field ids", () => 
   const result = api.evaluate(answers, null, PINNED_NOW);
   const html = api.buildReportHtml(result, answers);
   assert.ok(result.completeness.couldChangeResult.length, "fixture should leave rule-relevant gaps");
+  const items = api.completenessItems(result.completeness.couldChangeResult);
+  assert.ok(items.length, "deduped completeness items");
+  const n = items.length;
+  const title = n === 1
+    ? "1 unanswered question could change this result"
+    : `${n} unanswered questions could change this result`;
+  assert.ok(html.includes(title), "screen completeness uses a count heading");
+  assert.ok(html.includes("Answer these to confirm or revise the recommendation below."));
+  assert.ok(html.includes('class="completeness-list"'), "screen completeness is a structured list");
   const id = result.completeness.couldChangeResult[0];
   const label = api.questionLabel(id);
   assert.match(label, /^Q\d+/);
   assert.ok(label.includes(" · "));
   assert.equal(label.includes(id), false);
-  assert.ok(html.includes(label), "screen completeness uses human-readable label");
+  const first = items[0];
+  assert.ok(html.includes(first.number), "screen completeness shows question number");
+  assert.ok(html.includes(first.legend), "screen completeness shows question legend");
   assert.ok(html.includes('href="#q-'), "completeness jumps to the question fieldset");
-  const visible = html.replace(/<a href="[^"]*">/g, "").replace(/<\/a>/g, "");
+  const visible = html
+    .replace(/<a href="[^"]*">/g, "")
+    .replace(/<\/a>/g, "")
+    .replace(/<[^>]+>/g, " ");
   assert.equal(visible.includes(id), false, "raw field id is not completeness link text");
   const md = api.toMarkdown(result, answers);
   assert.ok(md.includes(id), "Markdown completeness still names field ids");
