@@ -1,6 +1,6 @@
 # SDD Selector
 
-A single HTML file that recommends a spec-driven development stack for a finance-tech team. Open `index.html` in a browser. There is no server, no account, and no install. Answers stay in the page; a link encodes them in the URL.
+A single HTML file that recommends a spec-driven development stack for a finance-tech team. The published page is [amin010.github.io/sdd-selector](https://amin010.github.io/sdd-selector/). You can also open `index.html` in a browser. There is no server, no account, and no install. Answers stay in the page; a link encodes them in the URL.
 
 The questionnaire and the scoring pack live in `packs/finance-tech.json` and are inlined into the page by `npm run build`. Node is only for tests and that build.
 
